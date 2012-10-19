@@ -1,0 +1,4 @@
+*.so
+*.class
+target/
+jd-intellij/
