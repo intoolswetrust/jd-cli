@@ -46,23 +46,25 @@ Usage
 Programmatically:
 
 ```java
-/* Returns the source of SomeClass from blah.jar as a String */
-new jd.core.Decompiler.decompile("blah.jar", "com/blah/SomeClass.class");
+/* Returns the source of SomeClass from compiled.jar as a String */
+new jd.core.Decompiler.decompile("compiled.jar", "com/namespace/SomeClass.class");
 
 /*
- * Returns the sources of all the classes in blah.jar as a Map<String, String>
+ * Returns the sources of all the classes in compiled.jar as a Map<String, String>
  * where the key is the class name (full path) and the value is the source
  */
-new jd.core.Decompiler.decompile("blah.jar");
+new jd.core.Decompiler.decompile("compiled.jar");
+
+/*
+ * Returns the number of classes decompiled and saved into out_dir
+ */
+new jd.core.Decompiler.decompileToDir("compiled.jar", "out_dir");
 ```
 
 From the command line:
 ```shell
-# Outputs the sources of SomeClass
-java -jar jd-core-java-1.0.jar blah.jar com/blah/SomeClass.class
-
-# Outputs all the sources in blah.jar
-java -jar jd-core-java-1.0.jar blah.jar
+# Outputs all the sources of compiled.jar into out_dir
+java -jar jd-core-java.jar <compiled.jar> <out_dir>
 ```
 
 License

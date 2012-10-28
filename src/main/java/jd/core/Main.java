@@ -6,24 +6,15 @@ import java.util.Map;
 public class Main {
     public static void main(String[] args) {
         try {
-            if (args.length < 1) {
-                System.out.println("Usage: jd <jar> [internalClassName]");
+            if (args.length < 2) {
+                System.err.println("Usage: java -jar jd-core-java.jar <compiled.jar> <out_dir>");
                 return;
             }
-            String basePath = args[0];
+            String jarPath = args[0];
+            String outDirPath = args[1];
 
-            if (args.length == 2) {
-                String internalClassName = args[1];
-                String result = new Decompiler().decompile(basePath, internalClassName);
-                System.out.println(result);
-            } else {
-                Map<String, String> classToJava = new Decompiler().decompile(basePath);
-                for (Map.Entry<String, String> entry : classToJava.entrySet()) {
-                    System.out.println("/* " + entry.getKey() + " */");
-                    System.out.println(entry.getValue());
-                    System.out.println("");
-                }
-            }
+            int numDecompiled = new Decompiler().decompileToDir(jarPath, outDirPath);
+            System.err.println("Decompiled " + numDecompiled + " classes");
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
