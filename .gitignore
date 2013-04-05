@@ -1,4 +1,5 @@
-*.so
-*.class
-target/
-jd-intellij/
+/.classpath
+/.project
+/.settings
+dependency-reduced-pom.xml
+/target
