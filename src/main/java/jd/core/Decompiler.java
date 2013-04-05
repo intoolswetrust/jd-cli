@@ -46,6 +46,8 @@ public class Decompiler {
 			}
 		}
 		
+		zip.close();
+		
 		return pathToSrc;
 	}
 	
