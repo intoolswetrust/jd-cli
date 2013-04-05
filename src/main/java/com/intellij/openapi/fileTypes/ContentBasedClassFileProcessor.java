@@ -1,3 +1,7 @@
 package com.intellij.openapi.fileTypes;
 
-public interface ContentBasedClassFileProcessor {}
+public interface ContentBasedClassFileProcessor {
+	
+	
+	
+}
