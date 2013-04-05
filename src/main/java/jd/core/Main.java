@@ -24,8 +24,7 @@ public class Main {
 			String jarPath = args[0];
 			String outDirPath = args[1];
 			
-			int numDecompiled = new Decompiler().decompileToDir(jarPath, outDirPath);
-			System.err.println("Decompiled " + numDecompiled + " classes");
+			(new Decompiler()).decompileToDir(jarPath, outDirPath);
 		}catch (Exception e){
 			e.printStackTrace();
 			System.exit(1);

@@ -1,73 +1,71 @@
 package jd.core;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.File;
-import java.io.PrintWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.Map;
-import java.util.HashMap;
+
 import jd.ide.intellij.JavaDecompiler;
 
 public class Decompiler {
 	
-	private JavaDecompiler decompiler;
+	private static final JavaDecompiler decompiler = new JavaDecompiler();
 	
 	public Decompiler(){
-		decompiler = new JavaDecompiler();
+		
 	}
 	
 	public String decompile(String jarPath, String internalClassName) throws DecompilerException {
-		String decompiled = decompiler.decompile(jarPath, internalClassName);
+		String src = decompiler.decompile(jarPath, internalClassName);
 		
-		if (!validContent(decompiled)){
+		if (src == null){
 			throw new DecompilerException("cannot decompile " + jarPath + "!" + internalClassName);
 		}
 		
-		return decompiled;
+		return src;
 	}
 	
-	public Map<String, String> decompile(String jarPath) throws DecompilerException, IOException {
+	public void decompileToDir(String jarPath, String outDir) throws DecompilerException, IOException {
 		ZipInputStream zip = new ZipInputStream(new FileInputStream(jarPath));
-		ZipEntry ze;
-		Map<String, String> pathToSrc = new HashMap<String, String>();
+		ZipEntry entry = null;
 		
-		while ((ze = zip.getNextEntry()) != null){
-			String entryName = ze.getName();
+		while ((entry = zip.getNextEntry()) != null){
+			String entryName = entry.getName();
 			
-			if (entryName.endsWith(".class")){
-				String classPath = entryName.replaceAll("\\$.*\\.class$", ".class");
-				String javaPath = classPath.replaceAll("\\.class$", ".java");
-				
-				if (!pathToSrc.containsKey(javaPath)){
-					pathToSrc.put(javaPath, decompiler.decompile(jarPath, classPath));
+			if (!entry.isDirectory()){
+				if (entryName.endsWith(".class")){
+					String classPath = entryName.replaceAll("\\$.*\\.class$", ".class");
+					String javaPath = classPath.replaceAll("\\.class$", ".java");
+					
+					File outFile = new File(outDir, javaPath);
+					outFile.getParentFile().mkdirs();
+					
+					FileOutputStream output = new FileOutputStream(outFile);
+					
+					output.write(this.decompile(jarPath, classPath).getBytes());
+					
+					output.close();
+				}else{
+					File outFile = new File(outDir, entryName);
+					outFile.getParentFile().mkdirs();
+					
+					FileOutputStream output = new FileOutputStream(outFile);
+					
+					byte[] buffer = new byte[4096];
+					int len;
+					
+					while ((len = zip.read(buffer)) != -1){
+						output.write(buffer, 0, len);
+					}
+					
+					output.close();
 				}
 			}
 		}
 		
 		zip.close();
-		
-		return pathToSrc;
-	}
-	
-	public int decompileToDir(String jarPath, String outDir) throws DecompilerException, IOException {
-		Map<String, String> pathToSrc = decompile(jarPath);
-		
-		for (Map.Entry<String, String> entry : pathToSrc.entrySet()){
-			String fileName = entry.getKey();
-			File file = new File(outDir, fileName);
-			file.getParentFile().mkdirs();
-			PrintWriter out = new PrintWriter(file);
-			out.print(entry.getValue());
-			out.close();
-		}
-		
-		return pathToSrc.size();
-	}
-	
-	private boolean validContent(String decompiled){
-		return decompiled != null && !decompiled.matches("(?sm)class\\s*\\{\\s*\\}.*");
 	}
 	
 }
