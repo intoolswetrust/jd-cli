@@ -7,7 +7,7 @@ public class JDPluginComponent {
 	}
 	
 	public boolean isShowMetadataEnabled(){
-		return false;
+		return true;
 	}
 	
 }
