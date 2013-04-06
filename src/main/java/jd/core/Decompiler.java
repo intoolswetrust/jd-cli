@@ -17,7 +17,7 @@ public class Decompiler {
 		
 	}
 	
-	public String decompile(String jarPath, String internalClassName) throws DecompilerException{
+	public String decompile(String jarPath, String internalClassName) throws DecompilerException {
 		String src = decompiler.decompile(jarPath, internalClassName);
 		
 		if (src == null){
@@ -50,7 +50,7 @@ public class Decompiler {
 		return src;
 	}
 	
-	public void decompileToDir(String jarPath, String outDir) throws DecompilerException, IOException{
+	public void decompileToDir(String jarPath, String outDir) throws IOException {
 		ZipInputStream zip = new ZipInputStream(new FileInputStream(jarPath));
 		ZipEntry entry = null;
 		
@@ -67,7 +67,11 @@ public class Decompiler {
 					
 					FileOutputStream output = new FileOutputStream(outFile);
 					
-					output.write(this.decompile(jarPath, classPath).getBytes());
+					try{
+						output.write(this.decompile(jarPath, classPath).getBytes());
+					}catch (DecompilerException e){
+						System.err.println("Failed to decompile " + classPath);
+					}
 					
 					output.close();
 				}else{
