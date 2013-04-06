@@ -17,15 +17,33 @@ public class Decompiler {
 		
 	}
 	
-	public String decompile(String jarPath, String internalClassName) throws DecompilerException {
+	public String decompile(String jarPath, String internalClassName) throws DecompilerException{
 		String src = decompiler.decompile(jarPath, internalClassName);
 		
 		if (src == null){
 			throw new DecompilerException("cannot decompile " + jarPath + "!" + internalClassName);
 		}
 		
+		StringBuilder result = new StringBuilder(src.length());
+		
+		for (String string : src.split("\n")){
+			for (int i = 0; true; i += 2){
+				String temp = string.substring(i);
+				
+				if (temp.startsWith("  ")){
+					result.append('\t');
+				}else{
+					result.append(temp);
+					break;
+				}
+			}
+			
+			result.append('\n');
+		}
+		
+		src = result.toString();
+		
 		src = src.replaceAll("\\n(\\s*)\\{", " {$1");
-		src = src.replaceAll("(?m)(?<=^ *)  ", "\t");
 		src = src.replaceAll("\\n\\t(extends|implements)", " $1");
 		src = src.replaceAll("(class|interface)( .*\\{)", "$1$2\n");
 		src = src.replaceAll("\\n(\\s*try \\{)", "\n\n$1");
@@ -33,7 +51,7 @@ public class Decompiler {
 		return src;
 	}
 	
-	public void decompileToDir(String jarPath, String outDir) throws DecompilerException, IOException {
+	public void decompileToDir(String jarPath, String outDir) throws DecompilerException, IOException{
 		ZipInputStream zip = new ZipInputStream(new FileInputStream(jarPath));
 		ZipEntry entry = null;
 		
