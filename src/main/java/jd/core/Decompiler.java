@@ -46,7 +46,6 @@ public class Decompiler {
 		src = src.replaceAll("\\n(\\s*)\\{", " {$1");
 		src = src.replaceAll("\\n\\t(extends|implements)", " $1");
 		src = src.replaceAll("(class|interface)( .*\\{)", "$1$2\n");
-		src = src.replaceAll("\\n(\\s*try \\{)", "\n\n$1");
 		
 		return src;
 	}
