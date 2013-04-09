@@ -78,16 +78,18 @@ public class Decompiler {
 					File outFile = new File(outDir, entryName);
 					outFile.getParentFile().mkdirs();
 					
-					FileOutputStream output = new FileOutputStream(outFile);
-					
-					byte[] buffer = new byte[4096];
-					int len;
-					
-					while ((len = zip.read(buffer)) != -1){
-						output.write(buffer, 0, len);
+					if (!outFile.exists()){
+						FileOutputStream output = new FileOutputStream(outFile);
+						
+						byte[] buffer = new byte[4096];
+						int len;
+						
+						while ((len = zip.read(buffer)) != -1){
+							output.write(buffer, 0, len);
+						}
+						
+						output.close();
 					}
-					
-					output.close();
 				}
 			}
 		}
