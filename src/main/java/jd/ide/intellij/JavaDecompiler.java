@@ -1,81 +1,72 @@
 package jd.ide.intellij;
 
-import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.io.FilenameFilter;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import jd.core.Main;
+import jd.core.IOUtils;
+import jd.core.JavaDecompilerConstants;
 
 public class JavaDecompiler {
-	
-	static{
-		String osName = System.getProperty("os.name").toLowerCase();
-		String os = "linux";
-		String arch = (System.getProperty("os.arch").contains("64")) ? "x86_64" : "x86";
-		String libEx = "so";
-		
-		if (osName.contains("win")){
-			os = "win32";
-			libEx = "dll";
-		}else if (osName.contains("mac")){
-			os = "macosx";
-			libEx = "jnilib";
-		}
-		
-		String libPath = Main.BASE_PATH + File.separator + "libjd-intellij." + libEx;
-		
-		File libFile = new File(libPath);
-		
-		if (!libFile.exists()){
-			System.out.println("Downloading native library");
-			
-			try{
-				URL url = new URL("https://bitbucket.org/bric3/jd-intellij/get/default.zip");
-				
-				URLConnection connection = url.openConnection();
-				connection.setReadTimeout(10000);
-				connection.setConnectTimeout(5000);
-				
-				BufferedInputStream input = new BufferedInputStream(connection.getInputStream());
-				ZipInputStream zip = new ZipInputStream(input);
-				
-				ZipEntry entry = null;
-				
-				while ((entry = zip.getNextEntry()) != null){
-					if (entry.getName().contains("native/nativelib/" + os + "/" + arch)){
-						FileOutputStream output = new FileOutputStream(libPath);
-						
-						byte[] buffer = new byte[4096];
-						int len;
-						
-						while ((len = zip.read(buffer)) != -1){
-							output.write(buffer, 0, len);
-						}
-						
-						output.close();
-						break;
-					}
-				}
-				
-				zip.close();
-				input.close();
-			}catch (Exception e){
-				System.err.println("Failed to download library");
-				e.printStackTrace();
-			}
-		}
-		
-		try{
-			System.load(libPath);
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-	}
-	
-	public native String decompile(String basePath, String internalClassName);
-	
+
+    static {
+        String osName = System.getProperty("os.name").toLowerCase();
+        String platform = "linux";
+        String arch = (System.getProperty("os.arch").contains("64")) ? "x86_64" : "x86";
+        String libExt = ".so";
+
+        if (osName.contains("win")) {
+            platform = "win32";
+            libExt = ".dll";
+        } else if (osName.contains("mac")) {
+            platform = "macosx";
+            libExt = ".jnilib";
+        }
+
+        final File tmpDir = new File(System.getProperty("java.io.tmpdir"));
+        try {
+            String[] oldLibs = tmpDir.list(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name != null && name.startsWith(JavaDecompilerConstants.NATIVE_LIB_TMP_PREFIX);
+                }
+            });
+            for (String libName : oldLibs) {
+                File oldLibFile = new File(tmpDir, libName);
+                if (oldLibFile.isFile()) {
+                    oldLibFile.delete();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            final File libTempFile = File.createTempFile(JavaDecompilerConstants.NATIVE_LIB_TMP_PREFIX, libExt, tmpDir);
+            libTempFile.deleteOnExit();
+
+            final String pathInJar = "/native/" + platform + "/" + arch + "/" + JavaDecompilerConstants.NATIVE_LIB_NAME
+                    + libExt;
+            is = JavaDecompiler.class.getResourceAsStream(pathInJar);
+            if (is == null) {
+                throw new FileNotFoundException("Native library " + pathInJar + " was not found inside the JAR.");
+            }
+            os = new FileOutputStream(libTempFile);
+            IOUtils.copy(is, os);
+
+            System.load(libTempFile.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(os);
+        }
+    }
+
+    public native String decompile(String basePath, String internalClassName);
+
 }

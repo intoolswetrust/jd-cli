@@ -1,17 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<groupId>jd.core</groupId>
 	<artifactId>jd-command-line</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0</version>
-	<name>JDCommandLine</name>
-	
+	<version>1.1-SNAPSHOT</version>
+
+	<name>jd-cmd</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 	<build>
-		<defaultGoal>install</defaultGoal>
-		<directory>${basedir}/target</directory>
 		<finalName>${project.name}</finalName>
-		
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -22,7 +26,7 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -30,11 +34,42 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<addClasspath>true</addClasspath>
 							<mainClass>jd.core.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<id>download-libs</id>
+						<configuration>
+							<target>
+
+								<echo message="Hello World from pom.xml" />
+								<!-- download file -->
+								<get src="https://bitbucket.org/bric3/jd-intellij/get/default.zip"
+									dest="${project.build.directory}/jd-intellij.zip" verbose="false"
+									usetimestamp="true" />
+								<unzip dest="${project.build.directory}/classes/" src="${project.build.directory}/jd-intellij.zip">
+									<patternset>
+										<include name="**/*.dll" />
+										<include name="**/*.so" />
+										<include name="**/*.jnilib" />
+									</patternset>
+									<regexpmapper from="^.*nativelib(.+)$" to="native\1" />
+								</unzip>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
