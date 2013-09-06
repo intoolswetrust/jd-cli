@@ -13,15 +13,24 @@ public class Decompiler {
 
     private static final JavaDecompiler decompiler = new JavaDecompiler();
 
+    private static final boolean DISCARD_LOCATION = IOUtils.getBoolean(JavaDecompilerConstants.PROP_METADATA,
+            JavaDecompilerConstants.PROP_METADATA_DEFAULT)
+            && IOUtils.getBoolean(JavaDecompilerConstants.PROP_DISCARD_LOCATION,
+                    JavaDecompilerConstants.PROP_DISCARD_LOCATION_DEFAULT);
+
     public Decompiler() {
 
     }
 
     public String decompile(String jarPath, String internalClassName) throws DecompilerException {
-        final String src = decompiler.decompile(jarPath, internalClassName);
+        String src = decompiler.decompile(jarPath, internalClassName);
 
         if (src == null) {
             throw new DecompilerException("cannot decompile " + jarPath + "!" + internalClassName);
+        }
+
+        if (DISCARD_LOCATION) {
+            src = src.replaceFirst("(/\\* Location:).*", "$1");
         }
 
         return src;

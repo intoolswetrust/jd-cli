@@ -1,5 +1,4 @@
-JDCommandLine
-=============
+# JDCommandLine
 
 JDCommandLine is a thin-wrapper for the [Java Decompiler](http://java.decompiler.free.fr/).
 
@@ -14,8 +13,7 @@ I hope this will motivate the author to release a proper library.
 
 This was originally [jd-core-java](https://github.com/nviennot/jd-core-java)
 
-Supported Platforms
--------------------
+## Supported Platforms
 
 JD supports:
 
@@ -24,29 +22,32 @@ JD supports:
 - Mac OSX 32/64-bit on x86 hardware
 
 
-Usage
-------
+## Usage
 
 Programmatically:
 
-```java
-/* Returns the source of SomeClass from compiled.jar as a String */
-new jd.core.Decompiler.decompile("compiled.jar", "com/namespace/SomeClass.class");
-
-/*
- * Returns the number of classes decompiled and saved into out_dir
- */
-new jd.core.Decompiler.decompileToDir("compiled.jar", "out_dir");
-```
+	java
+	/* Returns the source of SomeClass from compiled.jar as a String */
+	new jd.core.Decompiler.decompile("compiled.jar", "com/namespace/SomeClass.class");
+	
+	/*
+	 * Returns the number of classes decompiled and saved into out_dir
+	 */
+	new jd.core.Decompiler.decompileToDir("compiled.jar", "out_dir");
 
 From the command line:
-```shell
-# Outputs all the sources of compiled.jar into out_dir
-java -jar JDCommandLine.jar <compiled.jar> <out_dir>
-```
+	shell
+	# Outputs all the sources of compiled.jar into out_dir
+	java -jar JDCommandLine.jar <compiled.jar> <out_dir>
 
-License
--------
+You can control the decompiler behavior with 3 boolean flags, which are read as system properties:
+
+	// propertyName = defaultValue
+	jd.lineNumbers       = false  # add line numbers as comments
+	jd.metadata          = true   # add metadata to the end of file
+    jd.discardLocation   = true   # remove Location value from the metadata
+
+## License
 
 JDCommandLine is released under the MIT license.
 
@@ -54,3 +55,4 @@ JD-IntelliJ is free for non-commercial use. This means that JD-IntelliJ shall
 not be included or embedded into commercial software products. Nevertheless,
 this project may be freely used for personal needs in a commercial or
 non-commercial environments.
+
