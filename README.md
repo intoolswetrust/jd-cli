@@ -1,21 +1,16 @@
-# JDCommandLine
+# jd-cmd
 
-JDCommandLine is a thin-wrapper for the [Java Decompiler](http://java.decompiler.free.fr/).
+jd-cmd is a thin-wrapper for the [Java Decompiler](http://java.decompiler.free.fr/).
 
-This is hack around the IntelliJ IDE plugin. It fakes the interfaces of the
+This is a hack around the IntelliJ IDE plugin. It fakes the interfaces of the
 IDE, and provides access to JD-Core.
 
-Since the Author of JD-Core is not willing to provide a library, as seen on
-[this thread](http://java.decompiler.free.fr/?q=node/116), and we all want
-to batch decompilation, this is pretty much our only option.
-
-I hope this will motivate the author to release a proper library.
-
-This was originally [jd-core-java](https://github.com/nviennot/jd-core-java)
+This was originally [jd-core-java](https://github.com/nviennot/jd-core-java) 
+and [JDCommandLine](https://github.com/betterphp/JDCommandLine) 
 
 ## Supported Platforms
 
-JD supports:
+jd-cmd supports:
 
 - Linux 32/64-bit
 - Windows 32/64-bit
@@ -24,28 +19,34 @@ JD supports:
 
 ## Usage
 
-Programmatically:
-
-	java
-	/* Returns the source of SomeClass from compiled.jar as a String */
-	new jd.core.Decompiler.decompile("compiled.jar", "com/namespace/SomeClass.class");
-	
-	/*
-	 * Returns the number of classes decompiled and saved into out_dir
-	 */
-	new jd.core.Decompiler.decompileToDir("compiled.jar", "out_dir");
-
-From the command line:
-	shell
-	# Outputs all the sources of compiled.jar into out_dir
-	java -jar JDCommandLine.jar <compiled.jar> <out_dir>
-
 You can control the decompiler behavior with 3 boolean flags, which are read as system properties:
 
 	// propertyName = defaultValue
 	jd.lineNumbers       = false  # add line numbers as comments
 	jd.metadata          = true   # add metadata to the end of file
     jd.discardLocation   = true   # remove Location value from the metadata
+
+### Command line
+
+	# Outputs all the sources of compiled.jar into out_dir
+	# if out_dir is not provided, then name of the directory is the same as the JAR name with .src suffix
+	java -Djd.lineNumbers=true -jar jd-cmd.jar <compiled.jar> [out_dir]
+
+
+### Programmatically
+
+	Decompiler decompiler = new jd.core.Decompiler();
+	// let's display line numbers
+	System.setProperty("jd.lineNumbers","true");
+	
+	/* Returns the source of SomeClass from compiled.jar as a String */
+	String src = decompiler.decompile("compiled.jar", "com/namespace/SomeClass.class");
+	
+	/*
+	 * Decompiles whole JAR to the given directory and returns the number of decompiled classes.
+	 */
+	int count = decompiler.decompileToDir("compiled.jar", "out_dir");
+
 
 ## License
 
