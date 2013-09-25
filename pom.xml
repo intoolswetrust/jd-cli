@@ -45,24 +45,11 @@
 				<version>1.7</version>
 				<executions>
 					<execution>
-						<phase>compile</phase>
+						<phase>generate-resources</phase>
 						<id>download-libs</id>
 						<configuration>
 							<target>
-
-								<echo message="Hello World from pom.xml" />
-								<!-- download file -->
-								<get src="https://bitbucket.org/bric3/jd-intellij/get/default.zip"
-									dest="${project.build.directory}/jd-intellij.zip" verbose="false"
-									usetimestamp="true" />
-								<unzip dest="${project.build.directory}/classes/" src="${project.build.directory}/jd-intellij.zip">
-									<patternset>
-										<include name="**/*.dll" />
-										<include name="**/*.so" />
-										<include name="**/*.jnilib" />
-									</patternset>
-									<regexpmapper from="^.*nativelib(.+)$" to="native\1" />
-								</unzip>
+								<ant antfile="ant-prepare-binaries.xml" />
 							</target>
 						</configuration>
 						<goals>
@@ -73,4 +60,12 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.bcel</groupId>
+			<artifactId>bcel</artifactId>
+			<version>5.2</version>
+		</dependency>
+	</dependencies>
 </project>

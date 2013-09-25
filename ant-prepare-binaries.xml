@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="jd-cmd" default="main">
+
+	<property name="resources.dir" value="src/main/resources"/>
+	<property name="jd.zip.name" value="jd-intellij.zip"/>
+	<property name="native.dir" value="native"/>
+	
+	<target name="_checkLibsPresent">
+		<available file="${resources.dir}/${native.dir}" type="dir" property="jd.libs.ready"/>
+	</target>
+
+	<target name="main" unless="jd.libs.ready" depends="_checkLibsPresent" description="Downloads and unpacks native libraries">
+		<mkdir dir="${resources.dir}"/>
+
+		<echo>Downloading jd-intellij plugin sources</echo>
+		<!-- download file -->
+		<get src="https://bitbucket.org/bric3/jd-intellij/get/default.zip" dest="${jd.zip.name}" verbose="false" usetimestamp="true" />
+		
+		<echo>Unziping libraries to ${resources.dir}</echo>
+		<unzip dest="${resources.dir}" src="${jd.zip.name}">
+			<patternset>
+				<include name="**/*.dll" />
+				<include name="**/*.so" />
+				<include name="**/*.jnilib" />
+			</patternset>
+			<regexpmapper from="^.*nativelib(.+)$" to="${native.dir}\1" />
+		</unzip>
+		
+		<echo>Remove plugin sources zip</echo>
+		<delete file="${jd.zip.name}"/>
+	</target>
+
+</project>

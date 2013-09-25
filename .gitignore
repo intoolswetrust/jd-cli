@@ -3,3 +3,5 @@
 /.settings
 dependency-reduced-pom.xml
 /target
+/src/main/resources/native
+/jd-intellij.zip
