@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 kwart, betterphp, nviennot
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package jd.core;
 
 import java.io.IOException;
@@ -5,12 +20,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Helper method for jd-cmd.
+ * Utility class with helper IO and System methods.
  */
 public final class IOUtils {
 
     /**
-     * Copies data from {@link InputStream} to {@link OutputStream}.
+     * Private ctor.
+     */
+    private IOUtils() {
+    }
+
+    /**
+     * Copies data from an {@link InputStream} to an {@link OutputStream}.
      * 
      * @param is
      * @param os
@@ -29,7 +50,7 @@ public final class IOUtils {
     }
 
     /**
-     * Closes given {@link InputStream}.
+     * Closes given {@link InputStream} without throwing exception out of the method.
      * 
      * @param is
      */
@@ -43,7 +64,7 @@ public final class IOUtils {
     }
 
     /**
-     * Closes given {@link OutputStream}.
+     * Closes given {@link OutputStream} without throwing exception out of the method.
      * 
      * @param os
      */
@@ -57,7 +78,10 @@ public final class IOUtils {
     }
 
     /**
-     * Method similar to {@link Boolean#getBoolean(String)}, but with default value as second parameter.
+     * Returns <code>true</code> iff the system property named by the <code>propName</code> argument exists and is equal to the
+     * string "true" or it doesn't exist and the <code>defaultVal</code> parameter is <code>true</code>.
+     * <p>
+     * This method is similar to {@link Boolean#getBoolean(String)}, but with default value as second parameter.
      * 
      * @param propName
      * @param defaultVal

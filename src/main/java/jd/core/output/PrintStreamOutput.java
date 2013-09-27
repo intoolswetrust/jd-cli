@@ -16,18 +16,28 @@
 package jd.core.output;
 
 import java.io.InputStream;
+import java.io.PrintStream;
 
-/**
- * This interface has to be implemented by jd-core output plugins. It contains methods for processing classes and resources.
- * 
- * @author Josef Cacek
- */
-public interface JDOutput {
-    void init(String basePath);
+public class PrintStreamOutput extends AbstractJDOutput {
 
-    void processClass(String className, String src);
+    private final PrintStream ps;
 
-    void processResource(String fileName, InputStream is);
+    public PrintStreamOutput(final PrintStream ps) {
+        if (ps == null) {
+            throw new NullPointerException("PrintStream can't be null.");
+        }
+        this.ps = ps;
+    }
 
-    void commit();
+    public void processClass(final String className, final String src) {
+        if (debug)
+            ps.println("Class " + className);
+        ps.println(src);
+    }
+
+    public void processResource(String fileName, InputStream is) {
+        if (debug)
+            ps.println("Skipping resource " + fileName);
+    }
+
 }

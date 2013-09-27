@@ -13,21 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jd.core.output;
+package jd.core.input;
 
-import java.io.InputStream;
+import jd.core.output.JDOutput;
+import jd.ide.intellij.JavaDecompiler;
 
-/**
- * This interface has to be implemented by jd-core output plugins. It contains methods for processing classes and resources.
- * 
- * @author Josef Cacek
- */
-public interface JDOutput {
-    void init(String basePath);
+public interface JDInput {
 
-    void processClass(String className, String src);
-
-    void processResource(String fileName, InputStream is);
-
-    void commit();
+    void decompile(JavaDecompiler javaDecompiler, JDOutput jdOutput);
 }

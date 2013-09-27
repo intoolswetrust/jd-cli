@@ -15,19 +15,21 @@
  */
 package jd.core.output;
 
-import java.io.InputStream;
+import jd.core.options.DecompilerOptions;
+import jd.core.options.OptionsManager;
 
-/**
- * This interface has to be implemented by jd-core output plugins. It contains methods for processing classes and resources.
- * 
- * @author Josef Cacek
- */
-public interface JDOutput {
-    void init(String basePath);
+public abstract class AbstractJDOutput implements JDOutput {
 
-    void processClass(String className, String src);
+    protected boolean debug;
+    protected boolean skipResources;
 
-    void processResource(String fileName, InputStream is);
+    public void init(String basePath) {
+        final DecompilerOptions options = OptionsManager.getOptions();
+        debug = options.isDebug();
+        skipResources = options.isSkipResources();
+    }
 
-    void commit();
+    public void commit() {
+    }
+
 }

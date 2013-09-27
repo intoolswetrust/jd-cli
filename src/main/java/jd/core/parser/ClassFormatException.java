@@ -13,21 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jd.core.output;
-
-import java.io.InputStream;
+package jd.core.parser;
 
 /**
- * This interface has to be implemented by jd-core output plugins. It contains methods for processing classes and resources.
+ * Exception class used to report problems during class file parsing.
  * 
  * @author Josef Cacek
  */
-public interface JDOutput {
-    void init(String basePath);
+public class ClassFormatException extends Exception {
 
-    void processClass(String className, String src);
+    private static final long serialVersionUID = 1L;
 
-    void processResource(String fileName, InputStream is);
+    public ClassFormatException() {
+    }
 
-    void commit();
+    public ClassFormatException(String message) {
+        super(message);
+    }
+
+    public ClassFormatException(Throwable cause) {
+        super(cause);
+    }
+
+    public ClassFormatException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }
