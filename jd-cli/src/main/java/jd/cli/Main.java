@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jd.core;
+package jd.cli;
 
 import java.io.File;
 
+import jd.core.Decompiler;
 import jd.core.input.ClassFileInput;
 import jd.core.input.JDInput;
 import jd.core.output.ZipOutput;

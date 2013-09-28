@@ -1,7 +1,7 @@
-/.classpath
-/.project
-/.settings
+.classpath
+.project
+.settings
 dependency-reduced-pom.xml
-/target
-/src/main/resources/native
-/jd-intellij.zip
+target
+/jd-lib/src/main/resources/native
+/jd-lib/jd-intellij.zip
