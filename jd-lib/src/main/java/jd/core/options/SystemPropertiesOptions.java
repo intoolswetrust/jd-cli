@@ -15,34 +15,38 @@
  */
 package jd.core.options;
 
-import static jd.core.JavaDecompilerConstants.SystemProperties.*;
+import static jd.core.JavaDecompilerConstants.SystemProperties.DISCARD_LOCATION;
+import static jd.core.JavaDecompilerConstants.SystemProperties.DISCARD_LOCATION_DEFAULT;
+import static jd.core.JavaDecompilerConstants.SystemProperties.LINE_NUMBERS;
+import static jd.core.JavaDecompilerConstants.SystemProperties.LINE_NUMBERS_DEFAULT;
+import static jd.core.JavaDecompilerConstants.SystemProperties.METADATA;
+import static jd.core.JavaDecompilerConstants.SystemProperties.METADATA_DEFAULT;
+import static jd.core.JavaDecompilerConstants.SystemProperties.SKIP_RESOURCES;
+import static jd.core.JavaDecompilerConstants.SystemProperties.SKIP_RESOURCES_DEFAULT;
 import jd.core.IOUtils;
 
 /**
- * {@link DecompilerOptions} implementation, which reads values from System properties.
+ * {@link DecompilerOptions} implementation, which reads values from System
+ * properties.
  * 
  * @author Josef Cacek
  * @see jd.core.JavaDecompilerConstants.SystemProperties
  */
 public class SystemPropertiesOptions implements DecompilerOptions {
 
-    public boolean isDebug() {
-        return IOUtils.getBoolean(DEBUG, DEBUG_DEFAULT);
-    }
+	public boolean isDisplayLineNumbers() {
+		return IOUtils.getBoolean(LINE_NUMBERS, LINE_NUMBERS_DEFAULT);
+	}
 
-    public boolean isDisplayLineNumbers() {
-        return IOUtils.getBoolean(LINE_NUMBERS, LINE_NUMBERS_DEFAULT);
-    }
+	public boolean isDisplayMetadata() {
+		return IOUtils.getBoolean(METADATA, METADATA_DEFAULT);
+	}
 
-    public boolean isDisplayMetadata() {
-        return IOUtils.getBoolean(METADATA, METADATA_DEFAULT);
-    }
+	public boolean isDiscardLocation() {
+		return IOUtils.getBoolean(DISCARD_LOCATION, DISCARD_LOCATION_DEFAULT);
+	}
 
-    public boolean isDiscardLocation() {
-        return IOUtils.getBoolean(DISCARD_LOCATION, DISCARD_LOCATION_DEFAULT);
-    }
-
-    public boolean isSkipResources() {
-        return IOUtils.getBoolean(SKIP_RESOURCES, SKIP_RESOURCES_DEFAULT);
-    }
+	public boolean isSkipResources() {
+		return IOUtils.getBoolean(SKIP_RESOURCES, SKIP_RESOURCES_DEFAULT);
+	}
 }

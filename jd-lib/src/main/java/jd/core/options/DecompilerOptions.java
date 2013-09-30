@@ -22,13 +22,11 @@ package jd.core.options;
  */
 public interface DecompilerOptions {
 
-    boolean isDebug();
+	boolean isSkipResources();
 
-    boolean isSkipResources();
+	boolean isDisplayLineNumbers();
 
-    boolean isDisplayLineNumbers();
+	boolean isDisplayMetadata();
 
-    boolean isDisplayMetadata();
-
-    boolean isDiscardLocation();
+	boolean isDiscardLocation();
 }
