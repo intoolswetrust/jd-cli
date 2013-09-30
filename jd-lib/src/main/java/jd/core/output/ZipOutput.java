@@ -69,7 +69,7 @@ public class ZipOutput extends AbstractJDOutput {
 	 * @param file
 	 *            instance of {@link File} (not-<code>null</code>)
 	 */
-	public ZipOutput(final File file) throws FileNotFoundException {
+	public ZipOutput(final File file) {
 		if (file == null) {
 			throw new NullPointerException("File can't be null.");
 		}

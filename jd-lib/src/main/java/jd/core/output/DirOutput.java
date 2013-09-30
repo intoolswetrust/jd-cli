@@ -19,7 +19,6 @@ import static jd.core.JavaDecompilerConstants.JAVA_SUFFIX;
 import static jd.core.JavaDecompilerConstants.UTF_8;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +46,7 @@ public class DirOutput extends AbstractJDOutput {
 	 * @param outputDir
 	 *            directory path to save output not-<code>null</code>
 	 */
-	public DirOutput(final File outputDir) throws FileNotFoundException, NullPointerException {
+	public DirOutput(final File outputDir) {
 		if (outputDir == null) {
 			throw new NullPointerException("Null directory given");
 		}
