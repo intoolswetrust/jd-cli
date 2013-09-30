@@ -165,6 +165,7 @@ public class MultiOutput extends AbstractJDOutput {
 					}
 				}
 			}
+			break;
 		default:
 			File f = null;
 			FileOutputStream fos = null;

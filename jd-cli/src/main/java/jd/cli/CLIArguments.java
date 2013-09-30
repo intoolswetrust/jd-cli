@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jd.core.options.DecompilerOptions;
+import ch.qos.logback.classic.Level;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.FileConverter;
@@ -46,12 +47,18 @@ public class CLIArguments implements DecompilerOptions {
 
 	@Parameter(names = { "--skipResources", "-sr" }, description = "Skip processing resources")
 	private boolean skipResources;
+
 	@Parameter(names = { "--displayLineNumbers", "-n" }, description = "Include line numbers in decompiled classes")
 	private boolean displayLineNumbers;
+
 	@Parameter(names = { "--skipMetadata", "-sm" }, description = "Don't include metadata in decompiled classes")
 	private boolean skipMetadata;
+
 	@Parameter(names = { "--showLocation", "-l" }, description = "Include Location info in decompiled classes metadata part")
 	private boolean showLocation;
+
+	@Parameter(names = { "--logLevel", "-g" }, description = "Log level, one of: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF", converter = LogLevelConverter.class)
+	private Level logLevel = Level.INFO;
 
 	public List<String> getFiles() {
 		return files;
@@ -87,6 +94,10 @@ public class CLIArguments implements DecompilerOptions {
 
 	public boolean isDiscardLocation() {
 		return !showLocation;
+	}
+
+	public Level getLogLevel() {
+		return logLevel;
 	}
 
 	public boolean isOutputPluginSpecified() {

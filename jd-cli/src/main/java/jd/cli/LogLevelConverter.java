@@ -15,34 +15,18 @@
  */
 package jd.cli;
 
-import jd.core.input.JDInput;
-import jd.core.output.JDOutput;
+import ch.qos.logback.classic.Level;
+
+import com.beust.jcommander.IStringConverter;
 
 /**
- * Holds a pair of {@link JDInput} and {@link JDOutput} instances.
+ * Logback Level type converter for JCommander.
  */
-public class InputOutputPair {
+public class LogLevelConverter implements IStringConverter<Level> {
 
-	private final JDInput jdInput;
-	private final JDOutput jdOutput;
-
-	public InputOutputPair(final JDInput jdIn, final JDOutput jdOut, final JDOutput jdOutFallback) {
-		jdInput = jdIn;
-		jdOutput = (jdOut != null ? jdOut : jdOutFallback);
-	}
-
-	/**
-	 * @return the jdInput
-	 */
-	public JDInput getJdInput() {
-		return jdInput;
-	}
-
-	/**
-	 * @return the jdOutput
-	 */
-	public JDOutput getJdOutput() {
-		return jdOutput;
+	@Override
+	public Level convert(String value) {
+		return Level.toLevel(value, Level.INFO);
 	}
 
 }

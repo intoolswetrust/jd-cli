@@ -15,6 +15,8 @@
  */
 package jd.cli;
 
+import static org.slf4j.Logger.ROOT_LOGGER_NAME;
+
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,16 +41,28 @@ import jd.ide.intellij.JavaDecompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.Level;
+
 import com.beust.jcommander.JCommander;
 
+/**
+ * Main class of jd-cli.
+ */
 public class Main {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
+	/**
+	 * The {@link #main(String[])}!
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		final CLIArguments cliArguments = new CLIArguments();
 		final JCommander jCmd = new JCommander(cliArguments, args);
 		jCmd.setProgramName("java -jar jd-cli.jar");
+
+		setLoggingLevel(cliArguments.getLogLevel());
 
 		if (cliArguments.getFiles().isEmpty()) {
 			jCmd.usage();
@@ -111,6 +125,17 @@ public class Main {
 
 	}
 
+	/**
+	 * Helper method which creates correct {@link JDInput} instance for the
+	 * input file and if outPlugin is null, then provides a default
+	 * {@link JDOutput} instance for the given input file type too.
+	 * 
+	 * @param inputFile
+	 * @param outPlugin
+	 * @return
+	 * @throws NullPointerException
+	 * @throws IOException
+	 */
 	public static InputOutputPair getInOutPlugins(final File inputFile, JDOutput outPlugin)
 			throws NullPointerException, IOException {
 		JDInput jdIn = null;
@@ -148,5 +173,14 @@ public class Main {
 			}
 		}
 		return new InputOutputPair(jdIn, outPlugin, jdOut);
+	}
+
+	/**
+	 * Configures Logback log level.
+	 * 
+	 * @param level
+	 */
+	private static void setLoggingLevel(final Level level) {
+		((ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ROOT_LOGGER_NAME)).setLevel(level);
 	}
 }

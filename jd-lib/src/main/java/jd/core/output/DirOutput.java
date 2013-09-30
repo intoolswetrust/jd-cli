@@ -39,29 +39,28 @@ public class DirOutput extends AbstractJDOutput {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DirOutput.class);
 
-	private final File dir;
+	private File dir;
 
 	/**
-	 * Constructor which takes directory path as a parameter it tries to create
-	 * the directory if it doens't exist.
+	 * Constructor which takes directory path as a parameter.
 	 * 
 	 * @param outputDir
 	 *            directory path to save output not-<code>null</code>
-	 * @throws FileNotFoundException
-	 *             if the directory can't be created or if the path doesn't
-	 *             denote a directory.
 	 */
 	public DirOutput(final File outputDir) throws FileNotFoundException, NullPointerException {
 		if (outputDir == null) {
 			throw new NullPointerException("Null directory given");
 		}
 		dir = outputDir;
-		if (!outputDir.exists())
-			outputDir.mkdirs();
-		if (!outputDir.isDirectory()) {
-			throw new FileNotFoundException(
-					"Provided file either is not a directory or it didn't exist and the mkdirs() command failed - "
-							+ dir.getAbsolutePath());
+	}
+
+	@Override
+	public void init(String basePath) {
+		LOGGER.info("Directory output will be initialized for path {}", dir);
+		if (!dir.exists())
+			dir.mkdirs();
+		if (!dir.isDirectory()) {
+			LOGGER.error("Provided path is either not a directory or mkdirs() command failed: {}", dir);
 		}
 	}
 

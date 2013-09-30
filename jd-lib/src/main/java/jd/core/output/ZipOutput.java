@@ -68,8 +68,6 @@ public class ZipOutput extends AbstractJDOutput {
 	 * 
 	 * @param file
 	 *            instance of {@link File} (not-<code>null</code>)
-	 * @throws FileNotFoundException
-	 *             file creation failed for some reason
 	 */
 	public ZipOutput(final File file) throws FileNotFoundException {
 		if (file == null) {
@@ -77,22 +75,25 @@ public class ZipOutput extends AbstractJDOutput {
 		}
 		this.os = null;
 		this.file = file;
-		final File parentDir = file.getAbsoluteFile().getParentFile();
-		if (!parentDir.exists()) {
-			parentDir.mkdirs();
-		}
-		if (!parentDir.isDirectory()) {
-			throw new FileNotFoundException(
-					"Zip file parent directory can't be created, check if the path is corret and you have sufficient permissions.");
-		}
 	}
 
 	@Override
 	public void init(String basePath) {
+		zos = null;
 		if (file == null) {
+			LOGGER.info("ZIP output will be initialized for an InputStream.");
 			zos = new ZipOutputStream(os);
 		} else {
+			LOGGER.info("ZIP file output will be initialized - {}", file);
 			try {
+				final File parentDir = file.getAbsoluteFile().getParentFile();
+				if (!parentDir.exists()) {
+					parentDir.mkdirs();
+				}
+				if (!parentDir.isDirectory()) {
+					LOGGER.error("Parent directory can't be created: {}", parentDir);
+					return;
+				}
 				zos = new ZipOutputStream(new FileOutputStream(file));
 			} catch (FileNotFoundException e) {
 				LOGGER.error("ZipOutput can't be initialized", e);
