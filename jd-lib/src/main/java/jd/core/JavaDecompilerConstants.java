@@ -34,7 +34,7 @@ public final class JavaDecompilerConstants {
 	public static final String JAVA_SUFFIX = ".java";
 
 	public static final int MAGIC_NR_CLASS_FILE = 0xCAFEBABE;
-	public static final int MAGIC_NR_ZIP_FILE = 0x4B500403;
+	public static final int MAGIC_NR_ZIP_FILE = 0x504B0304;
 
 	public static class SystemProperties {
 		public static final String LINE_NUMBERS = "jd.lineNumbers";

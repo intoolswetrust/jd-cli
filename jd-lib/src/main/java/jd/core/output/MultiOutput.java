@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Collection;
 
 import jd.core.IOUtils;
 
@@ -60,6 +61,15 @@ public class MultiOutput extends AbstractJDOutput {
 		}
 		LOGGER.trace("MultiOutput instance wraps {} valid plugin(s).", tmpValid);
 		validPlugins = tmpValid;
+	}
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param plugins
+	 */
+	public MultiOutput(final Collection<JDOutput> plugins) {
+		this(plugins.toArray(new JDOutput[plugins.size()]));
 	}
 
 	/**

@@ -42,8 +42,10 @@ public class ZipOutput extends AbstractJDOutput {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZipOutput.class);
 
-	private final ZipOutputStream zos;
-	private final boolean close;
+	private final OutputStream os;
+	private final File file;
+
+	private ZipOutputStream zos;
 
 	/**
 	 * {@link OutputStream} based constructor.
@@ -56,8 +58,8 @@ public class ZipOutput extends AbstractJDOutput {
 		if (os == null) {
 			throw new NullPointerException("OutputStream can't be null.");
 		}
-		zos = new ZipOutputStream(os);
-		close = false;
+		this.os = os;
+		this.file = null;
 	}
 
 	/**
@@ -73,6 +75,8 @@ public class ZipOutput extends AbstractJDOutput {
 		if (file == null) {
 			throw new NullPointerException("File can't be null.");
 		}
+		this.os = null;
+		this.file = file;
 		final File parentDir = file.getAbsoluteFile().getParentFile();
 		if (!parentDir.exists()) {
 			parentDir.mkdirs();
@@ -81,8 +85,19 @@ public class ZipOutput extends AbstractJDOutput {
 			throw new FileNotFoundException(
 					"Zip file parent directory can't be created, check if the path is corret and you have sufficient permissions.");
 		}
-		zos = new ZipOutputStream(new FileOutputStream(file));
-		close = true;
+	}
+
+	@Override
+	public void init(String basePath) {
+		if (file == null) {
+			zos = new ZipOutputStream(os);
+		} else {
+			try {
+				zos = new ZipOutputStream(new FileOutputStream(file));
+			} catch (FileNotFoundException e) {
+				LOGGER.error("ZipOutput can't be initialized", e);
+			}
+		}
 	}
 
 	/*
@@ -91,7 +106,7 @@ public class ZipOutput extends AbstractJDOutput {
 	 * @see jd.core.output.JDOutput#processClass(java.lang.String, java.lang.String)
 	 */
 	public void processClass(final String className, final String src) {
-		if (className == null || src == null)
+		if (className == null || src == null || zos == null)
 			return;
 		try {
 			zos.putNextEntry(new ZipEntry(className + JAVA_SUFFIX));
@@ -108,7 +123,7 @@ public class ZipOutput extends AbstractJDOutput {
 	 * @see jd.core.output.JDOutput#processResource(java.lang.String, java.io.InputStream)
 	 */
 	public void processResource(final String fileName, final InputStream is) {
-		if (skipResources || fileName == null || is == null) {
+		if (skipResources || fileName == null || is == null || zos == null) {
 			return;
 		}
 		try {
@@ -127,15 +142,18 @@ public class ZipOutput extends AbstractJDOutput {
 	 */
 	@Override
 	public void commit() {
-		try {
-			if (close) {
-				zos.close();
-			} else {
-				zos.finish();
+		if (zos != null) {
+			try {
+				if (file != null) {
+					zos.close();
+				} else {
+					zos.finish();
+				}
+			} catch (IOException e) {
+				LOGGER.error("Exception occured during finishing ZIP output.", e);
 			}
-		} catch (IOException e) {
-			LOGGER.error("Exception occured during finishing ZIP output.", e);
 		}
+		zos = null;
 	}
 
 }

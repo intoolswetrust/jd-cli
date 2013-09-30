@@ -15,60 +15,138 @@
  */
 package jd.cli;
 
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import jd.core.Decompiler;
+import jd.core.IOUtils;
+import jd.core.JavaDecompilerConstants;
 import jd.core.input.ClassFileInput;
+import jd.core.input.DirInput;
 import jd.core.input.JDInput;
+import jd.core.input.ZipFileInput;
+import jd.core.options.OptionsManager;
+import jd.core.output.DirOutput;
+import jd.core.output.JDOutput;
+import jd.core.output.MultiOutput;
+import jd.core.output.PrintStreamOutput;
 import jd.core.output.ZipOutput;
 import jd.ide.intellij.JavaDecompiler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.beust.jcommander.JCommander;
+
 public class Main {
 
-    public static void main(String[] args) {
+	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-        try {
-            // JDInput in = new DirInput("/home/jcacek/Java/Projects/jsignpdf/bin");
-            JDInput in = new ClassFileInput("/home/jcacek/Java/Projects/jsignpdf/bin/net/sf/jsignpdf/InstallCert.class");
-            ZipOutput zo = new ZipOutput(new File(
-                    "/home/jcacek/Testing/jboss-eap-6.2.0.ER2/standalone/deployments/spnego-demo-decompiled.zip"));
-            in.decompile(new JavaDecompiler(), zo);
-            return;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+	public static void main(String[] args) {
+		final CLIArguments cliArguments = new CLIArguments();
+		final JCommander jCmd = new JCommander(cliArguments, args);
+		jCmd.setProgramName("java -jar jd-cli.jar");
 
-        Decompiler decompiler = new Decompiler();
-        // System.out.println(decompiler.decompile("/home/share2/Java/Projects/jsignpdf/bin/net/sf/jsignpdf/crl",
-        // "CRLInfo.class",
-        // null));
-        // System.setProperty(SystemProperties.LINE_NUMBERS, "true");
-        // decompiler = new JavaDecompiler();
-        // System.out.println(decompiler.decompile("/home/share2/Java/Projects/jd-cmd/target/classes",
-        // "jd/core/Decompiler.class", null));
+		if (cliArguments.getFiles().isEmpty()) {
+			jCmd.usage();
+			System.exit(1);
+		}
 
-        if (true)
-            return;
-        try {
-            if (args.length == 0 || args.length > 2) {
-                System.err.println("Usage: java -jar jd-cmd.jar <input.jar> [output]");
-                return;
-            }
+		OptionsManager.setOptions(cliArguments);
 
-            // TODO Decompiler.getInstance(), Decompiler.setOptions(DecompilerOptions) - test if the native implementation is
-            // thread safe.
-            // if only classname provided, try to cycle through parents until found the right package
-            // String decompiler.decompile(basePath, internalClassName,options);
-            // void decompiler.decompile(path, options, JDOutput...);
-            // Single class decompilation - with possible (default?) output to console
-            // Decompile to zip (configurable in DecompilerOptions?)
-            // instead of the decompileToDir use sth. like decompile
+		JDOutput outputPlugin = null;
 
-            final String outName = args.length == 1 ? args[0] + ".src" : args[1];
-            // (new Decompiler()).decompileToDir(args[0], outName);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
+		if (cliArguments.isOutputPluginSpecified()) {
+			List<JDOutput> outPlugins = new ArrayList<JDOutput>();
+			if (cliArguments.isConsoleOut()) {
+				outPlugins.add(new PrintStreamOutput(System.out));
+			}
+			final File zipFile = cliArguments.getZipOutFile();
+			if (zipFile != null) {
+				try {
+					outPlugins.add(new ZipOutput(zipFile));
+				} catch (Exception e) {
+					LOGGER.warn("Unable to create zip output", e);
+				}
+			}
+			final File dir = cliArguments.getDirOutFile();
+			if (dir != null) {
+				try {
+					outPlugins.add(new DirOutput(dir));
+				} catch (Exception e) {
+					LOGGER.warn("Unable to create directory output", e);
+				}
+			}
+			if (outPlugins.size() > 0) {
+				outputPlugin = new MultiOutput(outPlugins);
+			}
+		}
+
+		final JavaDecompiler javaDecompiler = new JavaDecompiler();
+
+		boolean decompiled = false;
+		for (String path : cliArguments.getFiles()) {
+			LOGGER.info("Decompiling {}", path);
+			final File file = new File(path);
+			if (file.exists()) {
+				try {
+					InputOutputPair inOut = getInOutPlugins(file, outputPlugin);
+					inOut.getJdInput().decompile(javaDecompiler, inOut.getJdOutput());
+					decompiled = true;
+				} catch (Exception e) {
+					LOGGER.warn("Problem occured during instantiating plugins", e);
+				}
+			} else {
+				LOGGER.warn("Input file {} doesn't exist", file);
+			}
+		}
+
+		if (!decompiled) {
+			jCmd.usage();
+			System.exit(2);
+		}
+
+	}
+
+	public static InputOutputPair getInOutPlugins(final File inputFile, JDOutput outPlugin)
+			throws NullPointerException, IOException {
+		JDInput jdIn = null;
+		JDOutput jdOut = null;
+		if (inputFile.isDirectory()) {
+			jdIn = new DirInput(inputFile.getPath());
+			jdOut = new DirOutput(new File(inputFile.getName() + ".src"));
+		} else {
+			DataInputStream dis = new DataInputStream(new FileInputStream(inputFile));
+			int magic = 0;
+			try {
+				magic = dis.readInt();
+			} finally {
+				IOUtils.closeQuietly(dis);
+			}
+			switch (magic) {
+			case JavaDecompilerConstants.MAGIC_NR_CLASS_FILE:
+				jdIn = new ClassFileInput(inputFile.getPath());
+				jdOut = new PrintStreamOutput(System.out);
+				break;
+			case JavaDecompilerConstants.MAGIC_NR_ZIP_FILE:
+				jdIn = new ZipFileInput(inputFile.getPath());
+				String decompiledZipName = inputFile.getName();
+				int suffixPos = decompiledZipName.lastIndexOf(".");
+				if (suffixPos >= 0) {
+					decompiledZipName = decompiledZipName.substring(0, suffixPos) + ".src"
+							+ decompiledZipName.substring(suffixPos);
+				} else {
+					decompiledZipName = decompiledZipName + ".src";
+				}
+				jdOut = new ZipOutput(new File(decompiledZipName));
+				break;
+			default:
+				throw new IllegalArgumentException("File type of was not recognized: " + inputFile);
+			}
+		}
+		return new InputOutputPair(jdIn, outPlugin, jdOut);
+	}
 }

@@ -15,16 +15,81 @@
  */
 package jd.cli;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import jd.core.options.DecompilerOptions;
+
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.converters.FileConverter;
 
 /**
  * Command line arguments for jd-cli.
- * 
- * @author Josef Cacek
  */
-public class CLIArguments {
+public class CLIArguments implements DecompilerOptions {
 
-	@Parameter(names = { "--help", "-h" }, help = true)
+	@Parameter(description = "[Files to decompile]")
+	private List<String> files = new ArrayList<String>();
+
+	@Parameter(names = { "--help", "-h" }, description = "Show this help", help = true)
 	private boolean help;
 
+	@Parameter(names = { "--outputZipFile", "-oz" }, description = "Output to a zipped file with given path", converter = FileConverter.class)
+	private File zipOutFile;
+
+	@Parameter(names = { "--outputDir", "-od" }, description = "Output to a directory with given path", converter = FileConverter.class)
+	private File dirOutFile;
+
+	@Parameter(names = { "--outputConsole", "-oc" }, description = "Output to system output stream")
+	private boolean consoleOut;
+
+	@Parameter(names = { "--skipResources", "-sr" }, description = "Skip processing resources")
+	private boolean skipResources;
+	@Parameter(names = { "--displayLineNumbers", "-n" }, description = "Include line numbers in decompiled classes")
+	private boolean displayLineNumbers;
+	@Parameter(names = { "--skipMetadata", "-sm" }, description = "Don't include metadata in decompiled classes")
+	private boolean skipMetadata;
+	@Parameter(names = { "--showLocation", "-l" }, description = "Include Location info in decompiled classes metadata part")
+	private boolean showLocation;
+
+	public List<String> getFiles() {
+		return files;
+	}
+
+	public boolean isHelp() {
+		return help;
+	}
+
+	public File getZipOutFile() {
+		return zipOutFile;
+	}
+
+	public File getDirOutFile() {
+		return dirOutFile;
+	}
+
+	public boolean isConsoleOut() {
+		return consoleOut;
+	}
+
+	public boolean isSkipResources() {
+		return skipResources;
+	}
+
+	public boolean isDisplayLineNumbers() {
+		return displayLineNumbers;
+	}
+
+	public boolean isDisplayMetadata() {
+		return !skipMetadata;
+	}
+
+	public boolean isDiscardLocation() {
+		return !showLocation;
+	}
+
+	public boolean isOutputPluginSpecified() {
+		return consoleOut || zipOutFile != null || dirOutFile != null;
+	}
 }
