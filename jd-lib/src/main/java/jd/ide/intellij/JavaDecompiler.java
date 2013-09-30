@@ -34,11 +34,16 @@ import jd.core.options.DecompilerOptions;
 import jd.core.options.OptionsManager;
 import jd.core.parser.SimpleClassParser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Decompiler implementation, which uses an IJ plugin natives to decompile classes. During the static initialization it unpacks
  * the native library to a temporary location and loads it.
  */
 public class JavaDecompiler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JavaDecompiler.class);
 
     static {
         String osName = System.getProperty("os.name").toLowerCase();
@@ -53,6 +58,8 @@ public class JavaDecompiler {
             platform = "macosx";
             libExt = ".jnilib";
         }
+
+        LOGGER.trace("Native will use platform {}, architecture {} and file extension {}", platform, arch, libExt);
 
         final File tmpDir = new File(JavaDecompilerConstants.TMP_DIR);
         try {
@@ -79,6 +86,7 @@ public class JavaDecompiler {
 
             final String pathInJar = "/native/" + platform + "/" + arch + "/" + JavaDecompilerConstants.NATIVE_LIB_NAME
                     + libExt;
+            LOGGER.trace("Using native library from classpath: {}", pathInJar);
             is = JavaDecompiler.class.getResourceAsStream(pathInJar);
             if (is == null) {
                 throw new FileNotFoundException("Native library " + pathInJar + " was not found inside the JAR.");
@@ -88,7 +96,7 @@ public class JavaDecompiler {
 
             System.load(libTempFile.getAbsolutePath());
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Exception occured during loading native library", e);
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(os);
@@ -103,8 +111,11 @@ public class JavaDecompiler {
      * @return decompiled class as a String or null if sth fails
      */
     public String decompileClass(String basePath, String className) {
-        if (className == null || basePath == null)
+        LOGGER.debug("Decompiling class {} from base path {}", className, basePath);
+        if (className == null || basePath == null) {
+            LOGGER.warn("Classname or basename was null");
             return null;
+        }
 
         String src = decompile(basePath, className);
         // TODO is windows OK with \n?
@@ -153,6 +164,7 @@ public class JavaDecompiler {
      * @return newly created JAR with the class (or null if {@link IOException} occurs)
      */
     private File createTempJar(File classFile, String correctPath) {
+        LOGGER.trace("Creating temporary JAR file for {} with correct path: {}", classFile, correctPath);
         ZipOutputStream zos = null;
         File tempJar = null;
         FileInputStream fis = null;
@@ -164,9 +176,7 @@ public class JavaDecompiler {
             IOUtils.copy(fis, zos);
             zos.closeEntry();
         } catch (IOException e) {
-            if (OptionsManager.getOptions().isDebug()) {
-                e.printStackTrace();
-            }
+            LOGGER.error("Temporary JAR creation failed", e);
         } finally {
             IOUtils.closeQuietly(fis);
             IOUtils.closeQuietly(zos);

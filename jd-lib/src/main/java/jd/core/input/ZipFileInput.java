@@ -26,12 +26,17 @@ import jd.core.options.OptionsManager;
 import jd.core.output.JDOutput;
 import jd.ide.intellij.JavaDecompiler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Input plugin for ZIP files (e.g. jar, war, ...)
  * 
  * @author Josef Cacek
  */
 public class ZipFileInput extends AbstractFileJDInput {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZipFileInput.class);
 
     /**
      * Constructor which takes
@@ -50,12 +55,15 @@ public class ZipFileInput extends AbstractFileJDInput {
     @Override
     public void decompile(JavaDecompiler javaDecompiler, JDOutput jdOutput) {
         if (javaDecompiler == null || jdOutput == null) {
+            LOGGER.warn("Decompiler or JDOutput are null");
             return;
         }
 
         final DecompilerOptions options = OptionsManager.getOptions();
         final boolean debug = options.isDebug();
         final boolean skipResources = options.isSkipResources();
+
+        LOGGER.debug("Initializing decompilation of a zip file {}", file);
 
         jdOutput.init(file.getPath());
         ZipInputStream zis = null;
@@ -69,19 +77,20 @@ public class ZipFileInput extends AbstractFileJDInput {
                     if (isClassFile(entryName)) {
                         if (isInnerClass(entryName)) {
                             // don't handle inner classes
-                            break;
+                            LOGGER.trace("Skipping inner class {}", entryName);
+                            return;
                         }
+                        LOGGER.debug("Decompiling {}", entryName);
                         jdOutput.processClass(cutClassSuffix(entryName),
                                 javaDecompiler.decompileClass(file.getPath(), entryName));
                     } else if (!skipResources) {
+                        LOGGER.debug("Processing resource file {}", entryName);
                         jdOutput.processResource(entryName, zis);
                     }
                 }
             }
         } catch (IOException e) {
-            if (debug) {
-                e.printStackTrace();
-            }
+            LOGGER.error("IOException occured", e);
         } finally {
             IOUtils.closeQuietly(zis);
         }

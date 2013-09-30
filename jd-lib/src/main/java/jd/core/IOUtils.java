@@ -19,10 +19,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Utility class with helper IO and System methods.
  */
 public final class IOUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IOUtils.class);
 
     /**
      * Private ctor.
@@ -39,6 +44,7 @@ public final class IOUtils {
      * @throws IOException
      */
     public static long copy(final InputStream is, final OutputStream os) throws IOException {
+        LOGGER.trace("Copying inputStream to outputStream");
         final byte[] buffer = new byte[4096];
         long count = 0;
         int n = 0;
@@ -46,6 +52,7 @@ public final class IOUtils {
             os.write(buffer, 0, n);
             count += n;
         }
+        LOGGER.trace("{} bytes copied from IS to OS", count);
         return count;
     }
 
@@ -60,6 +67,7 @@ public final class IOUtils {
                 is.close();
             }
         } catch (IOException ioe) {
+            LOGGER.debug("Closing InputStream failed.", ioe);
         }
     }
 
@@ -74,6 +82,7 @@ public final class IOUtils {
                 os.close();
             }
         } catch (IOException ioe) {
+            LOGGER.debug("Closing OutputStream failed.", ioe);
         }
     }
 
@@ -88,7 +97,9 @@ public final class IOUtils {
      * @return
      */
     public static boolean getBoolean(final String propName, final boolean defaultVal) {
-        return Boolean.parseBoolean(System.getProperty(propName, Boolean.toString(defaultVal)));
+        final boolean result = Boolean.parseBoolean(System.getProperty(propName, Boolean.toString(defaultVal)));
+        LOGGER.trace("Reading boolean value for system property {} with default {}. Result: {}", propName, defaultVal, result);
+        return result;
     }
 
 }

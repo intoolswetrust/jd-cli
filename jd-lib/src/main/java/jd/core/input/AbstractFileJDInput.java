@@ -20,12 +20,17 @@ import static jd.core.JavaDecompilerConstants.*;
 import java.io.File;
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Abstract parent for file-based input plugins (JAR, directory, ...).
  * 
  * @author Josef Cacek
  */
 public abstract class AbstractFileJDInput implements JDInput {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFileJDInput.class);
 
     protected final File file;
 
@@ -36,6 +41,7 @@ public abstract class AbstractFileJDInput implements JDInput {
      * @throws IllegalArgumentException path doesn't denote an existing file
      */
     public AbstractFileJDInput(final String filePath) throws IllegalArgumentException {
+        LOGGER.trace("Creating JDInput instance for file {}", filePath);
         file = new File(filePath);
         if (!file.exists()) {
             throw new IllegalArgumentException("Path doesn't denote an existing file.");

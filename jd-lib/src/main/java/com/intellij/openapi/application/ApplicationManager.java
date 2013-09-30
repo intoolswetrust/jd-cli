@@ -15,14 +15,19 @@
  */
 package com.intellij.openapi.application;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * An IJ plugin related code.
  */
 public class ApplicationManager {
 
-    private final static Application APP = new Application();
+    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
+    private static final Application APP = new Application();
 
     public static Application getApplication() {
+        LOGGER.trace("getApplication() called");
         return APP;
     }
 

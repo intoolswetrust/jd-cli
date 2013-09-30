@@ -17,6 +17,9 @@ package com.intellij.openapi.application;
 
 import jd.ide.intellij.config.JDPluginComponent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.intellij.openapi.components.ComponentManager;
 
 /**
@@ -24,10 +27,12 @@ import com.intellij.openapi.components.ComponentManager;
  */
 public class Application implements ComponentManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
     private static final JDPluginComponent jdpc = new JDPluginComponent();
 
     @SuppressWarnings("unchecked")
     public <T> T getComponent(Class<T> interfaceClass) {
+        LOGGER.trace("getComponent() called for {}", interfaceClass);
         return (T) (jdpc);
     }
 

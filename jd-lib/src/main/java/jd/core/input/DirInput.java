@@ -24,12 +24,17 @@ import jd.core.options.OptionsManager;
 import jd.core.output.JDOutput;
 import jd.ide.intellij.JavaDecompiler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Input plugin which takes a directory as an input.
  * 
  * @author Josef Cacek
  */
 public class DirInput extends AbstractFileJDInput {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DirInput.class);
 
     public DirInput(String path) {
         super(path);
@@ -41,9 +46,11 @@ public class DirInput extends AbstractFileJDInput {
     @Override
     public void decompile(JavaDecompiler javaDecompiler, JDOutput jdOutput) {
         if (javaDecompiler == null || jdOutput == null) {
+            LOGGER.warn("Decompiler or JDOutput are null");
             return;
         }
 
+        LOGGER.debug("Initializing decompilation of directory {}", file);
         jdOutput.init(file.getPath());
         for (File f : file.listFiles()) {
             processFile(javaDecompiler, jdOutput, "", f);
@@ -52,10 +59,10 @@ public class DirInput extends AbstractFileJDInput {
     }
 
     private void processFile(JavaDecompiler javaDecompiler, JDOutput jdOutput, String pathPrefix, File nextFile) {
-
         final String fileName = nextFile.getName();
         final String nameWithPath = pathPrefix + fileName;
         if (nextFile.isDirectory()) {
+            LOGGER.trace("Processing directory {}", nextFile);
             for (File f : nextFile.listFiles()) {
                 processFile(javaDecompiler, jdOutput, pathPrefix + fileName + "/", f);
             }
@@ -63,15 +70,19 @@ public class DirInput extends AbstractFileJDInput {
             if (isClassFile(fileName)) {
                 if (isInnerClass(fileName)) {
                     // don't handle inner classes
+                    LOGGER.trace("Skipping inner class {}", nextFile);
                     return;
                 }
+                LOGGER.debug("Decompiling {}", nextFile);
                 jdOutput.processClass(cutClassSuffix(nameWithPath), javaDecompiler.decompileClass(file.getPath(), nameWithPath));
             } else if (!OptionsManager.getOptions().isSkipResources()) {
+                LOGGER.debug("Processing resource file {}", nextFile);
                 FileInputStream fis = null;
                 try {
                     fis = new FileInputStream(nextFile);
                     jdOutput.processResource(nameWithPath, fis);
                 } catch (IOException ioe) {
+                    LOGGER.error("Resource processing failed for {}", nextFile, ioe);
                     if (OptionsManager.getOptions().isDebug())
                         ioe.printStackTrace();
                 } finally {

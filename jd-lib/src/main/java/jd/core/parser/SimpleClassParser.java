@@ -22,6 +22,9 @@ import java.io.InputStream;
 
 import jd.core.JavaDecompilerConstants;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Simple class file parser, which reads only a header part of a class and extracts class version info and class name.
  * 
@@ -29,17 +32,19 @@ import jd.core.JavaDecompilerConstants;
  */
 public final class SimpleClassParser {
 
-    private final static byte CONSTTYPE_UTF8 = 1;
-    private final static byte CONSTTYPE_INTEGER = 3;
-    private final static byte CONSTTYPE_FLOAT = 4;
-    private final static byte CONSTTYPE_LONG = 5;
-    private final static byte CONSTTYPE_DOUBLE = 6;
-    private final static byte CONSTTYPE_CLASS = 7;
-    private final static byte CONSTTYPE_FIELDREF = 9;
-    private final static byte CONSTTYPE_STRING = 8;
-    private final static byte CONSTTYPE_METHODREF = 10;
-    private final static byte CONSTTYPE_INTERFACEMETHODREF = 11;
-    private final static byte CONSTTYPE_NAMEANDTYPE = 12;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleClassParser.class);
+
+    private static final byte CONSTTYPE_UTF8 = 1;
+    private static final byte CONSTTYPE_INTEGER = 3;
+    private static final byte CONSTTYPE_FLOAT = 4;
+    private static final byte CONSTTYPE_LONG = 5;
+    private static final byte CONSTTYPE_DOUBLE = 6;
+    private static final byte CONSTTYPE_CLASS = 7;
+    private static final byte CONSTTYPE_FIELDREF = 9;
+    private static final byte CONSTTYPE_STRING = 8;
+    private static final byte CONSTTYPE_METHODREF = 10;
+    private static final byte CONSTTYPE_INTERFACEMETHODREF = 11;
+    private static final byte CONSTTYPE_NAMEANDTYPE = 12;
 
     private final int major, minor;
     private final String className;
@@ -51,6 +56,7 @@ public final class SimpleClassParser {
      * @param is Input stream
      */
     public SimpleClassParser(final InputStream is) throws IOException, ClassFormatException {
+        LOGGER.trace("Parsing class from an InputStream");
         final DataInputStream dataInputStream;
 
         if (is instanceof DataInputStream) {
@@ -64,6 +70,7 @@ public final class SimpleClassParser {
         }
         minor = dataInputStream.readUnsignedShort();
         major = dataInputStream.readUnsignedShort();
+        LOGGER.trace("Class version: {}.{}", major, minor);
 
         final int constantPoolSize = dataInputStream.readUnsignedShort();
         final Object[] constantPool = new Object[constantPoolSize];
@@ -110,14 +117,17 @@ public final class SimpleClassParser {
         // final int accessFlags =
         dataInputStream.readUnsignedShort();
         final int classIdx = dataInputStream.readUnsignedShort();
+        LOGGER.trace("Parsed class index in constant pool: {}", classIdx);
         if (classIdx < 1 || classIdx >= constantPoolSize || !(constantPool[classIdx] instanceof Integer)) {
             throw new ClassFormatException("Wrong class type index.");
         }
         final int classNameIdx = (Integer) constantPool[classIdx];
+        LOGGER.trace("Parsed class name index in constant pool: {}", classNameIdx);
         if (classNameIdx < 1 || classNameIdx >= constantPoolSize || !(constantPool[classNameIdx] instanceof String)) {
             throw new ClassFormatException("Wrong class name index.");
         }
         className = (String) constantPool[classNameIdx];
+        LOGGER.trace("Parsed class name: {}", className);
         // final int superClassNameIdx = dataInputStream.readUnsignedShort();
     }
 
