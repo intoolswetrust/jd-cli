@@ -15,6 +15,11 @@
  */
 package jd.core.options;
 
+/**
+ * Interface representing decompiler options.
+ * 
+ * @author Josef Cacek
+ */
 public interface DecompilerOptions {
 
     boolean isDebug();

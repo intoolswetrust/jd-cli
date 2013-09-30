@@ -28,11 +28,21 @@ import java.util.zip.ZipOutputStream;
 
 import jd.core.IOUtils;
 
+/**
+ * {@link JDOutput} implementation, which stores decompiled classes to a stream or file as a zip.
+ * 
+ * @author Josef Cacek
+ */
 public class ZipOutput extends AbstractJDOutput {
 
     private final ZipOutputStream zos;
     private final boolean close;
 
+    /**
+     * {@link OutputStream} based constructor.
+     * 
+     * @param os OutputStream to which the zip content should be written (not-<code>null</code>)
+     */
     public ZipOutput(final OutputStream os) {
         if (os == null) {
             throw new NullPointerException("OutputStream can't be null.");
@@ -41,12 +51,34 @@ public class ZipOutput extends AbstractJDOutput {
         close = false;
     }
 
+    /**
+     * {@link File} based constructor. It creates the file (and parent directories).
+     * 
+     * @param file instance of {@link File} (not-<code>null</code>)
+     * @throws FileNotFoundException file creation failed for some reason
+     */
     public ZipOutput(final File file) throws FileNotFoundException {
+        if (file == null) {
+            throw new NullPointerException("File can't be null.");
+        }
+        final File parentDir = file.getAbsoluteFile().getParentFile();
+        if (!parentDir.exists()) {
+            parentDir.mkdirs();
+        }
+        if (!parentDir.isDirectory()) {
+            throw new FileNotFoundException(
+                    "Zip file parent directory can't be created, check if the path is corret and you have sufficient permissions.");
+        }
         zos = new ZipOutputStream(new FileOutputStream(file));
         close = true;
     }
 
-    public void processClass(String className, String src) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see jd.core.output.JDOutput#processClass(java.lang.String, java.lang.String)
+     */
+    public void processClass(final String className, final String src) {
         if (className == null || src == null)
             return;
         try {
@@ -60,22 +92,12 @@ public class ZipOutput extends AbstractJDOutput {
         }
     }
 
-    @Override
-    public void commit() {
-        try {
-            if (close) {
-                zos.close();
-            } else {
-                zos.finish();
-            }
-        } catch (IOException e) {
-            if (debug) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void processResource(String fileName, InputStream is) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see jd.core.output.JDOutput#processResource(java.lang.String, java.io.InputStream)
+     */
+    public void processResource(final String fileName, final InputStream is) {
         if (skipResources || fileName == null || is == null) {
             return;
         }
@@ -90,4 +112,23 @@ public class ZipOutput extends AbstractJDOutput {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see jd.core.output.AbstractJDOutput#commit()
+     */
+    @Override
+    public void commit() {
+        try {
+            if (close) {
+                zos.close();
+            } else {
+                zos.finish();
+            }
+        } catch (IOException e) {
+            if (debug) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

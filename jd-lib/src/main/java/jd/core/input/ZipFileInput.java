@@ -26,12 +26,27 @@ import jd.core.options.OptionsManager;
 import jd.core.output.JDOutput;
 import jd.ide.intellij.JavaDecompiler;
 
+/**
+ * Input plugin for ZIP files (e.g. jar, war, ...)
+ * 
+ * @author Josef Cacek
+ */
 public class ZipFileInput extends AbstractFileJDInput {
 
+    /**
+     * Constructor which takes
+     * 
+     * @param path
+     */
     public ZipFileInput(String path) {
         super(path);
     }
 
+    /**
+     * Parses all entres in the zip and decompiles it writing results to {@link JDOutput} instance.
+     * 
+     * @see jd.core.input.JDInput#decompile(jd.ide.intellij.JavaDecompiler, jd.core.output.JDOutput)
+     */
     @Override
     public void decompile(JavaDecompiler javaDecompiler, JDOutput jdOutput) {
         if (javaDecompiler == null || jdOutput == null) {

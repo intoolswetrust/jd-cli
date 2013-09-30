@@ -18,16 +18,43 @@ package jd.core.output;
 import java.io.InputStream;
 
 /**
- * This interface has to be implemented by jd-core output plugins. It contains methods for processing classes and resources.
- * 
- * @author Josef Cacek
+ * This interface is used for the decompiler output plugins. It contains methods for processing classes and resources.
+ * <p>
+ * Usual workflow is:
+ * <ol>
+ * <li>{@link #init(String)} mehod is called to initialize plugin</li>
+ * <li>cycle through input resources and call {@link #processClass(String, String)} and
+ * {@link #processResource(String, InputStream)} mehods</li>
+ * <li>call {@link #commit()}</li>
+ * </ol>
  */
 public interface JDOutput {
+
+    /**
+     * Initialize the plugin for the given input basePath. Resources can be reserved here.
+     * 
+     * @param basePath path to decompiled resource(s) (e.g. directory, jar file, ...)
+     */
     void init(String basePath);
 
-    void processClass(String className, String src);
+    /**
+     * Handle a decompiled class.
+     * 
+     * @param classPath a class path within a basePath without ".class" extension (e.g. "java/lang/String")
+     * @param decompiledSrc decompiled source code.
+     */
+    void processClass(String classPath, String decompiledSrc);
 
-    void processResource(String fileName, InputStream is);
+    /**
+     * Handle resource from
+     * 
+     * @param filePath a path to a resource within a basePath (e.g. "org/myproject/translations/messages_en.properties")
+     * @param is the resource input stream
+     */
+    void processResource(String filePath, InputStream is);
 
+    /**
+     * Finish the processing. Resources should be released in this method.
+     */
     void commit();
 }

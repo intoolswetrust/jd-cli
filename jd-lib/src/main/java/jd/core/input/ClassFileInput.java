@@ -18,12 +18,22 @@ package jd.core.input;
 import jd.core.output.JDOutput;
 import jd.ide.intellij.JavaDecompiler;
 
+/**
+ * {@link JDInput} implementation which takes a single class file as an input.
+ * 
+ * @author Josef Cacek
+ */
 public class ClassFileInput extends AbstractFileJDInput {
 
     public ClassFileInput(String path) {
         super(path);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see jd.core.input.JDInput#decompile(jd.ide.intellij.JavaDecompiler, jd.core.output.JDOutput)
+     */
     @Override
     public void decompile(JavaDecompiler javaDecompiler, JDOutput jdOutput) {
         if (javaDecompiler == null || jdOutput == null) {

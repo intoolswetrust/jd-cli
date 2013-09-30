@@ -25,11 +25,25 @@ import java.io.InputStream;
 
 import jd.core.IOUtils;
 
+/**
+ * {@link JDOutput} implementation, which stores decompiled classes to a directory.
+ * 
+ * @author Josef Cacek
+ */
 public class DirOutput extends AbstractJDOutput {
 
     private final File dir;
 
-    public DirOutput(final File outputDir) throws FileNotFoundException {
+    /**
+     * Constructor which takes directory path as a parameter it tries to create the directory if it doens't exist.
+     * 
+     * @param outputDir directory path to save output not-<code>null</code>
+     * @throws FileNotFoundException if the directory can't be created or if the path doesn't denote a directory.
+     */
+    public DirOutput(final File outputDir) throws FileNotFoundException, NullPointerException {
+        if (outputDir == null) {
+            throw new NullPointerException("Null directory given");
+        }
         dir = outputDir;
         if (!outputDir.exists())
             outputDir.mkdirs();
@@ -40,6 +54,11 @@ public class DirOutput extends AbstractJDOutput {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see jd.core.output.JDOutput#processClass(java.lang.String, java.lang.String)
+     */
     public void processClass(String className, String src) {
         if (className == null || src == null)
             return;
@@ -60,6 +79,11 @@ public class DirOutput extends AbstractJDOutput {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see jd.core.output.JDOutput#processResource(java.lang.String, java.io.InputStream)
+     */
     public void processResource(String fileName, InputStream is) {
         if (skipResources || fileName == null || is == null) {
             return;

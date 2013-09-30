@@ -15,34 +15,47 @@
  */
 package jd.core.options;
 
+/**
+ * Options manager which helps to configure decompiler options in a threaded environment.
+ * 
+ * @author Josef Cacek
+ */
 public class OptionsManager {
 
-	private static final OptionsManager INSTANCE = new OptionsManager();
+    private static final ThreadLocal<DecompilerOptions> LOCAL_OPTIONS = new ThreadLocal<DecompilerOptions>() {
 
-	private ThreadLocal<DecompilerOptions> localOptions = new ThreadLocal<DecompilerOptions>() {
+        private final DecompilerOptions INITIAL = new SystemPropertiesOptions();
 
-		private final DecompilerOptions INITIAL = new SystemPropertiesOptions();
+        @Override
+        protected DecompilerOptions initialValue() {
+            return INITIAL;
+        }
 
-		@Override
-		protected DecompilerOptions initialValue() {
-			return INITIAL;
-		}
+    };
 
-	};
+    private OptionsManager() {
+    }
 
-	private OptionsManager() {
-	}
+    /**
+     * Stores decompiler options. If null is provided then options are removed.
+     * 
+     * @param options
+     */
+    public static void setOptions(DecompilerOptions options) {
+        if (options != null) {
+            LOCAL_OPTIONS.set(options);
+        } else {
+            LOCAL_OPTIONS.remove();
+        }
+    }
 
-	public static void setOptions(DecompilerOptions options) {
-		if (options != null) {
-			INSTANCE.localOptions.set(options);
-		} else {
-			INSTANCE.localOptions.remove();
-		}
-	}
-
-	public static DecompilerOptions getOptions() {
-		return INSTANCE.localOptions.get();
-	}
+    /**
+     * Returns options used for the current thread.
+     * 
+     * @return
+     */
+    public static DecompilerOptions getOptions() {
+        return LOCAL_OPTIONS.get();
+    }
 
 }

@@ -24,6 +24,11 @@ import jd.core.options.OptionsManager;
 import jd.core.output.JDOutput;
 import jd.ide.intellij.JavaDecompiler;
 
+/**
+ * Input plugin which takes a directory as an input.
+ * 
+ * @author Josef Cacek
+ */
 public class DirInput extends AbstractFileJDInput {
 
     public DirInput(String path) {

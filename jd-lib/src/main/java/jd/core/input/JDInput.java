@@ -18,6 +18,11 @@ package jd.core.input;
 import jd.core.output.JDOutput;
 import jd.ide.intellij.JavaDecompiler;
 
+/**
+ * This is an interface for decompiler input plugins.
+ * 
+ * @author Josef Cacek
+ */
 public interface JDInput {
 
     void decompile(JavaDecompiler javaDecompiler, JDOutput jdOutput);

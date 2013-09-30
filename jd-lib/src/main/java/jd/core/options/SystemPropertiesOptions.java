@@ -18,6 +18,12 @@ package jd.core.options;
 import static jd.core.JavaDecompilerConstants.SystemProperties.*;
 import jd.core.IOUtils;
 
+/**
+ * {@link DecompilerOptions} implementation, which reads values from System properties.
+ * 
+ * @author Josef Cacek
+ * @see jd.core.JavaDecompilerConstants.SystemProperties
+ */
 public class SystemPropertiesOptions implements DecompilerOptions {
 
     public boolean isDebug() {
