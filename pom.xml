@@ -4,7 +4,7 @@
 
 	<groupId>jd.core</groupId>
 	<artifactId>jd-cmd</artifactId>
-	<version>0.8.0.Final</version>
+	<version>0.8.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
