@@ -30,77 +30,77 @@ import com.beust.jcommander.converters.FileConverter;
  */
 public class CLIArguments implements DecompilerOptions {
 
-	@Parameter(description = "[Files to decompile]")
-	private List<String> files = new ArrayList<String>();
+    @Parameter(description = "[Files to decompile]")
+    private final List<String> files = new ArrayList<String>();
 
-	@Parameter(names = { "--help", "-h" }, description = "Show this help", help = true)
-	private boolean help;
+    @Parameter(names = { "--help", "-h" }, description = "shows this help", help = true)
+    private boolean help;
 
-	@Parameter(names = { "--outputZipFile", "-oz" }, description = "Output to a zipped file with given path", converter = FileConverter.class)
-	private File zipOutFile;
+    @Parameter(names = { "--outputZipFile", "-oz" }, description = "takes a [zipFilePath] as a parameter and configures ZIP output for this path", converter = FileConverter.class)
+    private File zipOutFile;
 
-	@Parameter(names = { "--outputDir", "-od" }, description = "Output to a directory with given path", converter = FileConverter.class)
-	private File dirOutFile;
+    @Parameter(names = { "--outputDir", "-od" }, description = "takes a [directoryPath] as a parameter and configures DIR output for this path", converter = FileConverter.class)
+    private File dirOutFile;
 
-	@Parameter(names = { "--outputConsole", "-oc" }, description = "Output to system output stream")
-	private boolean consoleOut;
+    @Parameter(names = { "--outputConsole", "-oc" }, description = "enables output to system output stream")
+    private boolean consoleOut;
 
-	@Parameter(names = { "--skipResources", "-sr" }, description = "Skip processing resources")
-	private boolean skipResources;
+    @Parameter(names = { "--skipResources", "-sr" }, description = "skips processing resources")
+    private boolean skipResources;
 
-	@Parameter(names = { "--displayLineNumbers", "-n" }, description = "Include line numbers in decompiled classes")
-	private boolean displayLineNumbers;
+    @Parameter(names = { "--displayLineNumbers", "-n" }, description = "displays line numbers in decompiled classes")
+    private boolean displayLineNumbers;
 
-	@Parameter(names = { "--skipMetadata", "-sm" }, description = "Don't include metadata in decompiled classes")
-	private boolean skipMetadata;
+    @Parameter(names = { "--skipMetadata", "-sm" }, description = "skips metadata in decompiled classes")
+    private boolean skipMetadata;
 
-	@Parameter(names = { "--showLocation", "-l" }, description = "Include Location info in decompiled classes metadata part")
-	private boolean showLocation;
+    @Parameter(names = { "--showLocation", "-l" }, description = "displays Location info in decompiled classes metadata part")
+    private boolean showLocation;
 
-	@Parameter(names = { "--logLevel", "-g" }, description = "Log level, one of: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF", converter = LogLevelConverter.class)
-	private Level logLevel = Level.INFO;
+    @Parameter(names = { "--logLevel", "-g" }, description = "takes [level] as parameter and sets it as the CLI log level. The value is should be one of: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF", converter = LogLevelConverter.class)
+    private final Level logLevel = Level.INFO;
 
-	public List<String> getFiles() {
-		return files;
-	}
+    public List<String> getFiles() {
+        return files;
+    }
 
-	public boolean isHelp() {
-		return help;
-	}
+    public boolean isHelp() {
+        return help;
+    }
 
-	public File getZipOutFile() {
-		return zipOutFile;
-	}
+    public File getZipOutFile() {
+        return zipOutFile;
+    }
 
-	public File getDirOutFile() {
-		return dirOutFile;
-	}
+    public File getDirOutFile() {
+        return dirOutFile;
+    }
 
-	public boolean isConsoleOut() {
-		return consoleOut;
-	}
+    public boolean isConsoleOut() {
+        return consoleOut;
+    }
 
-	public boolean isSkipResources() {
-		return skipResources;
-	}
+    public boolean isSkipResources() {
+        return skipResources;
+    }
 
-	public boolean isDisplayLineNumbers() {
-		return displayLineNumbers;
-	}
+    public boolean isDisplayLineNumbers() {
+        return displayLineNumbers;
+    }
 
-	public boolean isDisplayMetadata() {
-		return !skipMetadata;
-	}
+    public boolean isDisplayMetadata() {
+        return !skipMetadata;
+    }
 
-	public boolean isDiscardLocation() {
-		return !showLocation;
-	}
+    public boolean isDiscardLocation() {
+        return !showLocation;
+    }
 
-	public Level getLogLevel() {
-		return logLevel;
-	}
+    public Level getLogLevel() {
+        return logLevel;
+    }
 
-	public boolean isOutputPluginSpecified() {
-		return consoleOut || zipOutFile != null || dirOutFile != null;
-	}
+    public boolean isOutputPluginSpecified() {
+        return consoleOut || zipOutFile != null || dirOutFile != null;
+    }
 }
