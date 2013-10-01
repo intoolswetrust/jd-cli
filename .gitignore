@@ -5,3 +5,5 @@ dependency-reduced-pom.xml
 target
 /jd-lib/src/main/resources/native
 /jd-lib/jd-intellij.zip
+*.versionsBackup
+
