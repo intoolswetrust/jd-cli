@@ -43,8 +43,6 @@ import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
 
-import com.beust.jcommander.JCommander;
-
 /**
  * Main class of jd-cli.
  */
@@ -59,8 +57,20 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		final CLIArguments cliArguments = new CLIArguments();
-		final JCommander jCmd = new JCommander(cliArguments, args);
+		final ExtCommander jCmd = new ExtCommander(cliArguments, args);
 		jCmd.setProgramName("java -jar jd-cli.jar");
+		jCmd.setUsageHead("\njd-cli is a command line interface for the Java Decompiler. You can simply decompile classes, zip archives "
+				+ "(.zip, .jar, .war, ...) and directories with classes. Each supported input type has configured corresponding "
+				+ "default output type (class->screen, zip->zip, directory->directory), but you can simply override the output type "
+				+ "by providing an argument (multiple outputs at once are supported)\n");
+		jCmd.setUsageTail("Examples:\n" // 
+				+ "java -jar jd-cli.jar HelloWorld.class\n" //
+				+ "shows decompiled class on a screen\n\n" // 
+				+ "java -jar jd-cli.jar --skipResources -n -g ALL app.jar\n" //
+				+ "decompiles app.jar to app.src.jar; It doesn't copy resources to the output jar, the decompiled classes contain "
+				+ "line numbers as comments and the jd-cli prints the most verbose debug information about decompilation\n\n" // 				
+				+ "java -jar jd-cli.jar myapp.jar -od decompiled -oc\n" //
+				+ "decompiles content of myapp.jar to directory named 'decompiled' and also on a screen");
 
 		setLoggingLevel(cliArguments.getLogLevel());
 
