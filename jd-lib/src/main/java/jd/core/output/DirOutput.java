@@ -15,8 +15,7 @@
  */
 package jd.core.output;
 
-import static jd.core.JavaDecompilerConstants.JAVA_SUFFIX;
-import static jd.core.JavaDecompilerConstants.UTF_8;
+import static jd.core.JavaDecompilerConstants.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,7 +37,10 @@ public class DirOutput extends AbstractJDOutput {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DirOutput.class);
 
-	private File dir;
+	private int countClasses;
+	private int countResources;
+
+	private final File dir;
 
 	/**
 	 * Constructor which takes directory path as a parameter.
@@ -55,6 +57,9 @@ public class DirOutput extends AbstractJDOutput {
 
 	@Override
 	public void init(String basePath) {
+		super.init(basePath);
+		countClasses = 0;
+		countResources = 0;
 		LOGGER.info("Directory output will be initialized for path {}", dir);
 		if (!dir.exists())
 			dir.mkdirs();
@@ -66,7 +71,8 @@ public class DirOutput extends AbstractJDOutput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see jd.core.output.JDOutput#processClass(java.lang.String, java.lang.String)
+	 * @see jd.core.output.JDOutput#processClass(java.lang.String,
+	 * java.lang.String)
 	 */
 	public void processClass(String className, String src) {
 		if (className == null || src == null) {
@@ -80,6 +86,7 @@ public class DirOutput extends AbstractJDOutput {
 		try {
 			fos = new FileOutputStream(decompiledFile);
 			fos.write(src.getBytes(UTF_8));
+			countClasses++;
 		} catch (IOException e) {
 			LOGGER.error("Writing decompiled class to file {} failed.", decompiledFile, e);
 		} finally {
@@ -90,7 +97,8 @@ public class DirOutput extends AbstractJDOutput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see jd.core.output.JDOutput#processResource(java.lang.String, java.io.InputStream)
+	 * @see jd.core.output.JDOutput#processResource(java.lang.String,
+	 * java.io.InputStream)
 	 */
 	public void processResource(String fileName, InputStream is) {
 		if (skipResources || fileName == null || is == null) {
@@ -104,11 +112,23 @@ public class DirOutput extends AbstractJDOutput {
 		try {
 			fos = new FileOutputStream(tmpFile);
 			IOUtils.copy(is, fos);
+			countResources++;
 		} catch (IOException e) {
 			LOGGER.error("Writing resource to file {} failed.", tmpFile, e);
 		} finally {
 			IOUtils.closeQuietly(fos);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see jd.core.output.AbstractJDOutput#commit()
+	 */
+	@Override
+	public void commit() {
+		super.commit();
+		LOGGER.info("Finished with {} class file(s) and {} resource file(s) written.", countClasses, countResources);
 	}
 
 	/**
@@ -122,5 +142,4 @@ public class DirOutput extends AbstractJDOutput {
 			LOGGER.trace("Creating directory {} finished with result: {}", dir, dirCreated);
 		}
 	}
-
 }

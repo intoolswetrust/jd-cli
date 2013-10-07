@@ -15,8 +15,7 @@
  */
 package jd.core.output;
 
-import static jd.core.JavaDecompilerConstants.JAVA_SUFFIX;
-import static jd.core.JavaDecompilerConstants.UTF_8;
+import static jd.core.JavaDecompilerConstants.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,6 +43,9 @@ public class ZipOutput extends AbstractJDOutput {
 
 	private final OutputStream os;
 	private final File file;
+
+	private int countClasses;
+	private int countResources;
 
 	private ZipOutputStream zos;
 
@@ -79,6 +81,9 @@ public class ZipOutput extends AbstractJDOutput {
 
 	@Override
 	public void init(String basePath) {
+		super.init(basePath);
+		countClasses = 0;
+		countResources = 0;
 		zos = null;
 		if (file == null) {
 			LOGGER.info("ZIP output will be initialized for an InputStream.");
@@ -104,7 +109,8 @@ public class ZipOutput extends AbstractJDOutput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see jd.core.output.JDOutput#processClass(java.lang.String, java.lang.String)
+	 * @see jd.core.output.JDOutput#processClass(java.lang.String,
+	 * java.lang.String)
 	 */
 	public void processClass(final String className, final String src) {
 		if (className == null || src == null || zos == null)
@@ -113,6 +119,7 @@ public class ZipOutput extends AbstractJDOutput {
 			zos.putNextEntry(new ZipEntry(className + JAVA_SUFFIX));
 			zos.write(src.getBytes(UTF_8));
 			zos.closeEntry();
+			countClasses++;
 		} catch (IOException e) {
 			LOGGER.error("Exception occured during writing decompiled class {} to a ZIP output.", className, e);
 		}
@@ -121,7 +128,8 @@ public class ZipOutput extends AbstractJDOutput {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see jd.core.output.JDOutput#processResource(java.lang.String, java.io.InputStream)
+	 * @see jd.core.output.JDOutput#processResource(java.lang.String,
+	 * java.io.InputStream)
 	 */
 	public void processResource(final String fileName, final InputStream is) {
 		if (skipResources || fileName == null || is == null || zos == null) {
@@ -131,6 +139,7 @@ public class ZipOutput extends AbstractJDOutput {
 			zos.putNextEntry(new ZipEntry(fileName));
 			IOUtils.copy(is, zos);
 			zos.closeEntry();
+			countResources++;
 		} catch (IOException e) {
 			LOGGER.error("Exception occured during writing resource {} to a ZIP output.", fileName, e);
 		}
@@ -143,6 +152,7 @@ public class ZipOutput extends AbstractJDOutput {
 	 */
 	@Override
 	public void commit() {
+		super.commit();
 		if (zos != null) {
 			try {
 				if (file != null) {
@@ -154,6 +164,8 @@ public class ZipOutput extends AbstractJDOutput {
 				LOGGER.error("Exception occured during finishing ZIP output.", e);
 			}
 		}
+
+		LOGGER.info("Finished with {} class file(s) and {} resource file(s) written.", countClasses, countResources);
 		zos = null;
 	}
 
