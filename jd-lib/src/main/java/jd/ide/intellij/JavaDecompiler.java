@@ -81,8 +81,9 @@ public class JavaDecompiler {
 
 		InputStream is = null;
 		OutputStream os = null;
+		File libTempFile = null;
 		try {
-			final File libTempFile = File.createTempFile(JavaDecompilerConstants.NATIVE_LIB_TMP_PREFIX, libExt, tmpDir);
+			libTempFile = File.createTempFile(JavaDecompilerConstants.NATIVE_LIB_TMP_PREFIX, libExt, tmpDir);
 			libTempFile.deleteOnExit();
 
 			final String pathInJar = "/native/" + platform + "/" + arch + "/" + JavaDecompilerConstants.NATIVE_LIB_NAME
@@ -94,14 +95,21 @@ public class JavaDecompiler {
 			}
 			os = new FileOutputStream(libTempFile);
 			IOUtils.copy(is, os);
-
-			System.load(libTempFile.getAbsolutePath());
 		} catch (Exception e) {
-			LOGGER.error("Exception occured during loading native library", e);
+			LOGGER.error("Exception occured during creaing a temporary copy of a native library", e);
 		} finally {
 			IOUtils.closeQuietly(is);
 			IOUtils.closeQuietly(os);
 		}
+
+		if (libTempFile != null && libTempFile.exists()) {
+			try {
+				System.load(libTempFile.getAbsolutePath());
+			} catch (Exception e) {
+				LOGGER.error("Exception occured during loading native library", e);
+			}
+		}
+
 	}
 
 	/**
