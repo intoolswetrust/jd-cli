@@ -49,6 +49,7 @@ public class ExtCommander extends JCommander {
 		super(object);
 	}
 
+	@Override
 	public void usage(StringBuilder out, String indent) {
 		final int indentCount = indent.length();
 		if (usageHead != null) {
@@ -56,7 +57,7 @@ public class ExtCommander extends JCommander {
 		}
 		super.usage(out, indent);
 		if (usageTail != null) {
-			out.append("\n").append(wrap(indentCount, usageTail)).append("\n");
+			out.append("\n").append(wrap(indentCount, usageTail));
 		}
 	}
 
@@ -70,12 +71,12 @@ public class ExtCommander extends JCommander {
 
 	protected String wrap(final int indent, final String text) {
 		final int max = getColumnSize();
-		final String[] lines = text.split("\n");
+		final String[] lines = text.split("\n", -1);
 		final String indentStr = getIndent(indent);
 
 		final StringBuilder sb = new StringBuilder();
 		for (String line : lines) {
-			final String[] words = line.split(" ");
+			final String[] words = line.split(" ", -1);
 			final StringBuilder lineSb = new StringBuilder();
 			for (String word : words) {
 				final int lineLength = lineSb.length();
