@@ -55,7 +55,6 @@ public class PrintStreamOutput extends AbstractJDOutput {
 	 */
 	public void processClass(final String className, final String src) {
 		LOGGER.debug("Processing class {}", className);
-		ps.println(">>> Class " + className);
 		ps.println(src);
 	}
 
@@ -67,7 +66,6 @@ public class PrintStreamOutput extends AbstractJDOutput {
 	 */
 	public void processResource(String fileName, InputStream is) {
 		LOGGER.debug("Skipping resource {}", fileName);
-		ps.println(">>> Skipping resource " + fileName);
 	}
 
 }
