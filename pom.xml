@@ -16,4 +16,25 @@
 		<module>jd-lib</module>
 		<module>jd-cli</module>
 	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>.</directory>
+							<includes>
+								<include>jd-cli-*.zip</include>
+								<include>jd-cli-*.tar.gz</include>
+								<include>**/pom.xml.versionsBackup</include>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

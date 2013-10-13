@@ -22,6 +22,8 @@ package jd.core;
  */
 public final class JavaDecompilerConstants {
 
+	public static final String VERSION = "${project.version}";
+
 	public static final String TMP_DIR = System.getProperty("java.io.tmpdir");
 
 	public static final String UTF_8 = "UTF-8";

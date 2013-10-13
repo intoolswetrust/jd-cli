@@ -18,6 +18,19 @@
 	</properties>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<targetPath>${project.build.outputDirectory}</targetPath>
+			</resource>
+			<resource>
+				<directory>src/main/java</directory>
+				<filtering>true</filtering>
+				<targetPath>../filtered-src</targetPath>
+			</resource>
+		</resources>
+		<sourceDirectory>target/filtered-src</sourceDirectory>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -50,10 +63,10 @@
 		</plugins>
 	</build>
 	<dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
 	</dependencies>
 </project>

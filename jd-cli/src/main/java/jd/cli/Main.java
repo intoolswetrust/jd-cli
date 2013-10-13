@@ -59,8 +59,10 @@ public class Main {
 		final CLIArguments cliArguments = new CLIArguments();
 		final ExtCommander jCmd = new ExtCommander(cliArguments, args);
 		jCmd.setProgramName("java -jar jd-cli.jar");
-		jCmd.setUsageHead("\njd-cli is a command line interface for the Java Decompiler (http://java.decompiler.free.fr/). "
-				+ "The program decompile classes, zip archives "
+		jCmd.setUsageHead("jd-cli version "
+				+ JavaDecompilerConstants.VERSION
+				+ "\nThe jd-cli is a command line interface for the Java Decompiler (http://java.decompiler.free.fr/), "
+				+ "it decompile classes, zip archives "
 				+ "(.zip, .jar, .war, ...) and directories containing classes. Each supported input type has configured corresponding "
 				+ "default output type (class->screen, zip->zip, directory->directory). Man can simply override the output type "
 				+ "by specifying a command line parameter (-oc, -od, -oz). Multiple output type parameters can be used at once.");
