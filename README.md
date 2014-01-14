@@ -27,7 +27,7 @@ You should have [git](http://git-scm.com/) installed
 
 or you can download [current sources as a zip file](https://github.com/kwart/jd-cmd/archive/master.zip)
 
-Then you need to have [Maven](http://maven.apache.org/) installed
+Then you need to have [Maven 3.*](http://maven.apache.org/) installed
 
 	$ cd jd-cmd
 	$ mvn clean package
