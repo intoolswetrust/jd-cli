@@ -1,12 +1,12 @@
 /*
  * Copyright 2013 kwart, betterphp, nviennot
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,16 @@ package jd.core.options;
 
 import static jd.core.JavaDecompilerConstants.SystemProperties.DISCARD_LOCATION;
 import static jd.core.JavaDecompilerConstants.SystemProperties.DISCARD_LOCATION_DEFAULT;
+import static jd.core.JavaDecompilerConstants.SystemProperties.ESCAPE_UNICODE;
+import static jd.core.JavaDecompilerConstants.SystemProperties.ESCAPE_UNICODE_DEFAULT;
 import static jd.core.JavaDecompilerConstants.SystemProperties.LINE_NUMBERS;
 import static jd.core.JavaDecompilerConstants.SystemProperties.LINE_NUMBERS_DEFAULT;
 import static jd.core.JavaDecompilerConstants.SystemProperties.METADATA;
 import static jd.core.JavaDecompilerConstants.SystemProperties.METADATA_DEFAULT;
+import static jd.core.JavaDecompilerConstants.SystemProperties.OMIT_THIS;
+import static jd.core.JavaDecompilerConstants.SystemProperties.OMIT_THIS_DEFAULT;
+import static jd.core.JavaDecompilerConstants.SystemProperties.REALIGN_LINE_NRS;
+import static jd.core.JavaDecompilerConstants.SystemProperties.REALIGN_LINE_NRS_DEFAULT;
 import static jd.core.JavaDecompilerConstants.SystemProperties.SKIP_RESOURCES;
 import static jd.core.JavaDecompilerConstants.SystemProperties.SKIP_RESOURCES_DEFAULT;
 import jd.core.IOUtils;
@@ -48,5 +54,20 @@ public class SystemPropertiesOptions implements DecompilerOptions {
 
 	public boolean isSkipResources() {
 		return IOUtils.getBoolean(SKIP_RESOURCES, SKIP_RESOURCES_DEFAULT);
+	}
+
+	@Override
+	public boolean isEscapeUnicodeCharacters() {
+		return IOUtils.getBoolean(ESCAPE_UNICODE, ESCAPE_UNICODE_DEFAULT);
+	}
+
+	@Override
+	public boolean isOmitPrefixThis() {
+		return IOUtils.getBoolean(OMIT_THIS, OMIT_THIS_DEFAULT);
+	}
+
+	@Override
+	public boolean isRealignLineNumbers() {
+		return IOUtils.getBoolean(REALIGN_LINE_NRS, REALIGN_LINE_NRS_DEFAULT);
 	}
 }

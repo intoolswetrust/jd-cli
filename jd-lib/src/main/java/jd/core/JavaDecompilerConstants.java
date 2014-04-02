@@ -1,12 +1,12 @@
 /*
  * Copyright 2013 kwart, betterphp, nviennot
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,6 +47,12 @@ public final class JavaDecompilerConstants {
 		public static final boolean DISCARD_LOCATION_DEFAULT = true;
 		public static final String SKIP_RESOURCES = "jd.skipResources";
 		public static final boolean SKIP_RESOURCES_DEFAULT = false;
+		public static final String ESCAPE_UNICODE = "jd.escapeUnicode";
+		public static final boolean ESCAPE_UNICODE_DEFAULT = true;
+		public static final String OMIT_THIS = "jd.omitThis";
+		public static final boolean OMIT_THIS_DEFAULT = true;
+		public static final String REALIGN_LINE_NRS = "jd.realignLineNumbers";
+		public static final boolean REALIGN_LINE_NRS_DEFAULT = false;
 	}
 
 }

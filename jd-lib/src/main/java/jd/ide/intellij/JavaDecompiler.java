@@ -1,12 +1,12 @@
 /*
  * Copyright 2013 kwart, betterphp, nviennot
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -118,24 +118,24 @@ public class JavaDecompiler {
 	 * @param basePath
 	 *            path to directory or an archive which contains the class in
 	 *            its subtree
-	 * @param className
+	 * @param internalClassName
 	 *            class name (with path relative to basePath)
 	 * @return decompiled class as a String or null if sth fails
 	 */
-	public String decompileClass(String basePath, String className) {
-		LOGGER.debug("Decompiling class {} from base path {}", className, basePath);
-		if (className == null || basePath == null) {
+	public String decompileClass(String basePath, String internalClassName) {
+		LOGGER.debug("Decompiling class {} from base path {}", internalClassName, basePath);
+		if (internalClassName == null || basePath == null) {
 			LOGGER.warn("Classname or basename was null");
 			return null;
 		}
 
-		String src = decompile(basePath, className);
+		String src = decompile(basePath, internalClassName);
 		// TODO is windows OK with \n?
 		if (src == null || src.startsWith("class \n{")) {
 			// decompilation failed - wrong package?
 			final File baseFile = new File(basePath);
 			if (baseFile.isDirectory()) {
-				File classFile = new File(baseFile, className);
+				File classFile = new File(baseFile, internalClassName);
 				if (!classFile.isFile())
 					return null;
 				FileInputStream fis = null;
@@ -166,6 +166,8 @@ public class JavaDecompiler {
 	}
 
 	private native String decompile(String basePath, String internalClassName);
+
+	private native String getVersion();
 
 	/**
 	 * Creates a single purpose JAR with one class - the main reason is to fix

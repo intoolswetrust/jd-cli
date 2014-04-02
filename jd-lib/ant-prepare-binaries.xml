@@ -15,7 +15,7 @@
 
 		<echo>Downloading jd-intellij plugin sources</echo>
 		<!-- download file -->
-		<get src="https://bitbucket.org/bric3/jd-intellij/get/version-0.4.1.zip" dest="${jd.zip.name}" verbose="false" usetimestamp="true" />
+		<get src="https://bitbucket.org/bric3/jd-intellij/get/version-0.6.zip" dest="${jd.zip.name}" verbose="false" usetimestamp="true" />
 
 		<echo>Unziping libraries to ${resources.dir}</echo>
 		<unzip dest="${resources.dir}" src="${jd.zip.name}">
