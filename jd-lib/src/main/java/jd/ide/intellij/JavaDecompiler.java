@@ -130,8 +130,8 @@ public class JavaDecompiler {
 		}
 
 		String src = decompile(basePath, className);
-		// TODO is windows OK with \n?
-		if (src == null || src.startsWith("class \n{")) {
+		final String LS = System.getProperty("line.separator");
+		if (src == null || src.startsWith("class " + LS + "{")) {
 			// decompilation failed - wrong package?
 			final File baseFile = new File(basePath);
 			if (baseFile.isDirectory()) {
