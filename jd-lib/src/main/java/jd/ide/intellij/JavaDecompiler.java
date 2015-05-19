@@ -34,6 +34,11 @@ import jd.core.options.DecompilerOptions;
 import jd.core.options.OptionsManager;
 import jd.core.parser.SimpleClassParser;
 
+import com.intellij.openapi.application.ApplicationManager;
+import jd.ide.intellij.config.JDPluginComponent;
+import jd.commonide.IdeDecompiler;
+import jd.commonide.preferences.IdePreferences;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,72 +50,6 @@ import org.slf4j.LoggerFactory;
 public class JavaDecompiler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(JavaDecompiler.class);
-
-	static {
-		String osName = System.getProperty("os.name").toLowerCase();
-		String platform = "linux";
-		String arch = (System.getProperty("os.arch").contains("64")) ? "x86_64" : "x86";
-		String libExt = ".so";
-
-		if (osName.contains("win")) {
-			platform = "win32";
-			libExt = ".dll";
-		} else if (osName.contains("mac")) {
-			platform = "macosx";
-			libExt = ".jnilib";
-		}
-
-		LOGGER.trace("Native will use platform {}, architecture {} and file extension {}", platform, arch, libExt);
-
-		final File tmpDir = new File(JavaDecompilerConstants.TMP_DIR);
-		try {
-			String[] oldLibs = tmpDir.list(new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return name != null && name.startsWith(JavaDecompilerConstants.NATIVE_LIB_TMP_PREFIX);
-				}
-			});
-			for (String libName : oldLibs) {
-				File oldLibFile = new File(tmpDir, libName);
-				if (oldLibFile.isFile()) {
-					oldLibFile.delete();
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		InputStream is = null;
-		OutputStream os = null;
-		File libTempFile = null;
-		try {
-			libTempFile = File.createTempFile(JavaDecompilerConstants.NATIVE_LIB_TMP_PREFIX, libExt, tmpDir);
-			libTempFile.deleteOnExit();
-
-			final String pathInJar = "/native/" + platform + "/" + arch + "/" + JavaDecompilerConstants.NATIVE_LIB_NAME
-					+ libExt;
-			LOGGER.trace("Using native library from classpath: {}", pathInJar);
-			is = JavaDecompiler.class.getResourceAsStream(pathInJar);
-			if (is == null) {
-				throw new FileNotFoundException("Native library " + pathInJar + " was not found inside the JAR.");
-			}
-			os = new FileOutputStream(libTempFile);
-			IOUtils.copy(is, os);
-		} catch (Exception e) {
-			LOGGER.error("Exception occured during creaing a temporary copy of a native library", e);
-		} finally {
-			IOUtils.closeQuietly(is);
-			IOUtils.closeQuietly(os);
-		}
-
-		if (libTempFile != null && libTempFile.exists()) {
-			try {
-				System.load(libTempFile.getAbsolutePath());
-			} catch (Exception e) {
-				LOGGER.error("Exception occured during loading native library", e);
-			}
-		}
-
-	}
 
 	/**
 	 * Decompile a single class from given base location.
@@ -165,7 +104,33 @@ public class JavaDecompiler {
 		return src;
 	}
 
-	private native String decompile(String basePath, String internalClassName);
+	/**
+	 * Actual call to the native lib.
+	 *
+	 * @param basePath          Path to the root of the classpath, either a path to a directory or a path to a jar file.
+	 * @param internalTypeName  internal name of the type.
+	 * @return Decompiled class text.
+	 */
+	public String decompile(String basePath, String internalTypeName) {
+		// Load preferences
+		JDPluginComponent jdPluginComponent = ApplicationManager.getApplication().getComponent(JDPluginComponent.class);
+
+		boolean showDefaultConstructor = jdPluginComponent.isShowDefaultConstructorEnabled();
+		boolean realignmentLineNumber = jdPluginComponent.isRealignLineNumbersEnabled();
+		boolean showPrefixThis = !jdPluginComponent.isOmitPrefixThisEnabled();
+		boolean mergeEmptyLines = false;
+		boolean unicodeEscape = jdPluginComponent.isEscapeUnicodeCharactersEnabled();
+		boolean showLineNumbers = jdPluginComponent.isShowLineNumbersEnabled();
+		boolean showMetadata = jdPluginComponent.isShowMetadataEnabled();
+
+		// Create preferences
+		IdePreferences preferences = new IdePreferences(
+			showDefaultConstructor, realignmentLineNumber, showPrefixThis,
+			mergeEmptyLines, unicodeEscape, showLineNumbers, showMetadata);
+
+		// Decompile
+		return IdeDecompiler.decompile(preferences, basePath, internalTypeName);
+	}
 
 	/**
 	 * Creates a single purpose JAR with one class - the main reason is to fix
