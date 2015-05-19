@@ -21,10 +21,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import jd.core.IOUtils;
+import jd.core.JavaDecompiler;
 import jd.core.options.DecompilerOptions;
 import jd.core.options.OptionsManager;
 import jd.core.output.JDOutput;
-import jd.ide.intellij.JavaDecompiler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ public class ZipFileInput extends AbstractFileJDInput {
 	 * Parses all entres in the zip and decompiles it writing results to
 	 * {@link JDOutput} instance.
 	 * 
-	 * @see jd.core.input.JDInput#decompile(jd.ide.intellij.JavaDecompiler,
+	 * @see jd.core.input.JDInput#decompile(jd.core.JavaDecompiler,
 	 *      jd.core.output.JDOutput)
 	 */
 	@Override

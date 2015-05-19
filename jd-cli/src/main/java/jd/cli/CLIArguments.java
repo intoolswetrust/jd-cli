@@ -30,77 +30,112 @@ import com.beust.jcommander.converters.FileConverter;
  */
 public class CLIArguments implements DecompilerOptions {
 
-    @Parameter(description = "[Files to decompile]")
-    private final List<String> files = new ArrayList<String>();
+	@Parameter(description = "[Files to decompile]")
+	private final List<String> files = new ArrayList<String>();
 
-    @Parameter(names = { "--help", "-h" }, description = "shows this help", help = true)
-    private boolean help;
+	@Parameter(names = { "--help", "-h" }, description = "shows this help", help = true)
+	private boolean help;
 
-    @Parameter(names = { "--outputZipFile", "-oz" }, description = "takes a [zipFilePath] as a parameter and configures ZIP output for this path", converter = FileConverter.class)
-    private File zipOutFile;
+	@Parameter(names = { "--outputZipFile", "-oz" }, description = "takes a [zipFilePath] as a parameter and configures ZIP output for this path", converter = FileConverter.class)
+	private File zipOutFile;
 
-    @Parameter(names = { "--outputDir", "-od" }, description = "takes a [directoryPath] as a parameter and configures DIR output for this path", converter = FileConverter.class)
-    private File dirOutFile;
+	@Parameter(names = { "--outputDir", "-od" }, description = "takes a [directoryPath] as a parameter and configures DIR output for this path", converter = FileConverter.class)
+	private File dirOutFile;
 
-    @Parameter(names = { "--outputConsole", "-oc" }, description = "enables output to system output stream")
-    private boolean consoleOut;
+	@Parameter(names = { "--outputConsole", "-oc" }, description = "enables output to system output stream")
+	private boolean consoleOut;
 
-    @Parameter(names = { "--skipResources", "-sr" }, description = "skips processing resources")
-    private boolean skipResources;
+	@Parameter(names = { "--skipResources", "-sr" }, description = "skips processing resources")
+	private boolean skipResources;
 
-    @Parameter(names = { "--displayLineNumbers", "-n" }, description = "displays line numbers in decompiled classes")
-    private boolean displayLineNumbers;
+	@Parameter(names = { "--displayLineNumbers", "-n" }, description = "displays line numbers in decompiled classes")
+	private boolean displayLineNumbers;
 
-    @Parameter(names = { "--skipMetadata", "-sm" }, description = "skips metadata in decompiled classes")
-    private boolean skipMetadata;
+	@Parameter(names = { "--skipMetadata", "-sm" }, description = "skips metadata in decompiled classes")
+	private boolean skipMetadata;
 
-    @Parameter(names = { "--showLocation", "-l" }, description = "displays Location info in decompiled classes metadata part")
-    private boolean showLocation;
+	@Parameter(names = { "--showLocation", "-l" }, description = "displays Location info in decompiled classes metadata part")
+	private boolean showLocation;
 
-    @Parameter(names = { "--logLevel", "-g" }, description = "takes [level] as parameter and sets it as the CLI log level. The value is should be one of: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF", converter = LogLevelConverter.class)
-    private final Level logLevel = Level.INFO;
+	@Parameter(names = { "--escapeUnicodeCharacters", "-eu" }, description = "escape unicode characters in decompiled classes")
+	private boolean escapeUnicodeCharacters;
 
-    public List<String> getFiles() {
-        return files;
-    }
+	@Parameter(names = { "--showPrefixThis", "-st" }, description = "prefix with 'this' where possible in decompiled classes")
+	private boolean showPrefixThis;
 
-    public boolean isHelp() {
-        return help;
-    }
+	@Parameter(names = { "--realignLineNumbers", "-rn" }, description = "realign line numbers in decompiled classes")
+	private boolean realignLineNumbers;
 
-    public File getZipOutFile() {
-        return zipOutFile;
-    }
+	@Parameter(names = { "--showDefaultConstructor", "-dc" }, description = "show default constructor in decompiled classes")
+	private boolean showDefaultConstructor;
 
-    public File getDirOutFile() {
-        return dirOutFile;
-    }
+	@Parameter(names = { "--dontMergeEmptyLines", "-dm" }, description = "disables merging multiple empty lines into one in the decompiled classes")
+	private boolean dontMergeEmptyLines;
 
-    public boolean isConsoleOut() {
-        return consoleOut;
-    }
+	@Parameter(names = { "--logLevel", "-g" }, description = "takes [level] as parameter and sets it as the CLI log level. Possible values are: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF", converter = LogLevelConverter.class)
+	private final Level logLevel = Level.INFO;
 
-    public boolean isSkipResources() {
-        return skipResources;
-    }
+	public List<String> getFiles() {
+		return files;
+	}
 
-    public boolean isDisplayLineNumbers() {
-        return displayLineNumbers;
-    }
+	public boolean isHelp() {
+		return help;
+	}
 
-    public boolean isDisplayMetadata() {
-        return !skipMetadata;
-    }
+	public File getZipOutFile() {
+		return zipOutFile;
+	}
 
-    public boolean isDiscardLocation() {
-        return !showLocation;
-    }
+	public File getDirOutFile() {
+		return dirOutFile;
+	}
 
-    public Level getLogLevel() {
-        return logLevel;
-    }
+	public boolean isConsoleOut() {
+		return consoleOut;
+	}
 
-    public boolean isOutputPluginSpecified() {
-        return consoleOut || zipOutFile != null || dirOutFile != null;
-    }
+	public boolean isSkipResources() {
+		return skipResources;
+	}
+
+	public boolean isDisplayLineNumbers() {
+		return displayLineNumbers;
+	}
+
+	public boolean isDisplayMetadata() {
+		return !skipMetadata;
+	}
+
+	public boolean isDiscardLocation() {
+		return !showLocation;
+	}
+
+	public boolean isEscapeUnicodeCharacters() {
+		return escapeUnicodeCharacters;
+	}
+
+	public boolean isShowPrefixThis() {
+		return showPrefixThis;
+	}
+
+	public boolean isRealignLineNumbers() {
+		return realignLineNumbers;
+	}
+
+	public boolean isShowDefaultConstructor() {
+		return showDefaultConstructor;
+	}
+
+	public boolean isMergeEmptyLines() {
+		return !dontMergeEmptyLines;
+	}
+
+	public Level getLogLevel() {
+		return logLevel;
+	}
+
+	public boolean isOutputPluginSpecified() {
+		return consoleOut || zipOutFile != null || dirOutFile != null;
+	}
 }

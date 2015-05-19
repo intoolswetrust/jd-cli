@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jd.core.IOUtils;
+import jd.core.JavaDecompiler;
 import jd.core.JavaDecompilerConstants;
 import jd.core.input.ClassFileInput;
 import jd.core.input.DirInput;
@@ -36,7 +37,6 @@ import jd.core.output.JDOutput;
 import jd.core.output.MultiOutput;
 import jd.core.output.PrintStreamOutput;
 import jd.core.output.ZipOutput;
-import jd.ide.intellij.JavaDecompiler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

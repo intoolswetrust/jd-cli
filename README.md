@@ -1,21 +1,13 @@
 # jd-cmd - Command line Java Decompiler
 
-jd-cmd is a command line Java Decompiler which uses natives from [Java Decompiler GUI](http://java.decompiler.free.fr/) project. It's based on native libraries for IntelliJ plugin. 
+jd-cmd is a command line Java Decompiler which uses [JD Core from Java Decompiler](http://jd.benow.ca/) project. 
 
 This project was originally forked from [jd-core-java](https://github.com/nviennot/jd-core-java) 
 and then from [JDCommandLine](https://github.com/betterphp/JDCommandLine).
 
-## Supported Platforms
-
-jd-cmd supports:
-
-* Linux 32/64-bit
-* Windows 32/64-bit
-* Mac OSX 32/64-bit on x86 hardware
-
 ### Requirements
 
-[Java runtime](http://java.com/en/download/) is required, at least version 6 is needed but we suggest usage of Java 7. Native libraries (at least the Linux ones) crashes occasionally with Java 6.
+[Java runtime](http://java.com/en/download/) is required in version 7 or newer.
 
 For an initial build you should install Git and Maven.
 
@@ -48,33 +40,52 @@ The **jd-cmd** comes with 2 modules:
 
 Use all-in-one **jd-cli** jar located in `jd-cli/target/jd-cli.jar`
 
-	Usage: java -jar jd-cli.jar [options] [Files to decompile]
-	  Options:
-	    --displayLineNumbers, -n
-	       Include line numbers in decompiled classes
-	       Default: false
-	    --help, -h
-	       Show this help
-	       Default: false
-	    --logLevel, -g
-	       Log level, one of: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF
-	       Default: INFO
-	    --outputConsole, -oc
-	       Output to system output stream
-	       Default: false
-	    --outputDir, -od
-	       Output to a directory with given path
-	    --outputZipFile, -oz
-	       Output to a zipped file with given path
-	    --showLocation, -l
-	       Include Location info in decompiled classes metadata part
-	       Default: false
-	    --skipMetadata, -sm
-	       Don't include metadata in decompiled classes
-	       Default: false
-	    --skipResources, -sr
-	       Skip processing resources
-	       Default: false
+    Usage: java -jar jd-cli.jar [options] [Files to decompile]
+      Options:
+        --displayLineNumbers, -n
+           displays line numbers in decompiled classes
+           Default: false
+        --dontMergeEmptyLines, -dm
+           disables merging multiple empty lines into one in the decompiled classes
+           Default: false
+        --escapeUnicodeCharacters, -eu
+           escape unicode characters in decompiled classes
+           Default: false
+        --help, -h
+           shows this help
+           Default: false
+        --logLevel, -g
+           takes [level] as parameter and sets it as the CLI log level. Possible
+           values are: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF
+           Default: INFO
+        --outputConsole, -oc
+           enables output to system output stream
+           Default: false
+        --outputDir, -od
+           takes a [directoryPath] as a parameter and configures DIR output for this
+           path
+        --outputZipFile, -oz
+           takes a [zipFilePath] as a parameter and configures ZIP output for this
+           path
+        --realignLineNumbers, -rn
+           realign line numbers in decompiled classes
+           Default: false
+        --showDefaultConstructor, -dc
+           show default constructor in decompiled classes
+           Default: false
+        --showLocation, -l
+           displays Location info in decompiled classes metadata part
+           Default: false
+        --showPrefixThis, -st
+           prefix with 'this' where possible in decompiled classes
+           Default: false
+        --skipMetadata, -sm
+           skips metadata in decompiled classes
+           Default: false
+        --skipResources, -sr
+           skips processing resources
+           Default: false
+
 
 ### Programmatically
 
@@ -85,7 +96,7 @@ Add `jd-lib` as a dependency for your App and then do something like
 	import jd.core.input.ZipFileInput;
 	import jd.core.output.DirOutput;
 	import jd.core.output.JDOutput;
-	import jd.ide.intellij.JavaDecompiler;
+	import jd.core.JavaDecompiler;
 	
 	public class App {
 		public static void main(String[] args) {
@@ -103,5 +114,4 @@ Add `jd-lib` as a dependency for your App and then do something like
 
 * jd-cmd is licensed under [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 * this software is based on [MIT licensed](http://opensource.org/licenses/MIT) project [JDCommandLine](https://github.com/betterphp/JDCommandLine)
-* JD-IntelliJ is free for non-commercial use - check details in the [IntelliJ plugin repository](http://plugins.jetbrains.com/plugin/7100)
 
