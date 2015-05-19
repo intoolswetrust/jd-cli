@@ -29,4 +29,12 @@ public interface DecompilerOptions {
 	boolean isDisplayMetadata();
 
 	boolean isDiscardLocation();
+
+	boolean isEscapeUnicodeCharactersEnabled();
+
+	boolean isOmitPrefixThisEnabled();
+
+	boolean isRealignLineNumbersEnabled();
+
+	boolean isShowDefaultConstructorEnabled();
 }

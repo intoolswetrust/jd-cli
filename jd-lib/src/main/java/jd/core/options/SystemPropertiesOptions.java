@@ -23,6 +23,14 @@ import static jd.core.JavaDecompilerConstants.SystemProperties.METADATA;
 import static jd.core.JavaDecompilerConstants.SystemProperties.METADATA_DEFAULT;
 import static jd.core.JavaDecompilerConstants.SystemProperties.SKIP_RESOURCES;
 import static jd.core.JavaDecompilerConstants.SystemProperties.SKIP_RESOURCES_DEFAULT;
+import static jd.core.JavaDecompilerConstants.SystemProperties.ESCAPE_UNICODE_CHARACTERS;
+import static jd.core.JavaDecompilerConstants.SystemProperties.ESCAPE_UNICODE_CHARACTERS_DEFAULT;
+import static jd.core.JavaDecompilerConstants.SystemProperties.OMIT_PREFIX_THIS;
+import static jd.core.JavaDecompilerConstants.SystemProperties.OMIT_PREFIX_THIS_DEFAULT;
+import static jd.core.JavaDecompilerConstants.SystemProperties.REALIGN_LINE_NUMBERS;
+import static jd.core.JavaDecompilerConstants.SystemProperties.REALIGN_LINE_NUMBERS_DEFAULT;
+import static jd.core.JavaDecompilerConstants.SystemProperties.SHOW_DEFAULT_CONSTRUCTOR;
+import static jd.core.JavaDecompilerConstants.SystemProperties.SHOW_DEFAULT_CONSTRUCTOR_DEFAULT;
 import jd.core.IOUtils;
 
 /**
@@ -48,5 +56,21 @@ public class SystemPropertiesOptions implements DecompilerOptions {
 
 	public boolean isSkipResources() {
 		return IOUtils.getBoolean(SKIP_RESOURCES, SKIP_RESOURCES_DEFAULT);
+	}
+
+	public boolean isEscapeUnicodeCharactersEnabled() {
+		return IOUtils.getBoolean(ESCAPE_UNICODE_CHARACTERS, ESCAPE_UNICODE_CHARACTERS_DEFAULT);
+	}
+
+	public boolean isOmitPrefixThisEnabled() {
+		return IOUtils.getBoolean(OMIT_PREFIX_THIS, OMIT_PREFIX_THIS_DEFAULT);
+	}
+
+	public boolean isRealignLineNumbersEnabled() {
+		return IOUtils.getBoolean(REALIGN_LINE_NUMBERS, REALIGN_LINE_NUMBERS_DEFAULT);
+	}
+
+	public boolean isShowDefaultConstructorEnabled() {
+		return IOUtils.getBoolean(SHOW_DEFAULT_CONSTRUCTOR, SHOW_DEFAULT_CONSTRUCTOR_DEFAULT);
 	}
 }

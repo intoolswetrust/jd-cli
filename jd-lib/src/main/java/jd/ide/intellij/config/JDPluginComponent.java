@@ -40,4 +40,20 @@ public class JDPluginComponent {
         return OptionsManager.getOptions().isDisplayMetadata();
     }
 
+    public boolean isEscapeUnicodeCharactersEnabled() {
+        return OptionsManager.getOptions().isEscapeUnicodeCharactersEnabled();
+    }
+
+    public boolean isOmitPrefixThisEnabled() {
+        return OptionsManager.getOptions().isOmitPrefixThisEnabled();
+    }
+
+    public boolean isRealignLineNumbersEnabled() {
+        return OptionsManager.getOptions().isRealignLineNumbersEnabled();
+    }
+
+    public boolean isShowDefaultConstructorEnabled() {
+        return OptionsManager.getOptions().isShowDefaultConstructorEnabled();
+    }
+
 }

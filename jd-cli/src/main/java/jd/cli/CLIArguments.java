@@ -57,6 +57,18 @@ public class CLIArguments implements DecompilerOptions {
     @Parameter(names = { "--showLocation", "-l" }, description = "displays Location info in decompiled classes metadata part")
     private boolean showLocation;
 
+    @Parameter(names = { "--escapeUnicodeCharacters", "-eu" }, description = "escape unicode characters in decompiled classes")
+    private boolean escapeUnicodeCharacters = true;
+
+    @Parameter(names = { "--omitPrefixThis", "-op" }, description = "omit the prefix 'this' if possible in decompiled classes")
+    private boolean omitPrefixThis = true;
+
+    @Parameter(names = { "--realignLineNumbers", "-rl" }, description = "realign line numbers in decompiled classes")
+    private boolean realignLineNumbers = true;
+
+    @Parameter(names = { "--showDefaultConstructor", "-dc" }, description = "show default constructor in decompiled classes")
+    private boolean showDefaultConstructor;
+
     @Parameter(names = { "--logLevel", "-g" }, description = "takes [level] as parameter and sets it as the CLI log level. The value is should be one of: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF", converter = LogLevelConverter.class)
     private final Level logLevel = Level.INFO;
 
@@ -94,6 +106,22 @@ public class CLIArguments implements DecompilerOptions {
 
     public boolean isDiscardLocation() {
         return !showLocation;
+    }
+
+    public boolean isEscapeUnicodeCharactersEnabled() {
+        return escapeUnicodeCharacters;
+    }
+
+    public boolean isOmitPrefixThisEnabled() {
+        return omitPrefixThis;
+    }
+
+    public boolean isRealignLineNumbersEnabled() {
+        return realignLineNumbers;
+    }
+
+    public boolean isShowDefaultConstructorEnabled() {
+        return showDefaultConstructor;
     }
 
     public Level getLogLevel() {

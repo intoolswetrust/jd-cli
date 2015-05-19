@@ -47,6 +47,14 @@ public final class JavaDecompilerConstants {
 		public static final boolean DISCARD_LOCATION_DEFAULT = true;
 		public static final String SKIP_RESOURCES = "jd.skipResources";
 		public static final boolean SKIP_RESOURCES_DEFAULT = false;
+		public static final String ESCAPE_UNICODE_CHARACTERS = "jd.escapeUnicodeCharacters";
+		public static final boolean ESCAPE_UNICODE_CHARACTERS_DEFAULT = true;
+		public static final String OMIT_PREFIX_THIS = "jd.omitPrefixThis";
+		public static final boolean OMIT_PREFIX_THIS_DEFAULT = true;
+		public static final String REALIGN_LINE_NUMBERS = "jd.realignLineNumbers";
+		public static final boolean REALIGN_LINE_NUMBERS_DEFAULT = true;
+		public static final String SHOW_DEFAULT_CONSTRUCTOR = "jd.showDefaultConstructor";
+		public static final boolean SHOW_DEFAULT_CONSTRUCTOR_DEFAULT = false;
 	}
 
 }
