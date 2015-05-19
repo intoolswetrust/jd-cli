@@ -17,26 +17,14 @@ package jd.cli;
 
 import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import jd.core.IOUtils;
-import jd.core.JavaDecompiler;
-import jd.core.JavaDecompilerConstants;
-import jd.core.input.ClassFileInput;
-import jd.core.input.DirInput;
-import jd.core.input.JDInput;
-import jd.core.input.ZipFileInput;
+import jd.core.*;
+import jd.core.input.*;
 import jd.core.options.OptionsManager;
-import jd.core.output.DirOutput;
-import jd.core.output.JDOutput;
-import jd.core.output.MultiOutput;
-import jd.core.output.PrintStreamOutput;
-import jd.core.output.ZipOutput;
+import jd.core.output.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +49,7 @@ public class Main {
 		jCmd.setProgramName("java -jar jd-cli.jar");
 		jCmd.setUsageHead("jd-cli version "
 				+ JavaDecompilerConstants.VERSION
-				+ "\nThe jd-cli is a command line interface for the Java Decompiler (http://java.decompiler.free.fr/), "
+				+ "\nThe jd-cli is a command line interface for the Java Decompiler (http://jd.benow.ca/), "
 				+ "it decompile classes, zip archives "
 				+ "(.zip, .jar, .war, ...) and directories containing classes. Each supported input type has configured corresponding "
 				+ "default output type (class->screen, zip->zip, directory->directory). Man can simply override the output type "

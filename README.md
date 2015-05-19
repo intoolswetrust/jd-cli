@@ -7,7 +7,7 @@ and then from [JDCommandLine](https://github.com/betterphp/JDCommandLine).
 
 ### Requirements
 
-[Java runtime](http://java.com/en/download/) is required in version 7 or newer.
+[Java runtime](http://java.com/en/download/) is required in version 6 or newer.
 
 For an initial build you should install Git and Maven.
 
