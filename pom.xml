@@ -9,6 +9,7 @@
 
 	<properties>
 		<slf4j.version>1.7.5</slf4j.version>
+		<jd.version>0.7.1</jd.version>
 		<logback.version>1.0.13</logback.version>
 	</properties>
 
@@ -37,4 +38,11 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<repositories>
+		<repository>
+			<id>jd-core</id>
+			<url>https://raw.github.com/java-decompiler/mvn-repo/master</url>
+		</repository>
+	</repositories>
 </project>

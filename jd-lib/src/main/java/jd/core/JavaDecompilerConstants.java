@@ -28,9 +28,6 @@ public final class JavaDecompilerConstants {
 
 	public static final String UTF_8 = "UTF-8";
 
-	public static final String NATIVE_LIB_NAME = "libjd-intellij";
-	public static final String NATIVE_LIB_TMP_PREFIX = NATIVE_LIB_NAME + "-tmp";
-
 	public static final String CLASS_SUFFIX = ".class";
 	public static final int CLASS_SUFFIX_LEN = CLASS_SUFFIX.length();
 	public static final String JAVA_SUFFIX = ".java";
@@ -47,6 +44,16 @@ public final class JavaDecompilerConstants {
 		public static final boolean DISCARD_LOCATION_DEFAULT = true;
 		public static final String SKIP_RESOURCES = "jd.skipResources";
 		public static final boolean SKIP_RESOURCES_DEFAULT = false;
+		public static final String ESCAPE_UNICODE_CHARACTERS = "jd.escapeUnicodeCharacters";
+		public static final boolean ESCAPE_UNICODE_CHARACTERS_DEFAULT = false;
+		public static final String SHOW_PREFIX_THIS = "jd.showPrefixThis";
+		public static final boolean SHOW_PREFIX_THIS_DEFAULT = false;
+		public static final String REALIGN_LINE_NUMBERS = "jd.realignLineNumbers";
+		public static final boolean REALIGN_LINE_NUMBERS_DEFAULT = false;
+		public static final String SHOW_DEFAULT_CONSTRUCTOR = "jd.showDefaultConstructor";
+		public static final boolean SHOW_DEFAULT_CONSTRUCTOR_DEFAULT = false;
+		public static final String MERGE_EMPTY_LINES = "jd.mergeEmptyLines";
+		public static final boolean MERGE_EMPTY_LINES_DEFAULT = true;
 	}
 
 }

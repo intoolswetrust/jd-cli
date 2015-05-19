@@ -15,14 +15,7 @@
  */
 package jd.core.options;
 
-import static jd.core.JavaDecompilerConstants.SystemProperties.DISCARD_LOCATION;
-import static jd.core.JavaDecompilerConstants.SystemProperties.DISCARD_LOCATION_DEFAULT;
-import static jd.core.JavaDecompilerConstants.SystemProperties.LINE_NUMBERS;
-import static jd.core.JavaDecompilerConstants.SystemProperties.LINE_NUMBERS_DEFAULT;
-import static jd.core.JavaDecompilerConstants.SystemProperties.METADATA;
-import static jd.core.JavaDecompilerConstants.SystemProperties.METADATA_DEFAULT;
-import static jd.core.JavaDecompilerConstants.SystemProperties.SKIP_RESOURCES;
-import static jd.core.JavaDecompilerConstants.SystemProperties.SKIP_RESOURCES_DEFAULT;
+import static jd.core.JavaDecompilerConstants.SystemProperties.*;
 import jd.core.IOUtils;
 
 /**
@@ -48,5 +41,25 @@ public class SystemPropertiesOptions implements DecompilerOptions {
 
 	public boolean isSkipResources() {
 		return IOUtils.getBoolean(SKIP_RESOURCES, SKIP_RESOURCES_DEFAULT);
+	}
+
+	public boolean isEscapeUnicodeCharacters() {
+		return IOUtils.getBoolean(ESCAPE_UNICODE_CHARACTERS, ESCAPE_UNICODE_CHARACTERS_DEFAULT);
+	}
+
+	public boolean isShowPrefixThis() {
+		return IOUtils.getBoolean(SHOW_PREFIX_THIS, SHOW_PREFIX_THIS_DEFAULT);
+	}
+
+	public boolean isRealignLineNumbers() {
+		return IOUtils.getBoolean(REALIGN_LINE_NUMBERS, REALIGN_LINE_NUMBERS_DEFAULT);
+	}
+
+	public boolean isShowDefaultConstructor() {
+		return IOUtils.getBoolean(SHOW_DEFAULT_CONSTRUCTOR, SHOW_DEFAULT_CONSTRUCTOR_DEFAULT);
+	}
+
+	public boolean isMergeEmptyLines() {
+		return IOUtils.getBoolean(MERGE_EMPTY_LINES, MERGE_EMPTY_LINES_DEFAULT);
 	}
 }

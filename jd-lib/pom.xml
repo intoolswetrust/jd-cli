@@ -41,25 +41,6 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
-				<executions>
-					<execution>
-						<phase>generate-resources</phase>
-						<id>download-libs</id>
-						<configuration>
-							<target>
-								<ant antfile="ant-prepare-binaries.xml" />
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -68,5 +49,21 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>jd</groupId>
+			<artifactId>jd-core</artifactId>
+			<version>${jd.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jd</groupId>
+			<artifactId>jd-common</artifactId>
+			<version>${jd.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jd</groupId>
+			<artifactId>jd-common-ide</artifactId>
+			<version>${jd.version}</version>
+		</dependency>
 	</dependencies>
+
 </project>

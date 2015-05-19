@@ -29,4 +29,14 @@ public interface DecompilerOptions {
 	boolean isDisplayMetadata();
 
 	boolean isDiscardLocation();
+
+	boolean isEscapeUnicodeCharacters();
+
+	boolean isShowPrefixThis();
+
+	boolean isRealignLineNumbers();
+
+	boolean isShowDefaultConstructor();
+
+	boolean isMergeEmptyLines();
 }

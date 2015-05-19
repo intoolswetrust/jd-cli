@@ -20,9 +20,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import jd.core.IOUtils;
+import jd.core.JavaDecompiler;
 import jd.core.options.OptionsManager;
 import jd.core.output.JDOutput;
-import jd.ide.intellij.JavaDecompiler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

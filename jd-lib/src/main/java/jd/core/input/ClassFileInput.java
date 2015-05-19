@@ -15,8 +15,8 @@
  */
 package jd.core.input;
 
+import jd.core.JavaDecompiler;
 import jd.core.output.JDOutput;
-import jd.ide.intellij.JavaDecompiler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,28 +28,30 @@ import org.slf4j.LoggerFactory;
  */
 public class ClassFileInput extends AbstractFileJDInput {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClassFileInput.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ClassFileInput.class);
 
-    public ClassFileInput(String path) {
-        super(path);
-    }
+	public ClassFileInput(String path) {
+		super(path);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see jd.core.input.JDInput#decompile(jd.ide.intellij.JavaDecompiler, jd.core.output.JDOutput)
-     */
-    @Override
-    public void decompile(JavaDecompiler javaDecompiler, JDOutput jdOutput) {
-        if (javaDecompiler == null || jdOutput == null) {
-            LOGGER.warn("Decompiler or JDOutput are null");
-            return;
-        }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see jd.core.input.JDInput#decompile(jd.core.JavaDecompiler,
+	 * jd.core.output.JDOutput)
+	 */
+	@Override
+	public void decompile(JavaDecompiler javaDecompiler, JDOutput jdOutput) {
+		if (javaDecompiler == null || jdOutput == null) {
+			LOGGER.warn("Decompiler or JDOutput are null");
+			return;
+		}
 
-        jdOutput.init("");
-        final String name = file.getName();
-        LOGGER.debug("Decompiling single class file {}", name);
-        jdOutput.processClass(cutClassSuffix(name), javaDecompiler.decompileClass(file.getAbsoluteFile().getParent(), name));
-        jdOutput.commit();
-    }
+		jdOutput.init("");
+		final String name = file.getName();
+		LOGGER.debug("Decompiling single class file {}", name);
+		jdOutput.processClass(cutClassSuffix(name),
+				javaDecompiler.decompileClass(file.getAbsoluteFile().getParent(), name));
+		jdOutput.commit();
+	}
 }
