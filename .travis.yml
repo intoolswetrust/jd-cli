@@ -1,0 +1,12 @@
+language: java
+jdk: oraclejdk8
+deploy:
+  provider: releases
+  api_key:
+    secure: TpjXmidlAsJcIV6uNtOIjWLO/38UG09lDE7gWEy2ZJas426fsStWUhnClc+A4F3bZ/skn0Vxh7v33PQ4I9nWYDuf4QYAv9k7XPSCe81du/QmCw1y9yEyDm8EpWXg+in/bFOU3cawXq4zZwxoBHj89yod1a0eU8yFODxfYgtB15Tbe70qlctWMJPKZJLqcBdgL36nAPghBl9CkovSPxiASkuBUQY3JtGtCtWpkJsHsniYYceDEm9tBI8kGV3ig9UnHPIbGakRW+373V/+TIBOsRDZsKmuw6btos6nXBnwn98/FfvjEiDFUVJUSmGoGyIUdP6s10k9cm+gE4AKhu9sc7xd1XzFthx20j/fQCKP1iU0GxFeIieGy3sbSC5bZMqEh8mSsuUoEWHg8hUzeI/H6bxAValj1EOdFaGcGDcLhKexoro86LaeAeT7jCo8Q+CD8mz+uwxpwOaKcf8K5gSRS80GJL3Dr/F8xBZsEIRNl/DYRsgURS8aeD43jtdgS/ryIPAcviWiiGnM/qd0HnUJkgI47l0BRpuoSVA+F6iVRq2Kg+iYe1Z4W2OSem1ouny2BtaUAoPUAECmd/J/+kXUQVSEckpnkVBP4HgemOA10wyScuyC0bBRVjNyfJQhgMsjcDguAUtdkDbYugHWPKwdKh958P+nErR+yCpbcOC+SZs=
+  skip_cleanup: true
+  file: 
+    - jd-cli-*.zip
+    - jd-cli-*.tar.gz
+  on:
+    tags: true
