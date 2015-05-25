@@ -1,18 +1,19 @@
-/*
- * Copyright 2013 kwart, betterphp, nviennot
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+/*******************************************************************************
+ * Copyright (C) 2015 Josef Cacek
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
 package jd.cli;
 
 import static org.slf4j.Logger.ROOT_LOGGER_NAME;
@@ -49,6 +50,7 @@ public class Main {
 		jCmd.setProgramName("java -jar jd-cli.jar");
 		jCmd.setUsageHead("jd-cli version "
 				+ JavaDecompilerConstants.VERSION
+				+ " - Copyright (C) 2015 Josef Cacek\n"
 				+ "\nThe jd-cli is a command line interface for the Java Decompiler (http://jd.benow.ca/), "
 				+ "it decompile classes, zip archives "
 				+ "(.zip, .jar, .war, ...) and directories containing classes. Each supported input type has configured corresponding "
@@ -61,7 +63,11 @@ public class Main {
 				+ " Decompiles app.jar to app.src.jar; It doesn't copy resources to the output jar, the decompiled classes contain "
 				+ "line numbers as comments and the jd-cli prints the most verbose debug information about decompilation\n\n" //
 				+ "$ java -jar jd-cli.jar myapp.jar -od decompiled -oc\n" //
-				+ " Decompiles content of myapp.jar to directory named 'decompiled' and also on a screen");
+				+ " Decompiles content of myapp.jar to directory named 'decompiled' and also on a screen\n" //
+				+ "\n" //
+				+ "This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it " //
+				+ "under GPLv3 conditions." //
+		);
 
 		setLoggingLevel(cliArguments.getLogLevel());
 

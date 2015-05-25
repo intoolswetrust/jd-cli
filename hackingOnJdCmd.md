@@ -1,18 +1,32 @@
 # jd-cmd - Command line Java Decompiler
 
-jd-cmd is a command line Java Decompiler which uses [JD Core from Java Decompiler](http://jd.benow.ca/) project. 
+## Build the software yourself
 
-## Download
+You should have [git](http://git-scm.com/) installed
 
-Find latest bits in **[GitHub Releases](https://github.com/kwart/jd-cmd/releases/latest)**.
+	$ git clone git://github.com/kwart/jd-cmd.git
 
-## Requirements
+or you can download [current sources as a zip file](https://github.com/kwart/jd-cmd/archive/master.zip)
 
-[Java runtime](http://java.com/en/download/) is required in version 6 or newer.
+Then you need to have [Maven 3.*](http://maven.apache.org/) installed
 
-## Usage - Command line
+	$ cd jd-cmd
+	$ mvn clean package
 
-You can use the `jd-cli.bat` (Windows) or `jd-cli` (Linux/Unix) scripts to run the the JAR file.
+Test it by running:
+	
+	$ java -jar jd-cli/target/jd-cli.jar
+
+## Usage
+
+The **jd-cmd** comes with 2 modules:
+
+ 1. **jd-cli** command line interface for the decompiler. It's uses jd-lib module.
+ 1. **jd-lib** core API functionality.
+
+### Command line
+
+Use all-in-one **jd-cli** jar located in `jd-cli/target/jd-cli.jar`
 
     Usage: java -jar jd-cli.jar [options] [Files to decompile]
       Options:
@@ -60,10 +74,26 @@ You can use the `jd-cli.bat` (Windows) or `jd-cli` (Linux/Unix) scripts to run t
            skips processing resources
            Default: false
 
-## Credits
 
-This project was originally forked from [JDCommandLine](https://github.com/betterphp/JDCommandLine). 
+### Programmatically
 
-## License
+Add `jd-lib` as a dependency for your App and then do something like
 
-* jd-cmd is licensed under [GPLv3](http://www.gnu.org/licenses/gpl-3.0.html) as the original JD-Core library.
+	import java.io.File;
+	import jd.core.input.JDInput;
+	import jd.core.input.ZipFileInput;
+	import jd.core.output.DirOutput;
+	import jd.core.output.JDOutput;
+	import jd.core.JavaDecompiler;
+	
+	public class App {
+		public static void main(String[] args) {
+			JavaDecompiler javaDecompiler = new JavaDecompiler();
+			//choose input plugin for your decompiled file (class, zip, directory)
+			JDInput jdIn = new ZipFileInput("path/to/myFavorityLib.jar");
+			//choose output plugin (zip, directory, console)
+			JDOutput jdOut = new DirOutput(new File("/tmp/decompiled"));
+			//decompile
+			jdIn.decompile(javaDecompiler, jdOut);
+		}
+	}

@@ -25,5 +25,12 @@
 				<include>jd-cli.bat</include>
 			</includes>
 		</fileSet>
+		<fileSet>
+			<directory>..</directory>
+			<outputDirectory />
+			<includes>
+				<include>LICENSE.txt</include>
+			</includes>
+		</fileSet>
 	</fileSets>
 </assembly>
