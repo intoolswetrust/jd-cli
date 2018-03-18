@@ -20,47 +20,46 @@ import static jd.core.JavaDecompilerConstants.SystemProperties.*;
 import jd.core.IOUtils;
 
 /**
- * {@link DecompilerOptions} implementation, which reads values from System
- * properties.
- * 
+ * {@link DecompilerOptions} implementation, which reads values from System properties.
+ *
  * @author Josef Cacek
  * @see jd.core.JavaDecompilerConstants.SystemProperties
  */
 public class SystemPropertiesOptions implements DecompilerOptions {
 
-	public boolean isDisplayLineNumbers() {
-		return IOUtils.getBoolean(LINE_NUMBERS, LINE_NUMBERS_DEFAULT);
-	}
+    public boolean isDisplayLineNumbers() {
+        return IOUtils.getBoolean(LINE_NUMBERS, LINE_NUMBERS_DEFAULT);
+    }
 
-	public boolean isDisplayMetadata() {
-		return IOUtils.getBoolean(METADATA, METADATA_DEFAULT);
-	}
+    public boolean isDisplayMetadata() {
+        return IOUtils.getBoolean(METADATA, METADATA_DEFAULT);
+    }
 
-	public boolean isDiscardLocation() {
-		return IOUtils.getBoolean(DISCARD_LOCATION, DISCARD_LOCATION_DEFAULT);
-	}
+    public boolean isDiscardLocation() {
+        return IOUtils.getBoolean(DISCARD_LOCATION, DISCARD_LOCATION_DEFAULT);
+    }
 
-	public boolean isSkipResources() {
-		return IOUtils.getBoolean(SKIP_RESOURCES, SKIP_RESOURCES_DEFAULT);
-	}
+    public boolean isSkipResources() {
+        return IOUtils.getBoolean(SKIP_RESOURCES, SKIP_RESOURCES_DEFAULT);
+    }
 
-	public boolean isEscapeUnicodeCharacters() {
-		return IOUtils.getBoolean(ESCAPE_UNICODE_CHARACTERS, ESCAPE_UNICODE_CHARACTERS_DEFAULT);
-	}
+    public boolean isEscapeUnicodeCharacters() {
+        return IOUtils.getBoolean(ESCAPE_UNICODE_CHARACTERS, ESCAPE_UNICODE_CHARACTERS_DEFAULT);
+    }
 
-	public boolean isShowPrefixThis() {
-		return IOUtils.getBoolean(SHOW_PREFIX_THIS, SHOW_PREFIX_THIS_DEFAULT);
-	}
+    public boolean isShowPrefixThis() {
+        return IOUtils.getBoolean(SHOW_PREFIX_THIS, SHOW_PREFIX_THIS_DEFAULT);
+    }
 
-	public boolean isRealignLineNumbers() {
-		return IOUtils.getBoolean(REALIGN_LINE_NUMBERS, REALIGN_LINE_NUMBERS_DEFAULT);
-	}
+    public boolean isRealignLineNumbers() {
+        return IOUtils.getBoolean(REALIGN_LINE_NUMBERS, REALIGN_LINE_NUMBERS_DEFAULT);
+    }
 
-	public boolean isShowDefaultConstructor() {
-		return IOUtils.getBoolean(SHOW_DEFAULT_CONSTRUCTOR, SHOW_DEFAULT_CONSTRUCTOR_DEFAULT);
-	}
+    public boolean isShowDefaultConstructor() {
+        return IOUtils.getBoolean(SHOW_DEFAULT_CONSTRUCTOR, SHOW_DEFAULT_CONSTRUCTOR_DEFAULT);
+    }
 
-	public boolean isMergeEmptyLines() {
-		return IOUtils.getBoolean(MERGE_EMPTY_LINES, MERGE_EMPTY_LINES_DEFAULT);
-	}
+    public boolean isMergeEmptyLines() {
+        return IOUtils.getBoolean(MERGE_EMPTY_LINES, MERGE_EMPTY_LINES_DEFAULT);
+    }
 }

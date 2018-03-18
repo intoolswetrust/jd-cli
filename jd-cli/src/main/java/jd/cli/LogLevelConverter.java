@@ -25,9 +25,9 @@ import com.beust.jcommander.IStringConverter;
  */
 public class LogLevelConverter implements IStringConverter<Level> {
 
-	@Override
-	public Level convert(String value) {
-		return Level.toLevel(value, Level.INFO);
-	}
+    @Override
+    public Level convert(String value) {
+        return Level.toLevel(value, Level.INFO);
+    }
 
 }

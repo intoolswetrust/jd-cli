@@ -21,10 +21,10 @@ import jd.core.output.JDOutput;
 
 /**
  * This is an interface for decompiler input plugins.
- * 
+ *
  * @author Josef Cacek
  */
 public interface JDInput {
 
-	void decompile(JavaDecompiler javaDecompiler, JDOutput jdOutput);
+    void decompile(JavaDecompiler javaDecompiler, JDOutput jdOutput);
 }

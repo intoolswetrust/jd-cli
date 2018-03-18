@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Abstract parent for file-based input plugins (JAR, directory, ...).
- * 
+ *
  * @author Josef Cacek
  */
 public abstract class AbstractFileJDInput implements JDInput {
@@ -37,7 +37,7 @@ public abstract class AbstractFileJDInput implements JDInput {
 
     /**
      * Constructor based on an existing file path.
-     * 
+     *
      * @param filePath path to input file
      * @throws IllegalArgumentException path doesn't denote an existing file
      */
@@ -51,7 +51,7 @@ public abstract class AbstractFileJDInput implements JDInput {
 
     /**
      * Returns true if given file path ends with ".class"
-     * 
+     *
      * @param filePath
      * @return
      */
@@ -61,7 +61,7 @@ public abstract class AbstractFileJDInput implements JDInput {
 
     /**
      * Returns true if given file path ends with ".class" and it contains "$" in the name.
-     * 
+     *
      * @param filePath
      * @return
      */
@@ -71,7 +71,7 @@ public abstract class AbstractFileJDInput implements JDInput {
 
     /**
      * Removes ".class".length() number of character from the end of the input stream.
-     * 
+     *
      * @param classFilePath
      * @return
      */

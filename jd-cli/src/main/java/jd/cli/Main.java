@@ -49,173 +49,169 @@ import jd.core.output.ZipOutput;
  */
 public class Main {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
-
-	/**
-	 * The {@link #main(String[])}!
-	 *
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		final CLIArguments cliArguments = new CLIArguments();
-		final ExtCommander jCmd = new ExtCommander(cliArguments);
-		jCmd.setAcceptUnknownOptions(true);
-		jCmd.parse(args);
-		jCmd.setProgramName("java -jar jd-cli.jar");
-		jCmd.setUsageHead("jd-cli version "
-				+ JavaDecompilerConstants.VERSION
-				+ " - Copyright (C) 2015 Josef Cacek\n"
-				+ "\nThe jd-cli is a command line interface for the Java Decompiler (http://jd.benow.ca/), "
-				+ "it decompile classes, zip archives "
-				+ "(.zip, .jar, .war, ...) and directories containing classes. Each supported input type has configured corresponding "
-				+ "default output type (class->screen, zip->zip, directory->directory). Man can simply override the output type "
-				+ "by specifying a command line parameter (-oc, -od, -oz). Multiple output type parameters can be used at once.");
-		jCmd.setUsageTail("Examples:\n\n" //
-				+ "$ java -jar jd-cli.jar HelloWorld.class\n" //
-				+ " Shows decompiled class on a screen\n\n" //
-				+ "$ java -jar jd-cli.jar --skipResources -n -g ALL app.jar\n" //
-				+ " Decompiles app.jar to app.src.jar; It doesn't copy resources to the output jar, the decompiled classes contain "
-				+ "line numbers as comments and the jd-cli prints the most verbose debug information about decompilation\n\n" //
-				+ "$ java -jar jd-cli.jar myapp.jar -od decompiled -oc\n" //
-				+ " Decompiles content of myapp.jar to directory named 'decompiled' and also on a screen\n" //
-				+ "\n" //
-				+ "This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it " //
-				+ "under GPLv3 conditions." //
-		);
-
-		setLoggingLevel(cliArguments.getLogLevel());
-
-		if (jCmd.getUnknownOptions().contains("-")) {
-		    cliArguments.getFiles().add("-");
-		}
-
-		if (cliArguments.getFiles().isEmpty()) {
-			jCmd.usage();
-			System.exit(1);
-		}
-
-		OptionsManager.setOptions(cliArguments);
-
-		JDOutput outputPlugin = null;
-
-		if (cliArguments.isOutputPluginSpecified()) {
-			List<JDOutput> outPlugins = new ArrayList<JDOutput>();
-			if (cliArguments.isConsoleOut()) {
-				outPlugins.add(new PrintStreamOutput(System.out));
-			}
-			final File zipFile = cliArguments.getZipOutFile();
-			if (zipFile != null) {
-				try {
-					outPlugins.add(new ZipOutput(zipFile));
-				} catch (Exception e) {
-					LOGGER.warn("Unable to create zip output", e);
-				}
-			}
-			final File dir = cliArguments.getDirOutFile();
-			if (dir != null) {
-				try {
-					outPlugins.add(new DirOutput(dir));
-				} catch (Exception e) {
-					LOGGER.warn("Unable to create directory output", e);
-				}
-			}
-			if (outPlugins.size() > 0) {
-				outputPlugin = new MultiOutput(outPlugins);
-			}
-		}
-
-		final JavaDecompiler javaDecompiler = new JavaDecompiler();
-
-		boolean decompiled = false;
-		for (String path : cliArguments.getFiles()) {
-		    File file;
-			if ("-".equals(path)) {
-			    LOGGER.info("Decompiling from STD_IN");
-			    file = readSystemIn();
-			} else {
-			    LOGGER.info("Decompiling {}", path);
-			    file =  new File(path);
-			}
-
-			if (file.exists()) {
-				try {
-					InputOutputPair inOut = getInOutPlugins(file, outputPlugin);
-					inOut.getJdInput().decompile(javaDecompiler, inOut.getJdOutput());
-					decompiled = true;
-				} catch (Exception e) {
-					LOGGER.warn("Problem occured during instantiating plugins", e);
-				}
-			} else {
-				LOGGER.warn("Input file {} doesn't exist", file);
-			}
-		}
-
-		if (!decompiled) {
-			jCmd.usage();
-			System.exit(2);
-		}
-
-	}
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     /**
-	 * Helper method which creates correct {@link JDInput} instance for the
-	 * input file and if outPlugin is null, then provides a default
-	 * {@link JDOutput} instance for the given input file type too.
-	 *
-	 * @param inputFile
-	 * @param outPlugin
-	 * @return
-	 * @throws NullPointerException
-	 * @throws IOException
-	 */
-	public static InputOutputPair getInOutPlugins(final File inputFile, JDOutput outPlugin)
-			throws NullPointerException, IOException {
-		JDInput jdIn = null;
-		JDOutput jdOut = null;
-		if (inputFile.isDirectory()) {
-			jdIn = new DirInput(inputFile.getPath());
-			jdOut = new DirOutput(new File(inputFile.getName() + ".src"));
-		} else {
-			DataInputStream dis = new DataInputStream(new FileInputStream(inputFile));
-			int magic = 0;
-			try {
-				magic = dis.readInt();
-			} finally {
-				IOUtils.closeQuietly(dis);
-			}
-			switch (magic) {
-			case JavaDecompilerConstants.MAGIC_NR_CLASS_FILE:
-				jdIn = new ClassFileInput(inputFile.getPath());
-				jdOut = new PrintStreamOutput(System.out);
-				break;
-			case JavaDecompilerConstants.MAGIC_NR_ZIP_FILE:
-				jdIn = new ZipFileInput(inputFile.getPath());
-				String decompiledZipName = inputFile.getName();
-				int suffixPos = decompiledZipName.lastIndexOf(".");
-				if (suffixPos >= 0) {
-					decompiledZipName = decompiledZipName.substring(0, suffixPos) + ".src"
-							+ decompiledZipName.substring(suffixPos);
-				} else {
-					decompiledZipName = decompiledZipName + ".src";
-				}
-				jdOut = new ZipOutput(new File(decompiledZipName));
-				break;
-			default:
-				throw new IllegalArgumentException("File type of was not recognized: " + inputFile);
-			}
-		}
-		return new InputOutputPair(jdIn, outPlugin, jdOut);
-	}
+     * The {@link #main(String[])}!
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
+        final CLIArguments cliArguments = new CLIArguments();
+        final ExtCommander jCmd = new ExtCommander(cliArguments);
+        jCmd.setAcceptUnknownOptions(true);
+        jCmd.parse(args);
+        jCmd.setProgramName("java -jar jd-cli.jar");
+        jCmd.setUsageHead("jd-cli version " + JavaDecompilerConstants.VERSION + " - Copyright (C) 2015 Josef Cacek\n"
+                + "\nThe jd-cli is a command line interface for the Java Decompiler (http://jd.benow.ca/), "
+                + "it decompile classes, zip archives "
+                + "(.zip, .jar, .war, ...) and directories containing classes. Each supported input type has configured corresponding "
+                + "default output type (class->screen, zip->zip, directory->directory). Man can simply override the output type "
+                + "by specifying a command line parameter (-oc, -od, -oz). Multiple output type parameters can be used at once.");
+        jCmd.setUsageTail("Examples:\n\n" //
+                + "$ java -jar jd-cli.jar HelloWorld.class\n" //
+                + " Shows decompiled class on a screen\n\n" //
+                + "$ java -jar jd-cli.jar --skipResources -n -g ALL app.jar\n" //
+                + " Decompiles app.jar to app.src.jar; It doesn't copy resources to the output jar, the decompiled classes contain "
+                + "line numbers as comments and the jd-cli prints the most verbose debug information about decompilation\n\n" //
+                + "$ java -jar jd-cli.jar myapp.jar -od decompiled -oc\n" //
+                + " Decompiles content of myapp.jar to directory named 'decompiled' and also on a screen\n" //
+                + "\n" //
+                + "This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it " //
+                + "under GPLv3 conditions." //
+        );
 
-	/**
-	 * Configures Logback log level.
-	 *
-	 * @param level
-	 */
-	private static void setLoggingLevel(final Level level) {
-		((ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ROOT_LOGGER_NAME)).setLevel(level);
-	}
+        setLoggingLevel(cliArguments.getLogLevel());
 
+        if (jCmd.getUnknownOptions().contains("-")) {
+            cliArguments.getFiles().add("-");
+        }
+
+        if (cliArguments.getFiles().isEmpty()) {
+            jCmd.usage();
+            System.exit(1);
+        }
+
+        OptionsManager.setOptions(cliArguments);
+
+        JDOutput outputPlugin = null;
+
+        if (cliArguments.isOutputPluginSpecified()) {
+            List<JDOutput> outPlugins = new ArrayList<JDOutput>();
+            if (cliArguments.isConsoleOut()) {
+                outPlugins.add(new PrintStreamOutput(System.out));
+            }
+            final File zipFile = cliArguments.getZipOutFile();
+            if (zipFile != null) {
+                try {
+                    outPlugins.add(new ZipOutput(zipFile));
+                } catch (Exception e) {
+                    LOGGER.warn("Unable to create zip output", e);
+                }
+            }
+            final File dir = cliArguments.getDirOutFile();
+            if (dir != null) {
+                try {
+                    outPlugins.add(new DirOutput(dir));
+                } catch (Exception e) {
+                    LOGGER.warn("Unable to create directory output", e);
+                }
+            }
+            if (outPlugins.size() > 0) {
+                outputPlugin = new MultiOutput(outPlugins);
+            }
+        }
+
+        final JavaDecompiler javaDecompiler = new JavaDecompiler();
+
+        boolean decompiled = false;
+        for (String path : cliArguments.getFiles()) {
+            File file;
+            if ("-".equals(path)) {
+                LOGGER.info("Decompiling from STD_IN");
+                file = readSystemIn();
+            } else {
+                LOGGER.info("Decompiling {}", path);
+                file = new File(path);
+            }
+
+            if (file.exists()) {
+                try {
+                    InputOutputPair inOut = getInOutPlugins(file, outputPlugin);
+                    inOut.getJdInput().decompile(javaDecompiler, inOut.getJdOutput());
+                    decompiled = true;
+                } catch (Exception e) {
+                    LOGGER.warn("Problem occured during instantiating plugins", e);
+                }
+            } else {
+                LOGGER.warn("Input file {} doesn't exist", file);
+            }
+        }
+
+        if (!decompiled) {
+            jCmd.usage();
+            System.exit(2);
+        }
+
+    }
+
+    /**
+     * Helper method which creates correct {@link JDInput} instance for the input file and if outPlugin is null, then provides a
+     * default {@link JDOutput} instance for the given input file type too.
+     *
+     * @param inputFile
+     * @param outPlugin
+     * @return
+     * @throws NullPointerException
+     * @throws IOException
+     */
+    public static InputOutputPair getInOutPlugins(final File inputFile, JDOutput outPlugin)
+            throws NullPointerException, IOException {
+        JDInput jdIn = null;
+        JDOutput jdOut = null;
+        if (inputFile.isDirectory()) {
+            jdIn = new DirInput(inputFile.getPath());
+            jdOut = new DirOutput(new File(inputFile.getName() + ".src"));
+        } else {
+            DataInputStream dis = new DataInputStream(new FileInputStream(inputFile));
+            int magic = 0;
+            try {
+                magic = dis.readInt();
+            } finally {
+                IOUtils.closeQuietly(dis);
+            }
+            switch (magic) {
+                case JavaDecompilerConstants.MAGIC_NR_CLASS_FILE:
+                    jdIn = new ClassFileInput(inputFile.getPath());
+                    jdOut = new PrintStreamOutput(System.out);
+                    break;
+                case JavaDecompilerConstants.MAGIC_NR_ZIP_FILE:
+                    jdIn = new ZipFileInput(inputFile.getPath());
+                    String decompiledZipName = inputFile.getName();
+                    int suffixPos = decompiledZipName.lastIndexOf(".");
+                    if (suffixPos >= 0) {
+                        decompiledZipName = decompiledZipName.substring(0, suffixPos) + ".src"
+                                + decompiledZipName.substring(suffixPos);
+                    } else {
+                        decompiledZipName = decompiledZipName + ".src";
+                    }
+                    jdOut = new ZipOutput(new File(decompiledZipName));
+                    break;
+                default:
+                    throw new IllegalArgumentException("File type of was not recognized: " + inputFile);
+            }
+        }
+        return new InputOutputPair(jdIn, outPlugin, jdOut);
+    }
+
+    /**
+     * Configures Logback log level.
+     *
+     * @param level
+     */
+    private static void setLoggingLevel(final Level level) {
+        ((ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ROOT_LOGGER_NAME)).setLevel(level);
+    }
 
     /**
      * Creates a temporary file from STD_IN input.

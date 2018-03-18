@@ -33,14 +33,14 @@ public interface JDOutput {
 
     /**
      * Initialize the plugin for the given input basePath. Resources can be reserved here.
-     * 
+     *
      * @param basePath path to decompiled resource(s) (e.g. directory, jar file, ...)
      */
     void init(String basePath);
 
     /**
      * Handle a decompiled class.
-     * 
+     *
      * @param classPath a class path within a basePath without ".class" extension (e.g. "java/lang/String")
      * @param decompiledSrc decompiled source code.
      */
@@ -48,7 +48,7 @@ public interface JDOutput {
 
     /**
      * Handle resource from
-     * 
+     *
      * @param filePath a path to a resource within a basePath (e.g. "org/myproject/translations/messages_en.properties")
      * @param is the resource input stream
      */

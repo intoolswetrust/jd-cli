@@ -18,7 +18,7 @@ package jd.core.parser;
 
 /**
  * Exception class used to report problems during class file parsing.
- * 
+ *
  * @author Josef Cacek
  */
 public class ClassFormatException extends Exception {

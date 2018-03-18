@@ -18,7 +18,7 @@ package jd.core.options;
 
 /**
  * Options manager which helps to configure decompiler options in a threaded environment.
- * 
+ *
  * @author Josef Cacek
  */
 public class OptionsManager {
@@ -39,7 +39,7 @@ public class OptionsManager {
 
     /**
      * Stores decompiler options. If null is provided then options are removed.
-     * 
+     *
      * @param options
      */
     public static void setOptions(DecompilerOptions options) {
@@ -52,7 +52,7 @@ public class OptionsManager {
 
     /**
      * Returns options used for the current thread.
-     * 
+     *
      * @return
      */
     public static DecompilerOptions getOptions() {

@@ -16,7 +16,6 @@
  *******************************************************************************/
 package jd.ide.intellij;
 
-
 /**
  * for backward compatibility only
  */

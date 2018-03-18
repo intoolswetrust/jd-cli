@@ -24,35 +24,34 @@ import org.slf4j.LoggerFactory;
 
 /**
  * {@link JDInput} implementation which takes a single class file as an input.
- * 
+ *
  * @author Josef Cacek
  */
 public class ClassFileInput extends AbstractFileJDInput {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ClassFileInput.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClassFileInput.class);
 
-	public ClassFileInput(String path) {
-		super(path);
-	}
+    public ClassFileInput(String path) {
+        super(path);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jd.core.input.JDInput#decompile(jd.core.JavaDecompiler,
-	 * jd.core.output.JDOutput)
-	 */
-	@Override
-	public void decompile(JavaDecompiler javaDecompiler, JDOutput jdOutput) {
-		if (javaDecompiler == null || jdOutput == null) {
-			LOGGER.warn("Decompiler or JDOutput are null");
-			return;
-		}
+    /*
+     * (non-Javadoc)
+     *
+     * @see jd.core.input.JDInput#decompile(jd.core.JavaDecompiler, jd.core.output.JDOutput)
+     */
+    @Override
+    public void decompile(JavaDecompiler javaDecompiler, JDOutput jdOutput) {
+        if (javaDecompiler == null || jdOutput == null) {
+            LOGGER.warn("Decompiler or JDOutput are null");
+            return;
+        }
 
-		jdOutput.init("");
-		final String name = file.getName();
-		LOGGER.debug("Decompiling single class file {}", name);
+        jdOutput.init("");
+        final String name = file.getName();
+        LOGGER.debug("Decompiling single class file {}", name);
         String nameWithoutClassSfx = isClassFile(name) ? cutClassSuffix(name) : name;
         jdOutput.processClass(nameWithoutClassSfx, javaDecompiler.decompileClass(file.getAbsoluteFile().getParent(), name));
-		jdOutput.commit();
-	}
+        jdOutput.commit();
+    }
 }

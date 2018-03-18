@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Simple class file parser, which reads only a header part of a class and extracts class version info and class name.
- * 
+ *
  * @author Josef Cacek
  */
 public final class SimpleClassParser {
@@ -53,7 +53,7 @@ public final class SimpleClassParser {
     /**
      * Constructor which parses basic class information from the given stream. It stops reading right after className index is
      * found.
-     * 
+     *
      * @param is Input stream
      */
     public SimpleClassParser(final InputStream is) throws IOException, ClassFormatException {
@@ -134,7 +134,7 @@ public final class SimpleClassParser {
 
     /**
      * Returns the class major version.
-     * 
+     *
      * @return major
      */
     public int getMajor() {
@@ -143,7 +143,7 @@ public final class SimpleClassParser {
 
     /**
      * Returns the class minor version.
-     * 
+     *
      * @return minor
      */
     public int getMinor() {
@@ -152,7 +152,7 @@ public final class SimpleClassParser {
 
     /**
      * Returns class name
-     * 
+     *
      * @return
      */
     public String getClassName() {
@@ -161,7 +161,7 @@ public final class SimpleClassParser {
 
     /**
      * Returns class version in a human friendly way e.g. "49.0 (Java 1.5)"
-     * 
+     *
      * @return
      */
     public String getVersionString() {

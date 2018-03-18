@@ -20,30 +20,28 @@ import jd.core.options.DecompilerOptions;
 import jd.core.options.OptionsManager;
 
 /**
- * Abstract parent with more or less empty implementation of
- * {@link #init(String)} and {@link #commit()} methods.
+ * Abstract parent with more or less empty implementation of {@link #init(String)} and {@link #commit()} methods.
  */
 public abstract class AbstractJDOutput implements JDOutput {
 
-	protected boolean skipResources;
+    protected boolean skipResources;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jd.core.output.JDOutput#init(java.lang.String)
-	 */
-	public void init(String basePath) {
-		final DecompilerOptions options = OptionsManager.getOptions();
-		skipResources = options.isSkipResources();
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see jd.core.output.JDOutput#init(java.lang.String)
+     */
+    public void init(String basePath) {
+        final DecompilerOptions options = OptionsManager.getOptions();
+        skipResources = options.isSkipResources();
+    }
 
-	/**
-	 * Empty implementation of {@link JDOutput#commit()}. Child classes can
-	 * override the behavior.
-	 * 
-	 * @see jd.core.output.JDOutput#commit()
-	 */
-	public void commit() {
-	}
+    /**
+     * Empty implementation of {@link JDOutput#commit()}. Child classes can override the behavior.
+     *
+     * @see jd.core.output.JDOutput#commit()
+     */
+    public void commit() {
+    }
 
 }

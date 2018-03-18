@@ -18,26 +18,26 @@ package jd.core.options;
 
 /**
  * Interface representing decompiler options.
- * 
+ *
  * @author Josef Cacek
  */
 public interface DecompilerOptions {
 
-	boolean isSkipResources();
+    boolean isSkipResources();
 
-	boolean isDisplayLineNumbers();
+    boolean isDisplayLineNumbers();
 
-	boolean isDisplayMetadata();
+    boolean isDisplayMetadata();
 
-	boolean isDiscardLocation();
+    boolean isDiscardLocation();
 
-	boolean isEscapeUnicodeCharacters();
+    boolean isEscapeUnicodeCharacters();
 
-	boolean isShowPrefixThis();
+    boolean isShowPrefixThis();
 
-	boolean isRealignLineNumbers();
+    boolean isRealignLineNumbers();
 
-	boolean isShowDefaultConstructor();
+    boolean isShowDefaultConstructor();
 
-	boolean isMergeEmptyLines();
+    boolean isMergeEmptyLines();
 }

@@ -24,26 +24,26 @@ import jd.core.output.JDOutput;
  */
 public class InputOutputPair {
 
-	private final JDInput jdInput;
-	private final JDOutput jdOutput;
+    private final JDInput jdInput;
+    private final JDOutput jdOutput;
 
-	public InputOutputPair(final JDInput jdIn, final JDOutput jdOut, final JDOutput jdOutFallback) {
-		jdInput = jdIn;
-		jdOutput = (jdOut != null ? jdOut : jdOutFallback);
-	}
+    public InputOutputPair(final JDInput jdIn, final JDOutput jdOut, final JDOutput jdOutFallback) {
+        jdInput = jdIn;
+        jdOutput = (jdOut != null ? jdOut : jdOutFallback);
+    }
 
-	/**
-	 * @return the jdInput
-	 */
-	public JDInput getJdInput() {
-		return jdInput;
-	}
+    /**
+     * @return the jdInput
+     */
+    public JDInput getJdInput() {
+        return jdInput;
+    }
 
-	/**
-	 * @return the jdOutput
-	 */
-	public JDOutput getJdOutput() {
-		return jdOutput;
-	}
+    /**
+     * @return the jdOutput
+     */
+    public JDOutput getJdOutput() {
+        return jdOutput;
+    }
 
 }
