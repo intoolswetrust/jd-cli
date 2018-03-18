@@ -18,19 +18,31 @@ package jd.cli;
 
 import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import jd.core.*;
-import jd.core.input.*;
-import jd.core.options.OptionsManager;
-import jd.core.output.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
+import jd.core.IOUtils;
+import jd.core.JavaDecompiler;
+import jd.core.JavaDecompilerConstants;
+import jd.core.input.ClassFileInput;
+import jd.core.input.DirInput;
+import jd.core.input.JDInput;
+import jd.core.input.ZipFileInput;
+import jd.core.options.OptionsManager;
+import jd.core.output.DirOutput;
+import jd.core.output.JDOutput;
+import jd.core.output.MultiOutput;
+import jd.core.output.PrintStreamOutput;
+import jd.core.output.ZipOutput;
 
 /**
  * Main class of jd-cli.
@@ -41,12 +53,14 @@ public class Main {
 
 	/**
 	 * The {@link #main(String[])}!
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		final CLIArguments cliArguments = new CLIArguments();
-		final ExtCommander jCmd = new ExtCommander(cliArguments, args);
+		final ExtCommander jCmd = new ExtCommander(cliArguments);
+		jCmd.setAcceptUnknownOptions(true);
+		jCmd.parse(args);
 		jCmd.setProgramName("java -jar jd-cli.jar");
 		jCmd.setUsageHead("jd-cli version "
 				+ JavaDecompilerConstants.VERSION
@@ -70,6 +84,10 @@ public class Main {
 		);
 
 		setLoggingLevel(cliArguments.getLogLevel());
+
+		if (jCmd.getUnknownOptions().contains("-")) {
+		    cliArguments.getFiles().add("-");
+		}
 
 		if (cliArguments.getFiles().isEmpty()) {
 			jCmd.usage();
@@ -110,8 +128,15 @@ public class Main {
 
 		boolean decompiled = false;
 		for (String path : cliArguments.getFiles()) {
-			LOGGER.info("Decompiling {}", path);
-			final File file = new File(path);
+		    File file;
+			if ("-".equals(path)) {
+			    LOGGER.info("Decompiling from STD_IN");
+			    file = readSystemIn();
+			} else {
+			    LOGGER.info("Decompiling {}", path);
+			    file =  new File(path);
+			}
+
 			if (file.exists()) {
 				try {
 					InputOutputPair inOut = getInOutPlugins(file, outputPlugin);
@@ -132,11 +157,11 @@ public class Main {
 
 	}
 
-	/**
+    /**
 	 * Helper method which creates correct {@link JDInput} instance for the
 	 * input file and if outPlugin is null, then provides a default
 	 * {@link JDOutput} instance for the given input file type too.
-	 * 
+	 *
 	 * @param inputFile
 	 * @param outPlugin
 	 * @return
@@ -184,10 +209,34 @@ public class Main {
 
 	/**
 	 * Configures Logback log level.
-	 * 
+	 *
 	 * @param level
 	 */
 	private static void setLoggingLevel(final Level level) {
 		((ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ROOT_LOGGER_NAME)).setLevel(level);
 	}
+
+
+    /**
+     * Creates a temporary file from STD_IN input.
+     *
+     * @return newly created file with content received from {@link System#in} occurs)
+     */
+    private static File readSystemIn() {
+        FileOutputStream os = null;
+        File tempFile = null;
+        FileInputStream fis = null;
+        try {
+            tempFile = File.createTempFile("jdTemp-", "-stdin");
+            LOGGER.debug("Created temporary file from STD_IN: {}", tempFile.getAbsolutePath());
+            os = new FileOutputStream(tempFile);
+            IOUtils.copy(System.in, os);
+        } catch (IOException e) {
+            LOGGER.error("Copying STD_IN failed", e);
+        } finally {
+            IOUtils.closeQuietly(fis);
+            IOUtils.closeQuietly(os);
+        }
+        return tempFile;
+    }
 }
