@@ -23,7 +23,7 @@ package jd.core;
  */
 public final class JavaDecompilerConstants {
 
-    public static final String VERSION = "${project.version}";
+    public static final String VERSION = JavaDecompilerVersion.VERSION;
 
     public static final String TMP_DIR = System.getProperty("java.io.tmpdir");
 
