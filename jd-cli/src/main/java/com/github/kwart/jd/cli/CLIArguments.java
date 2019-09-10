@@ -37,12 +37,14 @@ public class CLIArguments implements DecompilerOptions {
     @Parameter(names = { "--help", "-h" }, description = "shows this help", help = true)
     private boolean help;
 
-    @Parameter(names = { "--outputZipFile",
-            "-oz" }, description = "takes a [zipFilePath] as a parameter and configures ZIP output for this path", converter = FileConverter.class)
+    @Parameter(names = { "--outputZipFile", "-oz" },
+            description = "takes a [zipFilePath] as a parameter and configures ZIP output for this path",
+            converter = FileConverter.class)
     private File zipOutFile;
 
-    @Parameter(names = { "--outputDir",
-            "-od" }, description = "takes a [directoryPath] as a parameter and configures DIR output for this path", converter = FileConverter.class)
+    @Parameter(names = { "--outputDir", "-od" },
+            description = "takes a [directoryPath] as a parameter and configures DIR output for this path",
+            converter = FileConverter.class)
     private File dirOutFile;
 
     @Parameter(names = { "--outputConsole", "-oc" }, description = "enables output to system output stream")
@@ -57,8 +59,10 @@ public class CLIArguments implements DecompilerOptions {
     @Parameter(names = { "--escapeUnicodeCharacters", "-eu" }, description = "escape unicode characters in decompiled classes")
     private boolean escapeUnicodeCharacters;
 
-    @Parameter(names = { "--logLevel",
-            "-g" }, description = "takes [level] as parameter and sets it as the CLI log level. Possible values are: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF", converter = LogLevelConverter.class)
+    @Parameter(names = { "--logLevel", "-g" },
+            description = "takes [level] as parameter and sets it as the CLI log level."
+                    + " Possible values are: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF",
+            converter = LogLevelConverter.class)
     private final Level logLevel = Level.INFO;
 
     public List<String> getFiles() {

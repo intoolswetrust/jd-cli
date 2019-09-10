@@ -9,6 +9,9 @@ import org.jd.core.v1.api.loader.LoaderException;
 
 import com.github.kwart.jd.IOUtils;
 
+/**
+ * Loader instance which takes byte array with class data as the constructor argument.
+ */
 public class ByteArrayLoader implements Loader {
 
     private final byte[] bytes;

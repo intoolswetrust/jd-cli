@@ -7,14 +7,18 @@
 
 package com.github.kwart.jd.printer;
 
-
 import static com.github.kwart.jd.JavaDecompilerConstants.LS;
 
 import org.jd.core.v1.api.printer.Printer;
 
 import com.github.kwart.jd.options.DecompilerOptions;
 
+/**
+ * Printer implementation which writes the data to a StringBuilder instance.
+ */
+@SuppressWarnings("checkstyle:MagicNumber")
 public class StringBuilderPrinter implements Printer {
+
     protected static final String INDENTATION = "  ";
 
     protected int indentationCount;
@@ -23,7 +27,7 @@ public class StringBuilderPrinter implements Printer {
     private final DecompilerOptions options;
 
     public StringBuilderPrinter(DecompilerOptions options) {
-        this.options=options;
+        this.options = options;
     }
 
     public void init() {
@@ -31,7 +35,9 @@ public class StringBuilderPrinter implements Printer {
         indentationCount = 0;
     }
 
-    public String toString() { return sb.toString(); }
+    public String toString() {
+        return sb.toString();
+    }
 
     public void start(int maxLineNumber, int majorVersion, int minorVersion) {
         this.indentationCount = 0;
@@ -50,11 +56,12 @@ public class StringBuilderPrinter implements Printer {
         }
     }
 
-    public void end() {}
+    public void end() {
+    }
 
     public void printText(String text) {
         if (options.isEscapeUnicodeCharacters()) {
-            for(int i=0, len=text.length(); i<len; i++) {
+            for (int i = 0, len = text.length(); i < len; i++) {
                 char c = text.charAt(i);
 
                 if (c < 128) {
@@ -77,29 +84,42 @@ public class StringBuilderPrinter implements Printer {
         }
     }
 
-    public void printNumericConstant(String constant) { sb.append(constant); }
+    public void printNumericConstant(String constant) {
+        sb.append(constant);
+    }
 
-    public void printStringConstant(String constant, String ownerInternalName) { printText(constant); }
+    public void printStringConstant(String constant, String ownerInternalName) {
+        printText(constant);
+    }
 
-    public void printKeyword(String keyword) { sb.append(keyword); }
+    public void printKeyword(String keyword) {
+        sb.append(keyword);
+    }
 
-    public void printDeclaration(int type, String internalTypeName, String name, String descriptor) { printText(name); }
+    public void printDeclaration(int type, String internalTypeName, String name, String descriptor) {
+        printText(name);
+    }
 
-    public void printReference(int type, String internalTypeName, String name, String descriptor, String ownerInternalName) { printText(name); }
+    public void printReference(int type, String internalTypeName, String name, String descriptor, String ownerInternalName) {
+        printText(name);
+    }
 
     public void indent() {
         this.indentationCount++;
     }
+
     public void unindent() {
-        if (this.indentationCount > 0)
+        if (this.indentationCount > 0) {
             this.indentationCount--;
+        }
     }
 
     public void startLine(int lineNumber) {
         printLineNumber(lineNumber);
 
-        for (int i=0; i<indentationCount; i++)
+        for (int i = 0; i < indentationCount; i++) {
             sb.append(INDENTATION);
+        }
     }
 
     public void endLine() {
@@ -113,9 +133,11 @@ public class StringBuilderPrinter implements Printer {
         }
     }
 
-    public void startMarker(int type) {}
+    public void startMarker(int type) {
+    }
 
-    public void endMarker(int type) {}
+    public void endMarker(int type) {
+    }
 
     protected void printLineNumber(int lineNumber) {
         if (options.isDisplayLineNumbers()) {

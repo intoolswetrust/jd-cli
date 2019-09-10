@@ -89,8 +89,9 @@ public class MultiOutput extends AbstractJDOutput {
      */
     @Override
     public void init(DecompilerOptions options, String basePath) {
-        if (!isValid())
+        if (!isValid()) {
             return;
+        }
         for (JDOutput jdOut : outputPlugins) {
             if (jdOut != null) {
                 try {
@@ -108,8 +109,9 @@ public class MultiOutput extends AbstractJDOutput {
      * @see jd.core.output.JDOutput#processClass(java.lang.String, java.lang.String)
      */
     public void processClass(final String className, final String src) {
-        if (!isValid())
+        if (!isValid()) {
             return;
+        }
         for (JDOutput jdOut : outputPlugins) {
             if (jdOut != null) {
                 try {
@@ -128,8 +130,9 @@ public class MultiOutput extends AbstractJDOutput {
      */
     @Override
     public void commit() {
-        if (!isValid())
+        if (!isValid()) {
             return;
+        }
         for (JDOutput jdOut : outputPlugins) {
             if (jdOut != null) {
                 try {
@@ -190,8 +193,9 @@ public class MultiOutput extends AbstractJDOutput {
                 } catch (Exception e) {
                     LOGGER.error("Exception occured during handling processResource() for multiple wrapped JDOutput.", e);
                 } finally {
-                    if (f != null)
+                    if (f != null) {
                         f.delete();
+                    }
                 }
                 break;
         }

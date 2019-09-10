@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -14,6 +15,7 @@
 
 		<maven.shade.plugin.version>3.2.1</maven.shade.plugin.version>
 		<maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
+		<maven.checkstyle.plugin.version>3.1.0</maven.checkstyle.plugin.version>
 		<slf4j.version>1.7.5</slf4j.version>
 		<jd.version>1.0.7</jd.version>
 		<logback.version>1.0.13</logback.version>
@@ -21,6 +23,7 @@
 	</properties>
 
 	<modules>
+		<module>build-tools</module>
 		<module>jd-lib</module>
 		<module>jd-cli</module>
 	</modules>
@@ -43,9 +46,40 @@
 					</filesets>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${maven.checkstyle.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>check-style</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>checkstyle</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<configLocation>jd-cmd/checkstyle.xml</configLocation>
+					<suppressionsLocation>jd-cmd/supressions.xml</suppressionsLocation>
+					<headerLocation>jd-cmd/ClassHeader.txt</headerLocation>
+					<consoleOutput>true</consoleOutput>
+					<failsOnError>true</failsOnError>
+					<includeTestSourceDirectory>true</includeTestSourceDirectory>
+					<useFile></useFile>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>${project.groupId}</groupId>
+						<artifactId>build-tools</artifactId>
+						<version>1.0</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
 		</plugins>
 	</build>
-	
+
 	<repositories>
 		<repository>
 			<id>JCenter</id>

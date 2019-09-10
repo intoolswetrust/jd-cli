@@ -34,6 +34,8 @@ public final class IOUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IOUtils.class);
 
+    private static final int BUFFER_SIZE = 4096;
+
     /**
      * Private ctor.
      */
@@ -50,7 +52,7 @@ public final class IOUtils {
      */
     public static long copy(final InputStream is, final OutputStream os) throws IOException {
         LOGGER.trace("Copying inputStream to outputStream");
-        final byte[] buffer = new byte[4096];
+        final byte[] buffer = new byte[BUFFER_SIZE];
         long count = 0;
         int n = 0;
         while (-1 != (n = is.read(buffer))) {
@@ -94,6 +96,10 @@ public final class IOUtils {
     /**
      * Returns true if given file path ends with ".class"
      *
+     * @param filePath
+     * @return
+     */
+    /**
      * @param filePath
      * @return
      */

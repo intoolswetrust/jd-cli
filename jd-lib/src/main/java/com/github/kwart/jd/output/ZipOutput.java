@@ -16,7 +16,8 @@
  *******************************************************************************/
 package com.github.kwart.jd.output;
 
-import static com.github.kwart.jd.JavaDecompilerConstants.*;
+import static com.github.kwart.jd.JavaDecompilerConstants.JAVA_SUFFIX;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -109,8 +110,9 @@ public class ZipOutput extends AbstractJDOutput {
      * @see jd.core.output.JDOutput#processClass(java.lang.String, java.lang.String)
      */
     public void processClass(final String className, final String src) {
-        if (className == null || src == null || zos == null)
+        if (className == null || src == null || zos == null) {
             return;
+        }
         try {
             zos.putNextEntry(new ZipEntry(className + JAVA_SUFFIX));
             zos.write(src.getBytes(UTF_8));

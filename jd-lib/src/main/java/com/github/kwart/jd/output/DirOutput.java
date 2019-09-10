@@ -16,7 +16,8 @@
  *******************************************************************************/
 package com.github.kwart.jd.output;
 
-import static com.github.kwart.jd.JavaDecompilerConstants.*;
+import static com.github.kwart.jd.JavaDecompilerConstants.JAVA_SUFFIX;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -61,8 +62,9 @@ public class DirOutput extends AbstractJDOutput {
         countClasses = 0;
         countResources = 0;
         LOGGER.info("Directory output will be initialized for path {}", dir);
-        if (!dir.exists())
+        if (!dir.exists()) {
             dir.mkdirs();
+        }
         if (!dir.isDirectory()) {
             LOGGER.error("Provided path is either not a directory or mkdirs() command failed: {}", dir);
         }
