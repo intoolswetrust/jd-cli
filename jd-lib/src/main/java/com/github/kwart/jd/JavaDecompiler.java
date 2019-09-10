@@ -33,7 +33,7 @@ public class JavaDecompiler {
 
     private final DecompilerOptions options;
     private final ClassFileToJavaSourceDecompiler classDecompiler;
-    
+
     public JavaDecompiler(DecompilerOptions options) {
         this.options = options;
         this.classDecompiler = new ClassFileToJavaSourceDecompiler();

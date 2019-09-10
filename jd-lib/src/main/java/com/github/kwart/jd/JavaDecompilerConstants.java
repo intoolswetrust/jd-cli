@@ -27,24 +27,50 @@ import java.util.Properties;
  */
 public final class JavaDecompilerConstants {
 
+    /**
+     * Project version (loaded from pom.properties in META-INF directory).
+     */
     public static final String VERSION;
 
+    /**
+     * Temp directory configured in java.io.tmpdir.
+     */
     public static final String TMP_DIR = System.getProperty("java.io.tmpdir");
+    /**
+     * Line separator.
+     */
     public static final String LS = System.getProperty("line.separator");
 
-    public static final String UTF_8 = "UTF-8";
-
+    /**
+     * Filename suffix for compiled classes.
+     */
     public static final String CLASS_SUFFIX = ".class";
+    /**
+     * Length of {@link #CLASS_SUFFIX}.
+     */
     public static final int CLASS_SUFFIX_LEN = CLASS_SUFFIX.length();
+    /**
+     * Filename suffix for java source files.
+     */
     public static final String JAVA_SUFFIX = ".java";
 
+    /**
+     * First bytes (magic number) in class files.
+     */
     public static final int MAGIC_NR_CLASS_FILE = 0xCAFEBABE;
+    /**
+     * First bytes (magic number) in zip files.
+     */
     public static final int MAGIC_NR_ZIP_FILE = 0x504B0304;
+
+    private JavaDecompilerConstants() {
+    }
 
     static {
         String version = "[UNKNOWN]";
-        try (InputStream is = JavaDecompilerConstants.class.getResourceAsStream("/META-INF/maven/com.github.kwart.jd/jd-cli/pom.properties")) {
-            if (is!=null) {
+        try (InputStream is = JavaDecompilerConstants.class
+                .getResourceAsStream("/META-INF/maven/com.github.kwart.jd/jd-cli/pom.properties")) {
+            if (is != null) {
                 Properties props = new Properties();
                 props.load(is);
                 if (props.containsKey("version")) {
@@ -52,7 +78,7 @@ public final class JavaDecompilerConstants {
                 }
             }
         } catch (IOException e) {
-            //ignore
+            // ignore
         }
         VERSION = version;
     }

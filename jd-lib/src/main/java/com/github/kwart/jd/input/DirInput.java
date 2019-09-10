@@ -39,8 +39,9 @@ public class DirInput extends AbstractFileJDInput {
 
     public DirInput(String path) {
         super(path);
-        if (!file.isDirectory())
+        if (!file.isDirectory()) {
             throw new IllegalArgumentException("Path doesn't denote a directory.");
+        }
 
     }
 
@@ -77,7 +78,7 @@ public class DirInput extends AbstractFileJDInput {
                 LOGGER.debug("Decompiling {}", nextFile);
                 jdOutput.processClass(IOUtils.cutClassSuffix(nameWithPath),
                         javaDecompiler.decompileClass(FileLoader.INSTANCE, nextFile.getAbsolutePath()));
-            } else if (! javaDecompiler.getOptions().isSkipResources()) {
+            } else if (!javaDecompiler.getOptions().isSkipResources()) {
                 LOGGER.debug("Processing resource file {}", nextFile);
                 FileInputStream fis = null;
                 try {
