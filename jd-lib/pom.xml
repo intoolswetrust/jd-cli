@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.kwart.jd</groupId>
         <artifactId>jd-cmd</artifactId>
-        <version>1.0.0.Final</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>jd-lib</artifactId>
