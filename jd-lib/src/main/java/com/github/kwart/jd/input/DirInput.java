@@ -36,13 +36,14 @@ import com.github.kwart.jd.output.JDOutput;
 public class DirInput extends AbstractFileJDInput {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DirInput.class);
+    private final FileLoader fileLoader;
 
     public DirInput(String path) {
         super(path);
         if (!file.isDirectory()) {
             throw new IllegalArgumentException("Path doesn't denote a directory.");
         }
-
+        this.fileLoader = new FileLoader(path);
     }
 
     @Override
@@ -76,8 +77,8 @@ public class DirInput extends AbstractFileJDInput {
                     return;
                 }
                 LOGGER.debug("Decompiling {}", nextFile);
-                jdOutput.processClass(IOUtils.cutClassSuffix(nameWithPath),
-                        javaDecompiler.decompileClass(FileLoader.INSTANCE, nextFile.getAbsolutePath()));
+                String internalName = IOUtils.cutClassSuffix(nameWithPath);
+                jdOutput.processClass(internalName, javaDecompiler.decompileClass(fileLoader, internalName));
             } else if (!javaDecompiler.getOptions().isSkipResources()) {
                 LOGGER.debug("Processing resource file {}", nextFile);
                 FileInputStream fis = null;

@@ -53,7 +53,7 @@ public class ClassFileInput extends AbstractFileJDInput {
         final String name = file.getName();
         LOGGER.debug("Decompiling single class file {}", name);
         String nameWithoutClassSfx = IOUtils.isClassFile(name) ? IOUtils.cutClassSuffix(name) : name;
-        jdOutput.processClass(nameWithoutClassSfx, javaDecompiler.decompileClass(FileLoader.INSTANCE, file.getPath()));
+        jdOutput.processClass(nameWithoutClassSfx, javaDecompiler.decompileClass(new FileLoader(), file.getPath()));
         jdOutput.commit();
     }
 }
