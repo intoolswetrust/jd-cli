@@ -73,6 +73,10 @@ public class CLIArguments implements DecompilerOptions {
             converter = LogLevelConverter.class)
     private final Level logLevel = Level.INFO;
 
+    @Parameter(names = { "--pattern", "-p" }, description =
+            "RegExp pattern which the to-be-decompiled file has to match. Not matching entries are skipped.")
+    private final String pattern = null;
+
     public List<String> getFiles() {
         return files;
     }
@@ -115,6 +119,10 @@ public class CLIArguments implements DecompilerOptions {
 
     public Level getLogLevel() {
         return logLevel;
+    }
+
+    public String getPattern() {
+        return pattern;
     }
 
     public boolean isOutputPluginSpecified() {

@@ -1,6 +1,7 @@
 package com.github.kwart.jd;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -28,6 +29,24 @@ import com.github.kwart.jd.output.StructuredDirOutput;
  */
 public class JavaDecompilerTest {
 
+    private static final DecompilerOptions DC_OPTS = new DecompilerOptions() {
+
+        @Override
+        public boolean isSkipResources() {
+            return false;
+        }
+
+        @Override
+        public boolean isEscapeUnicodeCharacters() {
+            return false;
+        }
+
+        @Override
+        public boolean isDisplayLineNumbers() {
+            return false;
+        }
+    };
+
     /**
      * Temporary folder.
      */
@@ -35,7 +54,7 @@ public class JavaDecompilerTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
-    public void test() throws LoaderException, IOException {
+    public void basicTest() throws LoaderException, IOException {
         JDInput input = new DirInput("target/test-classes");
         File tmpRootFolder = temporaryFolder.getRoot();
         File tmpFolder = new File(tmpRootFolder, "flat");
@@ -44,26 +63,31 @@ public class JavaDecompilerTest {
         outPlugins.add(new DirOutput(tmpFolder.getAbsoluteFile()));
         outPlugins.add(new StructuredDirOutput(tmpStructuredFolder.getAbsoluteFile()));
         JDOutput output = new MultiOutput(outPlugins);
-        JavaDecompiler decompiler = new JavaDecompiler(new DecompilerOptions() {
-
-            @Override
-            public boolean isSkipResources() {
-                return false;
-            }
-
-            @Override
-            public boolean isEscapeUnicodeCharacters() {
-                return false;
-            }
-
-            @Override
-            public boolean isDisplayLineNumbers() {
-                return false;
-            }
-        });
+        JavaDecompiler decompiler = new JavaDecompiler(DC_OPTS);
         input.decompile(decompiler, output);
         assertDecompiled(tmpFolder);
         assertDecompiled(new File(tmpStructuredFolder, "test-classes"));
+    }
+
+    @Test
+    public void patternNotMatchingTest() throws LoaderException, IOException {
+        JDInput input = new DirInput("target/test-classes", "Not.*Matching");
+        File tmpFolder = temporaryFolder.getRoot();
+        JDOutput output = new DirOutput(tmpFolder.getAbsoluteFile());
+        JavaDecompiler decompiler = new JavaDecompiler(DC_OPTS);
+        input.decompile(decompiler, output);
+        File decompiledFile = new File(tmpFolder, "com/github/kwart/jd/HelloWorld.java");
+        assertFalse(decompiledFile.isFile());
+    }
+
+    @Test
+    public void patternMatchingTest() throws LoaderException, IOException {
+        JDInput input = new DirInput("target/test-classes", "jd.Hello.*World\\.");
+        File tmpFolder = temporaryFolder.getRoot();
+        JDOutput output = new DirOutput(tmpFolder.getAbsoluteFile());
+        JavaDecompiler decompiler = new JavaDecompiler(DC_OPTS);
+        input.decompile(decompiler, output);
+        assertDecompiled(tmpFolder);
     }
 
     private void assertDecompiled(File outputFolder) throws IOException {
