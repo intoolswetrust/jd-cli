@@ -37,15 +37,23 @@ public class CLIArguments implements DecompilerOptions {
     @Parameter(names = { "--help", "-h" }, description = "shows this help", help = true)
     private boolean help;
 
+    @Parameter(names = { "--version", "-v" }, description = "shows the version", help = true)
+    private boolean version;
+
     @Parameter(names = { "--outputZipFile", "-oz" },
             description = "takes a [zipFilePath] as a parameter and configures ZIP output for this path",
             converter = FileConverter.class)
     private File zipOutFile;
 
     @Parameter(names = { "--outputDir", "-od" },
-            description = "takes a [directoryPath] as a parameter and configures DIR output for this path",
+            description = "takes a [directoryPath] as a parameter and configures a flat DIR output for this path",
             converter = FileConverter.class)
     private File dirOutFile;
+
+    @Parameter(names = { "--outputDirStructured", "-ods" },
+            description = "takes a [directoryPath] as a parameter and configures a structured DIR output for this path",
+            converter = FileConverter.class)
+    private File dirOutFileStructured;
 
     @Parameter(names = { "--outputConsole", "-oc" }, description = "enables output to system output stream")
     private boolean consoleOut;
@@ -73,12 +81,20 @@ public class CLIArguments implements DecompilerOptions {
         return help;
     }
 
+    public boolean isVersion() {
+        return version;
+    }
+
     public File getZipOutFile() {
         return zipOutFile;
     }
 
     public File getDirOutFile() {
         return dirOutFile;
+    }
+
+    public File getDirOutFileStructured() {
+        return dirOutFileStructured;
     }
 
     public boolean isConsoleOut() {
@@ -102,6 +118,6 @@ public class CLIArguments implements DecompilerOptions {
     }
 
     public boolean isOutputPluginSpecified() {
-        return consoleOut || zipOutFile != null || dirOutFile != null;
+        return consoleOut || zipOutFile != null || dirOutFile != null || dirOutFileStructured != null;
     }
 }
