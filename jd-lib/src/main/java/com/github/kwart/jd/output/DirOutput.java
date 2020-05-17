@@ -39,10 +39,10 @@ public class DirOutput extends AbstractJDOutput {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DirOutput.class);
 
+    protected final File dir;
+
     private int countClasses;
     private int countResources;
-
-    private final File dir;
 
     /**
      * Constructor which takes directory path as a parameter.
@@ -80,7 +80,7 @@ public class DirOutput extends AbstractJDOutput {
             LOGGER.warn("Class name or java source is null");
             return;
         }
-        final File decompiledFile = new File(dir, className + JAVA_SUFFIX);
+        final File decompiledFile = new File(getTargetDir(), className + JAVA_SUFFIX);
         LOGGER.trace("Writing decompiled class to {}", decompiledFile);
         createDir(decompiledFile.getParentFile());
         FileOutputStream fos = null;
@@ -105,7 +105,7 @@ public class DirOutput extends AbstractJDOutput {
             LOGGER.trace("Skipping resource {}", fileName);
             return;
         }
-        final File tmpFile = new File(dir, fileName);
+        final File tmpFile = new File(getTargetDir(), fileName);
         LOGGER.trace("Storing resource {}", tmpFile);
         createDir(tmpFile.getParentFile());
         FileOutputStream fos = null;
@@ -129,6 +129,10 @@ public class DirOutput extends AbstractJDOutput {
     public void commit() {
         super.commit();
         LOGGER.info("Finished with {} class file(s) and {} resource file(s) written.", countClasses, countResources);
+    }
+
+    protected File getTargetDir() {
+        return dir;
     }
 
     /**

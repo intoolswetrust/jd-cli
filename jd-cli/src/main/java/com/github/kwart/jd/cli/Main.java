@@ -16,6 +16,7 @@
  *******************************************************************************/
 package com.github.kwart.jd.cli;
 
+import static com.beust.jcommander.JCommander.getConsole;
 import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 
 import java.io.DataInputStream;
@@ -40,6 +41,7 @@ import com.github.kwart.jd.output.DirOutput;
 import com.github.kwart.jd.output.JDOutput;
 import com.github.kwart.jd.output.MultiOutput;
 import com.github.kwart.jd.output.PrintStreamOutput;
+import com.github.kwart.jd.output.StructuredDirOutput;
 import com.github.kwart.jd.output.ZipOutput;
 
 import ch.qos.logback.classic.Level;
@@ -47,6 +49,7 @@ import ch.qos.logback.classic.Level;
 /**
  * Main class of jd-cli.
  */
+@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 public final class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
@@ -70,6 +73,15 @@ public final class Main {
 
         if (jCmd.getUnknownOptions().contains("-")) {
             cliArguments.getFiles().add("-");
+        }
+
+        if (cliArguments.isHelp()) {
+            jCmd.usage();
+            System.exit(0);
+        }
+        if (cliArguments.isVersion()) {
+            getConsole().println(getVersionLine());
+            System.exit(0);
         }
 
         if (cliArguments.getFiles().isEmpty()) {
@@ -117,7 +129,7 @@ public final class Main {
         jCmd.setAcceptUnknownOptions(true);
         jCmd.parse(args);
         jCmd.setProgramName("java -jar jd-cli.jar");
-        jCmd.setUsageHead("jd-cli version " + JavaDecompilerConstants.VERSION + " - Copyright (C) 2015 Josef Cacek\n"
+        jCmd.setUsageHead(getVersionLine() + "\n"
             + "\nThe jd-cli is a command line interface for the Java Decompiler (http://jd.benow.ca/). "
             + "The application decompile classes, zip archives "
             + "(.zip, .jar, .war, ...) and directories containing classes. "
@@ -147,20 +159,28 @@ public final class Main {
             if (cliArguments.isConsoleOut()) {
                 outPlugins.add(new PrintStreamOutput(System.out));
             }
-            final File zipFile = cliArguments.getZipOutFile();
+            File zipFile = cliArguments.getZipOutFile();
             if (zipFile != null) {
                 try {
                     outPlugins.add(new ZipOutput(zipFile));
                 } catch (Exception e) {
-                    LOGGER.warn("Unable to create zip output", e);
+                    LOGGER.warn("Unable to create the zip output", e);
                 }
             }
-            final File dir = cliArguments.getDirOutFile();
+            File dir = cliArguments.getDirOutFile();
             if (dir != null) {
                 try {
                     outPlugins.add(new DirOutput(dir));
                 } catch (Exception e) {
-                    LOGGER.warn("Unable to create directory output", e);
+                    LOGGER.warn("Unable to create the directory output", e);
+                }
+            }
+            dir = cliArguments.getDirOutFileStructured();
+            if (dir != null) {
+                try {
+                    outPlugins.add(new StructuredDirOutput(dir));
+                } catch (Exception e) {
+                    LOGGER.warn("Unable to create the structured directory output", e);
                 }
             }
             if (outPlugins.size() > 0) {
@@ -213,7 +233,7 @@ public final class Main {
                     jdOut = new ZipOutput(new File(decompiledZipName));
                     break;
                 default:
-                    throw new IllegalArgumentException("File type of was not recognized: " + inputFile);
+                    throw new IllegalArgumentException("File type of the source was not recognized: " + inputFile);
             }
         }
         return new InputOutputPair(jdIn, outPlugin, jdOut);
@@ -239,7 +259,7 @@ public final class Main {
         FileInputStream fis = null;
         try {
             tempFile = File.createTempFile("jdTemp-", "-stdin");
-            LOGGER.debug("Created temporary file from STD_IN: {}", tempFile.getAbsolutePath());
+            LOGGER.debug("Created a temporary file from the STD_IN: {}", tempFile.getAbsolutePath());
             os = new FileOutputStream(tempFile);
             IOUtils.copy(System.in, os);
         } catch (IOException e) {
@@ -249,5 +269,9 @@ public final class Main {
             IOUtils.closeQuietly(os);
         }
         return tempFile;
+    }
+
+    private static String getVersionLine() {
+        return "jd-cli version " + JavaDecompilerConstants.VERSION + " - Copyright (C) 2015 Josef Cacek";
     }
 }

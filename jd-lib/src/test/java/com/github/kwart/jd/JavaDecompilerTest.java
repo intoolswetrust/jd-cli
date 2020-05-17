@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jd.core.v1.api.loader.LoaderException;
 import org.junit.Rule;
@@ -18,6 +20,8 @@ import com.github.kwart.jd.input.JDInput;
 import com.github.kwart.jd.options.DecompilerOptions;
 import com.github.kwart.jd.output.DirOutput;
 import com.github.kwart.jd.output.JDOutput;
+import com.github.kwart.jd.output.MultiOutput;
+import com.github.kwart.jd.output.StructuredDirOutput;
 
 /**
  * Basic test for {@link JavaDecompiler} class.
@@ -33,8 +37,13 @@ public class JavaDecompilerTest {
     @Test
     public void test() throws LoaderException, IOException {
         JDInput input = new DirInput("target/test-classes");
-        File tmpFolder = temporaryFolder.getRoot();
-        JDOutput output = new DirOutput(tmpFolder.getAbsoluteFile());
+        File tmpRootFolder = temporaryFolder.getRoot();
+        File tmpFolder = new File(tmpRootFolder, "flat");
+        File tmpStructuredFolder = new File(tmpRootFolder, "struct");
+        List<JDOutput> outPlugins = new ArrayList<JDOutput>();
+        outPlugins.add(new DirOutput(tmpFolder.getAbsoluteFile()));
+        outPlugins.add(new StructuredDirOutput(tmpStructuredFolder.getAbsoluteFile()));
+        JDOutput output = new MultiOutput(outPlugins);
         JavaDecompiler decompiler = new JavaDecompiler(new DecompilerOptions() {
 
             @Override
@@ -53,7 +62,12 @@ public class JavaDecompilerTest {
             }
         });
         input.decompile(decompiler, output);
-        File decompiledFile = new File(tmpFolder, "com/github/kwart/jd/HelloWorld.java");
+        assertDecompiled(tmpFolder);
+        assertDecompiled(new File(tmpStructuredFolder, "test-classes"));
+    }
+
+    private void assertDecompiled(File outputFolder) throws IOException {
+        File decompiledFile = new File(outputFolder, "com/github/kwart/jd/HelloWorld.java");
         assertTrue(decompiledFile.isFile());
         String decompiled = new String(Files.readAllBytes(decompiledFile.toPath()));
         assertThat(decompiled, containsString("public final class HelloWorld {"));
