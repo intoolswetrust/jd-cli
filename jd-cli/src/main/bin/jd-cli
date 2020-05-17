@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DIRNAME=`dirname "$0"`
-DIR=`cd "$DIRNAME"; pwd`
+DIRNAME=$(dirname "$(readlink -e "$0")")
+DIR=$(cd "$DIRNAME" || exit 112; pwd)
 
 java -jar "$DIR/jd-cli.jar" $@ 
