@@ -37,6 +37,10 @@ public class ClassFileInput extends AbstractFileJDInput {
         super(path);
     }
 
+    public ClassFileInput(String filePath, String pattern) throws IllegalArgumentException {
+        super(filePath, pattern);
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -49,8 +53,11 @@ public class ClassFileInput extends AbstractFileJDInput {
             return;
         }
 
-        jdOutput.init(javaDecompiler.getOptions(), "");
         final String name = file.getName();
+        if (skipThePath(name)) {
+            return;
+        }
+        jdOutput.init(javaDecompiler.getOptions(), "");
         LOGGER.debug("Decompiling single class file {}", name);
         String nameWithoutClassSfx = IOUtils.isClassFile(name) ? IOUtils.cutClassSuffix(name) : name;
         jdOutput.processClass(nameWithoutClassSfx, javaDecompiler.decompileClass(new FileLoader(), file.getPath()));

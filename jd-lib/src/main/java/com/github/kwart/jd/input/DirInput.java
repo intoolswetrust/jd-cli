@@ -38,12 +38,16 @@ public class DirInput extends AbstractFileJDInput {
     private static final Logger LOGGER = LoggerFactory.getLogger(DirInput.class);
     private final FileLoader fileLoader;
 
-    public DirInput(String path) {
-        super(path);
+    public DirInput(String path, String pattern) throws IllegalArgumentException {
+        super(path, pattern);
         if (!file.isDirectory()) {
             throw new IllegalArgumentException("Path doesn't denote a directory.");
         }
         this.fileLoader = new FileLoader(path);
+    }
+
+    public DirInput(String path) {
+        this(path, null);
     }
 
     @Override
@@ -70,6 +74,9 @@ public class DirInput extends AbstractFileJDInput {
                 processFile(javaDecompiler, jdOutput, pathPrefix + fileName + "/", f);
             }
         } else {
+            if (skipThePath(nameWithPath)) {
+                return;
+            }
             if (IOUtils.isClassFile(fileName)) {
                 if (IOUtils.isInnerClass(fileName)) {
                     // don't handle inner classes

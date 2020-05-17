@@ -40,12 +40,17 @@ public class ZipFileInput extends AbstractFileJDInput {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZipFileInput.class);
 
     /**
-     * Constructor which takes
-     *
-     * @param path
+     * Constructor.
      */
     public ZipFileInput(String path) {
         super(path);
+    }
+
+    /**
+     * Constructor.
+     */
+    public ZipFileInput(String filePath, String pattern) throws IllegalArgumentException {
+        super(filePath, pattern);
     }
 
     /**
@@ -73,6 +78,9 @@ public class ZipFileInput extends AbstractFileJDInput {
             while ((entry = zis.getNextEntry()) != null) {
                 if (!entry.isDirectory()) {
                     final String entryName = entry.getName();
+                    if (skipThePath(entryName)) {
+                        continue;
+                    }
                     if (IOUtils.isClassFile(entryName)) {
                         if (IOUtils.isInnerClass(entryName)) {
                             // don't handle inner classes

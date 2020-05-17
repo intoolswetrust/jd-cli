@@ -106,7 +106,7 @@ public final class Main {
 
             if (file.exists()) {
                 try {
-                    InputOutputPair inOut = getInOutPlugins(file, outputPlugin);
+                    InputOutputPair inOut = getInOutPlugins(file, outputPlugin, cliArguments.getPattern());
                     inOut.getJdInput().decompile(javaDecompiler, inOut.getJdOutput());
                     decompiled = true;
                 } catch (Exception e) {
@@ -200,12 +200,12 @@ public final class Main {
      * @throws NullPointerException
      * @throws IOException
      */
-    public static InputOutputPair getInOutPlugins(final File inputFile, JDOutput outPlugin)
+    public static InputOutputPair getInOutPlugins(final File inputFile, JDOutput outPlugin, String pattern)
             throws NullPointerException, IOException {
         JDInput jdIn = null;
         JDOutput jdOut = null;
         if (inputFile.isDirectory()) {
-            jdIn = new DirInput(inputFile.getPath());
+            jdIn = new DirInput(inputFile.getPath(), pattern);
             jdOut = new DirOutput(new File(inputFile.getName() + ".src"));
         } else {
             DataInputStream dis = new DataInputStream(new FileInputStream(inputFile));
@@ -217,11 +217,11 @@ public final class Main {
             }
             switch (magic) {
                 case JavaDecompilerConstants.MAGIC_NR_CLASS_FILE:
-                    jdIn = new ClassFileInput(inputFile.getPath());
+                    jdIn = new ClassFileInput(inputFile.getPath(), pattern);
                     jdOut = new PrintStreamOutput(System.out);
                     break;
                 case JavaDecompilerConstants.MAGIC_NR_ZIP_FILE:
-                    jdIn = new ZipFileInput(inputFile.getPath());
+                    jdIn = new ZipFileInput(inputFile.getPath(), pattern);
                     String decompiledZipName = inputFile.getName();
                     int suffixPos = decompiledZipName.lastIndexOf(".");
                     if (suffixPos >= 0) {
