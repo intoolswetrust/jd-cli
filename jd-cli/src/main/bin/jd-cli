@@ -3,4 +3,7 @@
 DIRNAME=$(dirname "$(readlink -e "$0")")
 DIR=$(cd "$DIRNAME" || exit 112; pwd)
 
+[ "$OSTYPE" = "cygwin" ] \
+&& DIR="$( cygpath -m "$DIR" )"
+
 java -jar "$DIR/jd-cli.jar" $@ 
