@@ -1,10 +1,10 @@
-# jd-cmd - Command line Java Decompiler
+# jd-cli - Command line Java Decompiler
 
-The *jd-cmd* is a simple command line wrapper around [JD Core](https://github.com/java-decompiler/jd-core)  Java Decompiler project. 
+The *jd-cli* is a simple command line wrapper around [JD Core](https://github.com/java-decompiler/jd-core)  Java Decompiler project. 
 
 ## Download
 
-Find latest bits in **[GitHub Releases](https://github.com/kwart/jd-cmd/releases/latest)**.
+Find latest bits in **[GitHub Releases](https://github.com/kwart/jd-cli/releases/latest)**.
 
 ## Requirements
 
@@ -58,4 +58,4 @@ This project was originally forked from [JDCommandLine](https://github.com/bette
 
 ## License
 
-* jd-cmd is licensed under [GPLv3](http://www.gnu.org/licenses/gpl-3.0.html) as the original JD-Core library.
+* jd-cli is licensed under [GPLv3](http://www.gnu.org/licenses/gpl-3.0.html) as the original JD-Core library.
