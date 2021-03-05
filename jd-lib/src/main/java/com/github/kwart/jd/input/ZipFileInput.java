@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.kwart.jd.IOUtils;
 import com.github.kwart.jd.JavaDecompiler;
-import com.github.kwart.jd.loader.ByteArrayLoader;
+import com.github.kwart.jd.loader.CachedLoader;
 import com.github.kwart.jd.output.JDOutput;
 
 /**
@@ -75,6 +75,7 @@ public class ZipFileInput extends AbstractFileJDInput {
             zis = new ZipInputStream(new FileInputStream(file));
             ZipEntry entry = null;
 
+            CachedLoader cachedLoader = new CachedLoader();
             while ((entry = zis.getNextEntry()) != null) {
                 if (!entry.isDirectory()) {
                     final String entryName = entry.getName();
@@ -82,24 +83,29 @@ public class ZipFileInput extends AbstractFileJDInput {
                         continue;
                     }
                     if (IOUtils.isClassFile(entryName)) {
-                        if (IOUtils.isInnerClass(entryName)) {
-                            // don't handle inner classes
-                            LOGGER.trace("Skipping inner class {}", entryName);
-                            continue;
-                        }
-                        LOGGER.debug("Decompiling {}", entryName);
+                        LOGGER.debug("Caching {}", entryName);
                         try {
-                            ByteArrayLoader bal = new ByteArrayLoader(zis, entryName);
-                            jdOutput.processClass(IOUtils.cutClassSuffix(entryName),
-                                    javaDecompiler.decompileClass(bal, entryName));
+                            cachedLoader.addClass(entryName, zis);
                         } catch (LoaderException e) {
                             LOGGER.error("LoaderException occured", e);
                         }
                     } else if (!skipResources) {
                         LOGGER.debug("Processing resource file {}", entryName);
                         jdOutput.processResource(entryName, zis);
+                    } else {
+                        LOGGER.trace("Skipping resource file {}", entryName);
                     }
                 }
+            }
+            for (String entryName : cachedLoader.getClassNames()) {
+                if (IOUtils.isInnerClass(entryName)) {
+                    // don't handle inner classes
+                    LOGGER.trace("Skipping inner class {}", entryName);
+                    continue;
+                }
+                String internalName = IOUtils.cutClassSuffix(entryName);
+                LOGGER.debug("Decompiling {}", entryName);
+                jdOutput.processClass(internalName, javaDecompiler.decompileClass(cachedLoader, internalName));
             }
         } catch (IOException e) {
             LOGGER.error("IOException occured", e);
