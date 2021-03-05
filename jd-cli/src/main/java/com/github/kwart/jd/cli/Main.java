@@ -272,6 +272,6 @@ public final class Main {
     }
 
     private static String getVersionLine() {
-        return "jd-cli version " + JavaDecompilerConstants.VERSION + " - Copyright (C) 2015 Josef Cacek";
+        return "jd-cli version " + JavaDecompilerConstants.VERSION + " - Copyright (C) 2015-2021 Josef Cacek";
     }
 }
