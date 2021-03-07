@@ -20,7 +20,10 @@ public class CachedLoader implements Loader {
     private final ConcurrentMap<String, byte[]> classCache = new ConcurrentHashMap<>();
 
     public void addClass(String name, byte[] bytecode) {
-        classCache.put(name, bytecode);
+        if (name == null || bytecode == null) {
+            return;
+        }
+        classCache.put(name.replace('\\', '/'), bytecode);
     }
 
     public void addClass(String name, InputStream is) throws LoaderException {
@@ -46,7 +49,11 @@ public class CachedLoader implements Loader {
         return findInCache(internalName) != null;
     }
 
-    public byte[] findInCache(String internalName) {
+    private byte[] findInCache(String internalName) {
+        if (internalName == null) {
+            return null;
+        }
+        internalName = internalName.replace('\\', '/');
         byte[] bytes = classCache.get(internalName);
         return bytes != null ? bytes : classCache.get(internalName + ".class");
     }

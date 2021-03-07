@@ -28,4 +28,6 @@ public interface DecompilerOptions {
     boolean isDisplayLineNumbers();
 
     boolean isEscapeUnicodeCharacters();
+
+    boolean isParallelProcessingAllowed();
 }

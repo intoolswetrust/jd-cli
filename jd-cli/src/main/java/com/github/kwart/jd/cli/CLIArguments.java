@@ -67,6 +67,9 @@ public class CLIArguments implements DecompilerOptions {
     @Parameter(names = { "--escapeUnicodeCharacters", "-eu" }, description = "escape unicode characters in decompiled classes")
     private boolean escapeUnicodeCharacters;
 
+    @Parameter(names = { "--serialProcessing", "-sp" }, description = "don't use parallel processing")
+    private boolean serialProcessing;
+
     @Parameter(names = { "--logLevel", "-g" },
             description = "takes [level] as parameter and sets it as the CLI log level."
                     + " Possible values are: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF",
@@ -127,5 +130,10 @@ public class CLIArguments implements DecompilerOptions {
 
     public boolean isOutputPluginSpecified() {
         return consoleOut || zipOutFile != null || dirOutFile != null || dirOutFileStructured != null;
+    }
+
+    @Override
+    public boolean isParallelProcessingAllowed() {
+        return ! serialProcessing;
     }
 }
