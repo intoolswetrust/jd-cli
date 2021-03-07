@@ -18,6 +18,7 @@ package com.github.kwart.jd.input;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import com.github.kwart.jd.IOUtils;
 import com.github.kwart.jd.JavaDecompiler;
 import com.github.kwart.jd.loader.CachedLoader;
+import com.github.kwart.jd.options.DecompilerOptions;
 import com.github.kwart.jd.output.JDOutput;
 
 /**
@@ -65,17 +67,18 @@ public class ZipFileInput extends AbstractFileJDInput {
             return;
         }
 
-        boolean skipResources = javaDecompiler.getOptions().isSkipResources();
+        DecompilerOptions options = javaDecompiler.getOptions();
+        boolean skipResources = options.isSkipResources();
 
         LOGGER.debug("Initializing decompilation of a zip file {}", file);
 
-        jdOutput.init(javaDecompiler.getOptions(), file.getPath());
+        jdOutput.init(options, file.getPath());
         ZipInputStream zis = null;
+        CachedLoader cachedLoader = new CachedLoader();
         try {
             zis = new ZipInputStream(new FileInputStream(file));
             ZipEntry entry = null;
 
-            CachedLoader cachedLoader = new CachedLoader();
             while ((entry = zis.getNextEntry()) != null) {
                 if (!entry.isDirectory()) {
                     final String entryName = entry.getName();
@@ -97,21 +100,20 @@ public class ZipFileInput extends AbstractFileJDInput {
                     }
                 }
             }
-            for (String entryName : cachedLoader.getClassNames()) {
-                if (IOUtils.isInnerClass(entryName)) {
-                    // don't handle inner classes
-                    LOGGER.trace("Skipping inner class {}", entryName);
-                    continue;
-                }
-                String internalName = IOUtils.cutClassSuffix(entryName);
-                LOGGER.debug("Decompiling {}", entryName);
-                jdOutput.processClass(internalName, javaDecompiler.decompileClass(cachedLoader, internalName));
-            }
         } catch (IOException e) {
             LOGGER.error("IOException occured", e);
         } finally {
             IOUtils.closeQuietly(zis);
         }
+        Stream<String> classNamesStream = options.isParallelProcessingAllowed() ? cachedLoader.getClassNames().parallelStream()
+                : cachedLoader.getClassNames().stream();
+        classNamesStream.filter(s -> !IOUtils.isInnerClass(s)).map(s -> IOUtils.cutClassSuffix(s)).forEach(name -> {
+            try {
+                jdOutput.processClass(name, javaDecompiler.decompileClass(cachedLoader, name));
+            } catch (Exception e) {
+                LOGGER.error("Exception when decompiling class " + name, e);
+            }
+        });
         jdOutput.commit();
     }
 }

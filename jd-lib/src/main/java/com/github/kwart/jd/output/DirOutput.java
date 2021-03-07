@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +42,8 @@ public class DirOutput extends AbstractJDOutput {
 
     protected final File dir;
 
-    private int countClasses;
-    private int countResources;
+    private final AtomicLong countClasses = new AtomicLong();
+    private final AtomicLong countResources = new AtomicLong();
 
     /**
      * Constructor which takes directory path as a parameter.
@@ -59,8 +60,8 @@ public class DirOutput extends AbstractJDOutput {
     @Override
     public void init(DecompilerOptions options, String basePath) {
         super.init(options, basePath);
-        countClasses = 0;
-        countResources = 0;
+        countClasses.set(0);
+        countResources.set(0);
         LOGGER.info("Directory output will be initialized for path {}", dir);
         if (!dir.exists()) {
             dir.mkdirs();
@@ -87,7 +88,7 @@ public class DirOutput extends AbstractJDOutput {
         try {
             fos = new FileOutputStream(decompiledFile);
             fos.write(src.getBytes(UTF_8));
-            countClasses++;
+            countClasses.addAndGet(1);
         } catch (IOException e) {
             LOGGER.error("Writing decompiled class to file {} failed.", decompiledFile, e);
         } finally {
@@ -112,7 +113,7 @@ public class DirOutput extends AbstractJDOutput {
         try {
             fos = new FileOutputStream(tmpFile);
             IOUtils.copy(is, fos);
-            countResources++;
+            countResources.addAndGet(1);
         } catch (IOException e) {
             LOGGER.error("Writing resource to file {} failed.", tmpFile, e);
         } finally {

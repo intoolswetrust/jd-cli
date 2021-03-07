@@ -29,14 +29,15 @@ import com.github.kwart.jd.printer.StringBuilderPrinter;
  */
 public class JavaDecompiler {
 
+    private static final ThreadLocal<ClassFileToJavaSourceDecompiler> DECOMPILER_TL = ThreadLocal
+            .withInitial(() -> new ClassFileToJavaSourceDecompiler());
+
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaDecompiler.class);
 
     private final DecompilerOptions options;
-    private final ClassFileToJavaSourceDecompiler classDecompiler;
 
     public JavaDecompiler(DecompilerOptions options) {
         this.options = options;
-        this.classDecompiler = new ClassFileToJavaSourceDecompiler();
     }
 
     /**
@@ -55,7 +56,7 @@ public class JavaDecompiler {
 
         StringBuilderPrinter sbp = new StringBuilderPrinter(options);
         try {
-            classDecompiler.decompile(loader, sbp, internalName);
+            DECOMPILER_TL.get().decompile(loader, sbp, internalName);
         } catch (Exception e) {
             LOGGER.error("Can't decompile " + internalName, e);
             return null;

@@ -45,6 +45,11 @@ public class JavaDecompilerTest {
         public boolean isDisplayLineNumbers() {
             return false;
         }
+
+        @Override
+        public boolean isParallelProcessingAllowed() {
+            return true;
+        }
     };
 
     /**

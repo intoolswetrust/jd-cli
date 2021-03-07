@@ -23,7 +23,7 @@ import com.github.kwart.jd.options.DecompilerOptions;
  */
 public abstract class AbstractJDOutput implements JDOutput {
 
-    protected DecompilerOptions options;
+    protected volatile DecompilerOptions options;
 
     public void init(DecompilerOptions options, String basePath) {
         this.options = options;

@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import com.github.kwart.jd.IOUtils;
 import com.github.kwart.jd.JavaDecompiler;
 import com.github.kwart.jd.JavaDecompilerConstants;
+import com.github.kwart.jd.input.CachedDirInput;
 import com.github.kwart.jd.input.ClassFileInput;
 import com.github.kwart.jd.input.DirInput;
 import com.github.kwart.jd.input.JDInput;
@@ -106,7 +107,8 @@ public final class Main {
 
             if (file.exists()) {
                 try {
-                    InputOutputPair inOut = getInOutPlugins(file, outputPlugin, cliArguments.getPattern());
+                    InputOutputPair inOut = getInOutPlugins(file, outputPlugin, cliArguments.getPattern(),
+                            cliArguments.isParallelProcessingAllowed());
                     inOut.getJdInput().decompile(javaDecompiler, inOut.getJdOutput());
                     decompiled = true;
                 } catch (Exception e) {
@@ -183,7 +185,9 @@ public final class Main {
                     LOGGER.warn("Unable to create the structured directory output", e);
                 }
             }
-            if (outPlugins.size() > 0) {
+            if (outPlugins.size() == 1) {
+                outputPlugin = outPlugins.get(0);
+            } else if (outPlugins.size() > 1) {
                 outputPlugin = new MultiOutput(outPlugins);
             }
         }
@@ -196,16 +200,17 @@ public final class Main {
      *
      * @param inputFile
      * @param outPlugin
+     * @param useParallel
      * @return
      * @throws NullPointerException
      * @throws IOException
      */
-    public static InputOutputPair getInOutPlugins(final File inputFile, JDOutput outPlugin, String pattern)
+    public static InputOutputPair getInOutPlugins(final File inputFile, JDOutput outPlugin, String pattern, boolean useParallel)
             throws NullPointerException, IOException {
         JDInput jdIn = null;
         JDOutput jdOut = null;
         if (inputFile.isDirectory()) {
-            jdIn = new DirInput(inputFile.getPath(), pattern);
+            jdIn = useParallel ? new CachedDirInput(inputFile.getPath(), pattern) : new DirInput(inputFile.getPath(), pattern);
             jdOut = new DirOutput(new File(inputFile.getName() + ".src"));
         } else {
             DataInputStream dis = new DataInputStream(new FileInputStream(inputFile));

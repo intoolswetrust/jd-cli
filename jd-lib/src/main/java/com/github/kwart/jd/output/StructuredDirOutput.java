@@ -34,7 +34,7 @@ public class StructuredDirOutput extends DirOutput {
      */
     public static final String NO_SRC_NAME = "none";
 
-    private File targetDir;
+    private volatile File targetDir;
 
     /**
      * Constructor which takes directory path as a parameter.
