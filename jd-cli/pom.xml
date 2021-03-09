@@ -12,7 +12,8 @@
     <artifactId>jd-cli</artifactId>
     <packaging>jar</packaging>
 
-    <name>jd-cli</name>
+    <name>${project.artifactId}</name>
+    <description>Command line interface module</description>
 
     <build>
         <finalName>${project.name}</finalName>
