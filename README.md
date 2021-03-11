@@ -14,43 +14,92 @@ Find latest bits in **[GitHub Releases](https://github.com/kwart/jd-cli/releases
 
 You can use the `jd-cli.bat` (Windows) or `jd-cli` (Linux/Unix) scripts to run the the JAR file.
 
-    Usage: java -jar jd-cli.jar [options] [Files to decompile]
-      Options:
-        --displayLineNumbers, -n
-           displays line numbers in decompiled classes
-           Default: false
-        --escapeUnicodeCharacters, -eu
-           escape unicode characters in decompiled classes
-           Default: false
-        --help, -h
-           shows this help
-           Default: false
-        --logLevel, -g
-           takes [level] as parameter and sets it as the CLI log level. Possible
-           values are: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF
-           Default: INFO
-        --outputConsole, -oc
-           enables output to system output stream
-           Default: false
-        --outputDir, -od
-           takes a [directoryPath] as a parameter and configures a flat DIR output
-           for this path
-        --outputDirStructured, -ods
-           takes a [directoryPath] as a parameter and configures a structured DIR
-           output for this path
-        --outputZipFile, -oz
-           takes a [zipFilePath] as a parameter and configures ZIP output for this
-           path
-        --pattern, -p
-           RegExp pattern which the to-be-decompiled file has to match. Not matching
-           entries are skipped.
-        --skipResources, -sr
-           skips processing resources
-           Default: false
-        --version, -v
-           shows the version
-           Default: false
+```
+Usage: java -jar jd-cli.jar [options] [Files to decompile]
+  Options:
+    --displayLineNumbers, -n
+       displays line numbers in decompiled classes
+       Default: false
+    --escapeUnicodeCharacters, -eu
+       escape unicode characters in decompiled classes
+       Default: false
+    --help, -h
+       shows this help
+       Default: false
+    --logLevel, -g
+       takes [level] as parameter and sets it as the CLI log level. Possible
+       values are: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF
+       Default: INFO
+    --outputConsole, -oc
+       enables output to system output stream
+       Default: false
+    --outputDir, -od
+       takes a [directoryPath] as a parameter and configures a flat DIR output
+       for this path
+    --outputDirStructured, -ods
+       takes a [directoryPath] as a parameter and configures a structured DIR
+       output for this path
+    --outputZipFile, -oz
+       takes a [zipFilePath] as a parameter and configures ZIP output for this
+       path
+    --pattern, -p
+       RegExp pattern which the to-be-decompiled file has to match. Not matching
+       entries are skipped.
+    --serialProcessing, -sp
+       don't use parallel processing
+       Default: false
+    --skipResources, -sr
+       skips processing resources
+       Default: false
+    --version, -v
+       shows the version
+       Default: false
+```
 
+## Using as a Maven dependency
+
+```xml
+<dependency>
+    <groupId>com.github.kwart.jd</groupId>
+    <artifactId>jd-lib</artifactId>
+    <version>${jd-cli.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-simple</artifactId>
+    <version>${slf4j.version}</version>
+</dependency>
+```
+
+```java
+public static void main(String[] args) {
+    JDInput input = new ZipFileInput("/opt/hazelcast/hazelcast.jar");
+    JDOutput output = new DirOutput(new File("/tmp/hz-src"));
+    JavaDecompiler decompiler = new JavaDecompiler(new DecompilerOptions() {
+
+        @Override
+        public boolean isSkipResources() {
+            return true;
+        }
+
+        @Override
+        public boolean isEscapeUnicodeCharacters() {
+            return false;
+        }
+
+        @Override
+        public boolean isDisplayLineNumbers() {
+            return true;
+        }
+
+        @Override
+        public boolean isParallelProcessingAllowed() {
+            return true;
+        }
+    });
+    input.decompile(decompiler, output);
+}
+```
 
 ## Credits
 
