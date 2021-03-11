@@ -117,7 +117,7 @@
 
     <scm>
         <connection>scm:git:git://github.com/kwart/jd-cli.git</connection>
-        <developerConnection>scm:git:ssh://github.com:kwart/jd-cli.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:kwart/jd-cli.git</developerConnection>
         <url>http://github.com/kwart/jd-cli/</url>
     </scm>
 
