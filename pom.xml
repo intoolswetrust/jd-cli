@@ -3,7 +3,7 @@
 
     <groupId>com.github.kwart.jd</groupId>
     <artifactId>jd-cli-root</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
@@ -117,7 +117,7 @@
         <connection>scm:git:git://github.com/kwart/jd-cli.git</connection>
         <developerConnection>scm:git:git@github.com:kwart/jd-cli.git</developerConnection>
         <url>http://github.com/kwart/jd-cli/</url>
-      <tag>jd-cli-1.2.0</tag>
+      <tag>HEAD</tag>
   </scm>
 
      <distributionManagement>
