@@ -37,6 +37,7 @@
                     </execution>
                 </executions>
             </plugin>
+<!--            
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
@@ -56,6 +57,7 @@
                     </execution>
                 </executions>
             </plugin>
+-->
         </plugins>
     </build>
 

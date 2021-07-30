@@ -187,13 +187,30 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <keyname>E6859CD79F1F3E3BE207555C3409C2FF0184B8FB</keyname>
-                            <passphraseServerId>gpg.passphrase</passphraseServerId>
                             <gpgArguments>
                                 <gpgArgument>--pinentry-mode</gpgArgument>
                                 <gpgArgument>loopback</gpgArgument>
                             </gpgArguments>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-java</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <phase>compile</phase>
+                                <configuration>
+                                    <rules>
+                                        <requireJavaVersion>
+                                            <version>[1.8,1.9)</version>
+                                        </requireJavaVersion>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

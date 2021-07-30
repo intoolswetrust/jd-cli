@@ -10,7 +10,9 @@ Find latest bits in **[GitHub Releases](https://github.com/kwart/jd-cli/releases
 
 [Java runtime](http://java.com/en/download/) is required in version 8 or newer (for version 1.0.0 and newer) and Java 6 for older versions.
 
-## Usage - Command line
+## Usage
+
+### Command line
 
 You can use the `jd-cli.bat` (Windows) or `jd-cli` (Linux/Unix) scripts to run the the JAR file.
 
@@ -54,6 +56,20 @@ Usage: java -jar jd-cli.jar [options] [Files to decompile]
     --version, -v
        shows the version
        Default: false
+```
+
+
+### Docker
+
+You can use a Docker distribution to decompile your classes.
+
+For instance, the following command decompiles the `file-to-decompile.jar`
+in the current directory and the decompiled files are stored in
+the `decompiled-src` directory.
+
+```bash
+docker run -it --rm -v `pwd`:/mnt --user $(id -u):$(id -g) \
+  kwart/jd-cli /mnt/file-to-decompile.jar -od /mnt/deccompiled-src
 ```
 
 ## Using as a Maven dependency
