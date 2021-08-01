@@ -33,7 +33,13 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Publish to Apache Maven Central
-        run: mvn --batch-mode -Prelease deploy
+        run: |
+          PROJECT_VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          if [[ "$PROJECT_VERSION" == *-SNAPSHOT ]]; then
+            mvn --batch-mode -Prelease deploy
+          else
+            mvn --batch-mode package
+          fi
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
