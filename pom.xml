@@ -8,7 +8,7 @@
 
     <name>${project.artifactId}</name>
     <description>The jd-cli Java decompiler wrapper</description>
-    <url>https://github.com/kwart/jd-cli</url>
+    <url>https://github.com/intoolswetrust/jd-cli</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -114,13 +114,13 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/kwart/jd-cli.git</connection>
-        <developerConnection>scm:git:git@github.com:kwart/jd-cli.git</developerConnection>
-        <url>http://github.com/kwart/jd-cli/</url>
-      <tag>HEAD</tag>
-  </scm>
+        <connection>scm:git:git://github.com/intoolswetrust/jd-cli.git</connection>
+        <developerConnection>scm:git:git@github.com:intoolswetrust/jd-cli.git</developerConnection>
+        <url>http://github.com/intoolswetrust/jd-cli/</url>
+        <tag>HEAD</tag>
+    </scm>
 
-     <distributionManagement>
+    <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>

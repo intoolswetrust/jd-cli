@@ -12,7 +12,6 @@
 
     <name>${project.artifactId}</name>
     <description>Decompilation library module</description>
-    <url>https://github.com/kwart/jd-cli</url>
 
     <dependencies>
         <dependency>
