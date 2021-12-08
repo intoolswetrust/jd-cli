@@ -6,4 +6,4 @@ DIR=$(cd "$DIRNAME" || exit 112; pwd)
 [ "$OSTYPE" = "cygwin" ] \
 && DIR="$( cygpath -m "$DIR" )"
 
-java -jar "$DIR/jd-cli.jar" $@ 
+java -jar "$DIR/jd-cli.jar" "$@"
