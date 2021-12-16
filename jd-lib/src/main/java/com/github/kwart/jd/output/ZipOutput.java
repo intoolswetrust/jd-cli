@@ -171,4 +171,9 @@ public class ZipOutput extends AbstractJDOutput {
         zos = null;
     }
 
+    @Override
+    public File getTargetDir() {
+        return file;
+    }
+
 }

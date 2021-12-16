@@ -16,12 +16,14 @@
  *******************************************************************************/
 package com.github.kwart.jd.input;
 
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.FileOutputStream;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import com.github.kwart.jd.output.DirOutput;
 import org.jd.core.v1.api.loader.LoaderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +55,24 @@ public class ZipFileInput extends AbstractFileJDInput {
      */
     public ZipFileInput(String filePath, String pattern) throws IllegalArgumentException {
         super(filePath, pattern);
+    }
+
+    /*
+     * write zip entry .jar to temp file
+     */
+    private File writeZipEntry(ZipInputStream zis) {
+        FileOutputStream fos = null;
+        File f = null;
+        try {
+            f = File.createTempFile("jdZipTemp-", ".jar");
+            fos = new FileOutputStream(f);
+            IOUtils.copy(zis, fos);
+        } catch (Exception ex) {
+            LOGGER.error("Exception RAISED!!! ", ex);
+        } finally {
+            IOUtils.closeQuietly(fos);
+        }
+        return f;
     }
 
     /**
@@ -87,11 +107,12 @@ public class ZipFileInput extends AbstractFileJDInput {
                     }
                     if (IOUtils.isClassFile(entryName)) {
                         LOGGER.debug("Caching {}", entryName);
-                        try {
-                            cachedLoader.addClass(entryName, zis);
-                        } catch (LoaderException e) {
-                            LOGGER.error("LoaderException occured", e);
-                        }
+                        processClass(zis, cachedLoader, entryName);
+                    } else if (IOUtils.isJarFile(entryName)) {
+                        LOGGER.debug("Caching {}", entryName);
+                        processInnerJar(javaDecompiler,
+                                zis,
+                                getInnerDir(jdOutput, entryName));
                     } else if (!skipResources) {
                         LOGGER.debug("Processing resource file {}", entryName);
                         jdOutput.processResource(entryName, zis);
@@ -100,12 +121,13 @@ public class ZipFileInput extends AbstractFileJDInput {
                     }
                 }
             }
-        } catch (IOException e) {
-            LOGGER.error("IOException occured", e);
+        } catch (Exception e) {
+            LOGGER.error("Exception occured", e);
         } finally {
             IOUtils.closeQuietly(zis);
         }
-        Stream<String> classNamesStream = options.isParallelProcessingAllowed() ? cachedLoader.getClassNames().parallelStream()
+        Stream<String> classNamesStream = options.isParallelProcessingAllowed()
+                ? cachedLoader.getClassNames().parallelStream()
                 : cachedLoader.getClassNames().stream();
         classNamesStream.filter(s -> !IOUtils.isInnerClass(s)).map(s -> IOUtils.cutClassSuffix(s)).forEach(name -> {
             try {
@@ -115,5 +137,37 @@ public class ZipFileInput extends AbstractFileJDInput {
             }
         });
         jdOutput.commit();
+    }
+
+    private void processClass(ZipInputStream zis, CachedLoader cachedLoader, String entryName) {
+        try {
+            cachedLoader.addClass(entryName, zis);
+        } catch (LoaderException e) {
+            LOGGER.error("LoaderException occured", e);
+        }
+    }
+
+    private String getInnerDir(JDOutput jdOutput, String entryName) {
+        return ((jdOutput.getTargetDir() == null)
+                    ? ""
+                    : jdOutput.getTargetDir().getPath() + File.separator)
+                + entryName;
+    }
+
+    private void processInnerJar(JavaDecompiler javaDecompiler, ZipInputStream zis, String entryName) {
+        File f = null;
+        try {
+            f = writeZipEntry(zis);
+            JDInput jdIn = new ZipFileInput(f.getPath(), null);
+            jdIn.decompile(javaDecompiler,
+                    new DirOutput(
+                            new File(entryName + ".src")));
+        } catch (Exception ex) {
+            LOGGER.error("Processing inner jar Exception", ex);
+        } finally {
+            if (f != null) {
+                f.delete();
+            }
+        }
     }
 }

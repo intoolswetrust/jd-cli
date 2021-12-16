@@ -16,6 +16,7 @@
  *******************************************************************************/
 package com.github.kwart.jd.output;
 
+import java.io.File;
 import java.io.InputStream;
 
 import com.github.kwart.jd.options.DecompilerOptions;
@@ -25,7 +26,7 @@ import com.github.kwart.jd.options.DecompilerOptions;
  * <p>
  * Usual workflow is:
  * <ol>
- * <li>{@link #init(String)} mehod is called to initialize plugin</li>
+ * <li>{@link #init(DecompilerOptions, String)} mehod is called to initialize plugin</li>
  * <li>cycle through input resources and call {@link #processClass(String, String)} and
  * {@link #processResource(String, InputStream)} mehods</li>
  * <li>call {@link #commit()}</li>
@@ -60,4 +61,9 @@ public interface JDOutput {
      * Finish the processing. Resources should be released in this method.
      */
     void commit();
+
+    /*
+     * Get Target Dir
+     */
+    File getTargetDir();
 }

@@ -57,7 +57,7 @@ public class StructuredDirOutput extends DirOutput {
     }
 
     @Override
-    protected File getTargetDir() {
+    public File getTargetDir() {
         return targetDir;
     }
 }

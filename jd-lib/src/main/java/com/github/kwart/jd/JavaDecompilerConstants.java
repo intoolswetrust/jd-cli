@@ -50,6 +50,14 @@ public final class JavaDecompilerConstants {
      */
     public static final int CLASS_SUFFIX_LEN = CLASS_SUFFIX.length();
     /**
+     * Filename suffix for compiled jars.
+     */
+    public static final String JAR_SUFFIX = ".jar";
+    /**
+     * Length of {@link #JAR_SUFFIX}.
+     */
+    public static final int JAR_SUFFIX_LEN = JAR_SUFFIX.length();
+    /**
      * Filename suffix for java source files.
      */
     public static final String JAVA_SUFFIX = ".java";

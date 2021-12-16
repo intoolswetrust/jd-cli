@@ -132,7 +132,8 @@ public class DirOutput extends AbstractJDOutput {
         LOGGER.info("Finished with {} class file(s) and {} resource file(s) written.", countClasses, countResources);
     }
 
-    protected File getTargetDir() {
+    @Override
+    public File getTargetDir() {
         return dir;
     }
 

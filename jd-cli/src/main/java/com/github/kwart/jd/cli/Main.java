@@ -101,7 +101,7 @@ public final class Main {
                 LOGGER.info("Decompiling from STD_IN");
                 file = readSystemIn();
             } else {
-                LOGGER.info("Decompiling {}", path);
+                //LOGGER.info("Decompiling {}", path);
                 file = new File(path);
             }
 

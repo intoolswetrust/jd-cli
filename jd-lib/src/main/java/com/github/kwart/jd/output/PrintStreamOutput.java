@@ -16,6 +16,7 @@
  *******************************************************************************/
 package com.github.kwart.jd.output;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
 
@@ -62,6 +63,11 @@ public class PrintStreamOutput extends AbstractJDOutput {
      */
     public void processResource(String fileName, InputStream is) {
         LOGGER.debug("Skipping resource {}", fileName);
+    }
+
+    @Override
+    public File getTargetDir() {
+        return null;
     }
 
 }

@@ -144,6 +144,11 @@ public class MultiOutput extends AbstractJDOutput {
         }
     }
 
+    @Override
+    public File getTargetDir() {
+        return null;
+    }
+
     /**
      * Calls {@link #processResource(String, InputStream)} method of wrapped {@link JDOutput} instances. If only one wrapped
      * instance exist then the given InputStream is directly provided to it, otherwise temporary file is created and for each

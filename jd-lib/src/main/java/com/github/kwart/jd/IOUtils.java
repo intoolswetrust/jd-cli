@@ -18,6 +18,8 @@ package com.github.kwart.jd;
 
 import static com.github.kwart.jd.JavaDecompilerConstants.CLASS_SUFFIX;
 import static com.github.kwart.jd.JavaDecompilerConstants.CLASS_SUFFIX_LEN;
+import static com.github.kwart.jd.JavaDecompilerConstants.JAR_SUFFIX;
+import static com.github.kwart.jd.JavaDecompilerConstants.JAR_SUFFIX_LEN;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -108,6 +110,20 @@ public final class IOUtils {
     }
 
     /**
+     * Returns true if given file path ends with ".jar"
+     *
+     * @param filePath
+     * @return
+     */
+    /**
+     * @param filePath
+     * @return
+     */
+    public static boolean isJarFile(final String filePath) {
+        return filePath.toLowerCase(Locale.ENGLISH).endsWith(JAR_SUFFIX);
+    }
+
+    /**
      * Returns true if given file path ends with ".class" and it contains "$" in the name.
      *
      * @param filePath
@@ -125,5 +141,14 @@ public final class IOUtils {
      */
     public static String cutClassSuffix(final String classFilePath) {
         return classFilePath.substring(0, classFilePath.length() - CLASS_SUFFIX_LEN);
+    }
+    /**
+     * Removes ".jar".length() number of character from the end of the input stream.
+     *
+     * @param jarFilePath
+     * @return
+     */
+    public static String cutJarSuffix(final String jarFilePath) {
+        return jarFilePath.substring(0, jarFilePath.length() - JAR_SUFFIX_LEN);
     }
 }
