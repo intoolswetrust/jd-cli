@@ -20,7 +20,7 @@
         <maven.checkstyle.plugin.version>3.1.2</maven.checkstyle.plugin.version>
         <slf4j.version>1.7.36</slf4j.version>
         <jd.version>1.1.3</jd.version>
-        <logback.version>1.2.10</logback.version>
+        <logback.version>1.2.11</logback.version>
         <jcommander.version>1.32</jcommander.version>
         <junit.version>4.13.2</junit.version>
     </properties>
