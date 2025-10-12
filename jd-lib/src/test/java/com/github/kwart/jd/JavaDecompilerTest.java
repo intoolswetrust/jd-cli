@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jd.core.v1.api.loader.LoaderException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -59,7 +58,7 @@ public class JavaDecompilerTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
-    public void basicTest() throws LoaderException, IOException {
+    public void basicTest() throws IOException {
         JDInput input = new DirInput("target/test-classes");
         File tmpRootFolder = temporaryFolder.getRoot();
         File tmpFolder = new File(tmpRootFolder, "flat");
@@ -75,7 +74,7 @@ public class JavaDecompilerTest {
     }
 
     @Test
-    public void patternNotMatchingTest() throws LoaderException, IOException {
+    public void patternNotMatchingTest() throws IOException {
         JDInput input = new DirInput("target/test-classes", "Not.*Matching");
         File tmpFolder = temporaryFolder.getRoot();
         JDOutput output = new DirOutput(tmpFolder.getAbsoluteFile());
@@ -86,7 +85,7 @@ public class JavaDecompilerTest {
     }
 
     @Test
-    public void patternMatchingTest() throws LoaderException, IOException {
+    public void patternMatchingTest() throws IOException {
         JDInput input = new DirInput("target/test-classes", "jd.Hello.*World\\.");
         File tmpFolder = temporaryFolder.getRoot();
         JDOutput output = new DirOutput(tmpFolder.getAbsoluteFile());

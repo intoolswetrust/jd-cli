@@ -22,7 +22,6 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.jd.core.v1.api.loader.LoaderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,8 +88,8 @@ public class ZipFileInput extends AbstractFileJDInput {
                         LOGGER.debug("Caching {}", entryName);
                         try {
                             cachedLoader.addClass(entryName, zis);
-                        } catch (LoaderException e) {
-                            LOGGER.error("LoaderException occured", e);
+                        } catch (IOException e) {
+                            LOGGER.error("IOException occured", e);
                         }
                     } else if (!skipResources) {
                         LOGGER.debug("Processing resource file {}", entryName);
