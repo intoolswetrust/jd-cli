@@ -12,8 +12,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
 
         <maven.shade.plugin.version>3.3.0</maven.shade.plugin.version>
         <maven.clean.plugin.version>3.2.0</maven.clean.plugin.version>
