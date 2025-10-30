@@ -10,3 +10,5 @@ target
 /jd-cli-*.zip
 /jd-cli-*.tar.gz
 bin/
+**/*.releaseBackup
+release.properties
