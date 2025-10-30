@@ -180,9 +180,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/intoolswetrust/jd-cli.git</connection>
-        <developerConnection>scm:git:git@github.com:intoolswetrust/jd-cli.git</developerConnection>
-        <url>http://github.com/intoolswetrust/jd-cli/</url>
+        <connection>scm:git:https://github.com/intoolswetrust/jd-cli.git</connection>
+        <url>https://github.com/intoolswetrust/jd-cli/</url>
         <tag>HEAD</tag>
     </scm>
 
