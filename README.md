@@ -1,6 +1,6 @@
 # jd-cli - Command line Java Decompiler
 
-The *jd-cli* is a simple command line wrapper around [JD Core](https://github.com/java-decompiler/jd-core)  Java Decompiler project. 
+The *jd-cli* is a simple command line wrapper around [nbauma109/jd-core](https://github.com/nbauma109/jd-core) (fork of the original [java-decompiler/jd-core](https://github.com/java-decompiler/jd-core))  Java Decompiler project. 
 
 ## Download
 
@@ -8,7 +8,9 @@ Find latest bits in **[GitHub Releases](https://github.com/kwart/jd-cli/releases
 
 ## Requirements
 
-[Java runtime](http://java.com/en/download/) is required in version 8 or newer (for version 1.0.0 and newer) and Java 6 for older versions.
+[Java runtime](https://adoptium.net/temurin/releases) required:
+* version 17+ (for jd-cli version 1.3.0+);
+* version 8+ for older jd-cli versions (`< 1.3.0`).
 
 ## Usage
 
