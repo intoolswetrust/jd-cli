@@ -1,4 +1,4 @@
-FROM gcr.io/distroless/java:17
+FROM gcr.io/distroless/java17-debian12
 MAINTAINER Josef (kwart) Cacek <josef.cacek@gmail.com>
 
 COPY jd-cli/target/jd-cli.jar /jd-cli.jar
