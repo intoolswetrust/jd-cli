@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jd.core.v1.api.loader.Loader;
-import org.jd.core.v1.api.loader.LoaderException;
-
 import com.github.kwart.jd.IOUtils;
 
 /**
@@ -22,18 +20,16 @@ public class ByteArrayLoader implements Loader {
         this.internalName = internalName;
     }
 
-    public ByteArrayLoader(InputStream is, String internalName) throws LoaderException {
+    public ByteArrayLoader(InputStream is, String internalName) throws IOException {
         this.internalName = internalName;
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             IOUtils.copy(is, baos);
             bytes = baos.toByteArray();
-        } catch (IOException e) {
-            throw new LoaderException(e);
         }
     }
 
     @Override
-    public byte[] load(String internalName) throws LoaderException {
+    public byte[] load(String internalName) throws IOException {
         return canLoad(internalName) ? bytes : null;
     }
 

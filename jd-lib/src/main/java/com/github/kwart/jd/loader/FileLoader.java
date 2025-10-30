@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.jd.core.v1.api.loader.Loader;
-import org.jd.core.v1.api.loader.LoaderException;
 
 /**
  * Loads bytes from given file name.
@@ -24,12 +23,8 @@ public final class FileLoader implements Loader {
     }
 
     @Override
-    public byte[] load(String internalName) throws LoaderException {
-        try {
-            return Files.readAllBytes(fixPath(internalName));
-        } catch (IOException e) {
-            throw new LoaderException(e);
-        }
+    public byte[] load(String internalName) throws IOException {
+        return Files.readAllBytes(fixPath(internalName));
     }
 
     @Override

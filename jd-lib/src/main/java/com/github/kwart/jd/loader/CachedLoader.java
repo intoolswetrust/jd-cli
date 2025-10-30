@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.jd.core.v1.api.loader.Loader;
-import org.jd.core.v1.api.loader.LoaderException;
 
 import com.github.kwart.jd.IOUtils;
 
@@ -26,12 +25,10 @@ public class CachedLoader implements Loader {
         classCache.put(name.replace('\\', '/'), bytecode);
     }
 
-    public void addClass(String name, InputStream is) throws LoaderException {
+    public void addClass(String name, InputStream is) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             IOUtils.copy(is, baos);
             addClass(name, baos.toByteArray());
-        } catch (IOException e) {
-            throw new LoaderException(e);
         }
     }
 
@@ -40,7 +37,7 @@ public class CachedLoader implements Loader {
     }
 
     @Override
-    public byte[] load(String internalName) throws LoaderException {
+    public byte[] load(String internalName) throws IOException {
         return findInCache(internalName);
     }
 

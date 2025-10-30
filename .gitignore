@@ -9,3 +9,4 @@ target
 *.versionsBackup
 /jd-cli-*.zip
 /jd-cli-*.tar.gz
+bin/
