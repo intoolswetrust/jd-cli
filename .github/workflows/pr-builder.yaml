@@ -32,7 +32,7 @@ jobs:
 
       - name: Upload output log
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: jd-cli-log
           path: output.log
