@@ -59,7 +59,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@b98a3b12e86552593f3e4e577ca8a62aa2f3f22b
+      uses: svenstaro/upload-release-action@29e53e917877a24fad85510ded594ab3c9ca12de
       with:
         file: jd-cli-${{ github.event.inputs.release-version }}-dist.*
         file_glob: true
