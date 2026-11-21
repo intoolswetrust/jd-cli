@@ -27,4 +27,11 @@
 /*  27 */       .withMonth(Month.AUGUST.getValue())
 /*  28 */       .withDayOfMonth(1);
 /*   0 */   }
+/*   0 */ 
+/*   0 */ 
+/*   0 */   
+/*   0 */   public Locale rootLocale()
+/*   0 */   {
+/*  35 */     return Locale.ROOT;
+/*   0 */   }
 /*   0 */ }

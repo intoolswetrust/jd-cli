@@ -27,4 +27,10 @@ public final class BuilderChain {
                 .withMonth(Month.AUGUST.getValue())
                 .withDayOfMonth(1);
     }
+
+    /**
+     * Returns the root locale (signature and body on the same line, as many projects write their one-liners).
+     */
+    @SuppressWarnings({ "checkstyle:leftcurly", "checkstyle:rightcurly" })
+    public Locale rootLocale() { return Locale.ROOT; }
 }
