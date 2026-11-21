@@ -60,9 +60,7 @@ public class JavaDecompilerTest {
     };
 
     /** Number of the println statements in DensePacked.java. */
-    private static final int PRINTLN_COUNT = 9;
-    /** Zero-based index of the line with method b() in DensePacked.java. */
-    private static final int LINE_OF_B = 3;
+    private static final int PRINTLN_COUNT = 8;
     private static final Pattern PRINTLN = Pattern.compile("System\\.out\\.println\\(\"\\w+\"\\);");
 
     /**
@@ -110,8 +108,8 @@ public class JavaDecompilerTest {
 
     /**
      * Decompiles a class in which several members (and inner classes) share the same source lines. To keep every statement on
-     * its original line, jd-core has to join members on one line and to reorder them (e.g. the synthetic constructor of an inner
-     * class is moved behind its method). This is not possible by merely adding blank lines.
+     * its original line, jd-core has to join members on one line and to reorder them (e.g. the field of an inner class is moved
+     * behind its constructor). This is not possible by merely adding blank lines.
      */
     @Test
     public void realignLineNumbersReordersMembersTest() throws IOException {
@@ -119,15 +117,16 @@ public class JavaDecompilerTest {
         File classesDir = temporaryFolder.newFolder("classes");
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         assertTrue("A JDK is required to run this test", compiler != null);
-        assertEquals(0, compiler.run(null, null, null, "-g", "-d", classesDir.getPath(), sourceFile.getPath()));
+        int result = compiler.run(null, null, null, "-g", "--release", "17", "-d", classesDir.getPath(), sourceFile.getPath());
+        assertEquals(0, result);
 
         String plain = decompileDensePacked(classesDir, false);
         String realigned = decompileDensePacked(classesDir, true);
 
-        // without realignment the (synthetic) constructor of the inner class precedes its method
-        assertTrue(plain.indexOf("In1(DensePacked") < plain.indexOf("void x()"));
-        // with realignment the members are reordered, so that the method keeps its original line
-        assertTrue(realigned.indexOf("void x()") < realigned.indexOf("In1(DensePacked"));
+        // without realignment the field of the inner class precedes its constructor
+        assertTrue(plain.indexOf("int z") < plain.indexOf("In3()"));
+        // with realignment the members sharing a line are re-ordered, so that each of them keeps its original line
+        assertTrue(realigned.indexOf("In3()") < realigned.indexOf("int z"));
 
         // each statement is on the same line as in the original source
         List<String> original = Files.readAllLines(sourceFile.toPath());
@@ -142,8 +141,8 @@ public class JavaDecompilerTest {
         }
         assertEquals(PRINTLN_COUNT, checked);
         // members are joined on shared lines, exactly as in the original source
-        assertThat(decompiled.get(LINE_OF_B), allOf(containsString("void b()"), containsString("class In1")));
-        assertThat(decompiled.get(LINE_OF_B + 1), containsString("void c()"));
+        assertThat(decompiled.get(2), allOf(containsString("void a()"), containsString("class In1")));
+        assertThat(decompiled.get(3), allOf(containsString("DensePacked()"), containsString("class In2")));
     }
 
     private String decompileDensePacked(File classesDir, boolean realign) throws IOException {

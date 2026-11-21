@@ -51,15 +51,15 @@ Usage: java -jar jd-cli.jar [options] [Files to decompile]
        entries are skipped.
     --realignLineNumbers, -rn
        re-lays out the decompiled code (using jd-core's line number realignment)
-       so that statements land on the same line numbers as in the original
-       source, e.g. to set breakpoints or read stack traces against it. Spacing
-       between members is adjusted, members and inner classes which shared a
-       line in the original are joined on one line again and members may be
-       re-ordered (e.g. the constructor of an inner class moved behind its
-       methods) where the original numbering requires it. It is a best-effort
-       layout, not a plain padding of blank lines. Needs line number debug info in the classes
-       (compiled with -g or default javac options); without it nothing changes.
-       Can be combined with --displayLineNumbers.
+       so that statements land on the same line numbers as in the original source,
+       e.g. to set breakpoints or read stack traces against it. Spacing between
+       members is adjusted, members and inner classes which shared a line in the
+       original are joined on one line again and members may be re-ordered (e.g. a
+       field moved behind the constructor) where the original numbering requires
+       it. It is a best-effort layout, not a plain padding of blank lines. Needs
+       line number debug info in the classes (compiled with -g or default javac
+       options); without it nothing changes. Can be combined with
+       --displayLineNumbers.
        Default: false
     --serialProcessing, -sp
        don't use parallel processing
