@@ -1,6 +1,5 @@
 package com.github.kwart.jd;
 
-import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -11,10 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
@@ -58,10 +54,6 @@ public class JavaDecompilerTest {
             return true;
         }
     };
-
-    /** Number of the println statements in DensePacked.java. */
-    private static final int PRINTLN_COUNT = 8;
-    private static final Pattern PRINTLN = Pattern.compile("System\\.out\\.println\\(\"\\w+\"\\);");
 
     /**
      * Temporary folder.
@@ -107,9 +99,17 @@ public class JavaDecompilerTest {
     }
 
     /**
-     * Decompiles a class in which several members (and inner classes) share the same source lines. To keep every statement on
-     * its original line, jd-core has to join members on one line and to reorder them (e.g. the field of an inner class is moved
-     * behind its constructor). This is not possible by merely adding blank lines.
+     * Decompiles DensePacked.java with realigned line numbers and compares the whole output.
+     * <p>
+     * Why this sample: jd-core sorts fields, methods and inner classes by their original line number whether the option is
+     * enabled or not, so a class with one member per line (e.g. methods interleaved with inner classes) comes out in the same
+     * order with and without realignment, and could only prove that the lines match. In DensePacked several members share
+     * a line, which is where the realignment layout actually does something on top of the sort: members are joined on one line
+     * again, and members sharing a line are re-ordered (the field {@code z} of {@code In3} is moved behind its constructor,
+     * which is not the case without realignment). The sample is compiled in the test (with {@code --release 17}, so that the
+     * output does not depend on the javac version), because such a layout would not pass checkstyle as a source file.
+     * <p>
+     * The numbers in the expected output are the original line numbers: line 3 of DensePacked.java is line 3 of the output, etc.
      */
     @Test
     public void realignLineNumbersReordersMembersTest() throws IOException {
@@ -120,32 +120,28 @@ public class JavaDecompilerTest {
         int result = compiler.run(null, null, null, "-g", "--release", "17", "-d", classesDir.getPath(), sourceFile.getPath());
         assertEquals(0, result);
 
-        String plain = decompileDensePacked(classesDir, false);
-        String realigned = decompileDensePacked(classesDir, true);
+        String expected = String.join("\n",
+                "package com.github.kwart.jd.sample;",
+                "public class DensePacked {",
+                // line 3
+                "  public void a() { System.out.println(\"a\"); } class In1 { In1() { System.out.println(\"in1\"); } "
+                        + "void x() { System.out.println(\"x\"); } }",
+                // line 4
+                "  DensePacked() { System.out.println(\"ctor\"); } class In2 { void y() { System.out.println(\"y\"); } }",
+                // line 5
+                "  private int f = 1; public void b() { System.out.println(\"b\"); }",
+                // line 6: the field z is moved behind the constructor
+                "  class In3 { In3() { this.z = 3; System.out.println(\"in3\"); } int z; "
+                        + "void w() { System.out.println(\"w\"); }",
+                "     }",
+                "",
+                "}",
+                "");
 
-        // without realignment the field of the inner class precedes its constructor
-        assertTrue(plain.indexOf("int z") < plain.indexOf("In3()"));
-        // with realignment the members sharing a line are re-ordered, so that each of them keeps its original line
-        assertTrue(realigned.indexOf("In3()") < realigned.indexOf("int z"));
-
-        // each statement is on the same line as in the original source
-        List<String> original = Files.readAllLines(sourceFile.toPath());
-        List<String> decompiled = Arrays.asList(realigned.split("\\R", -1));
-        int checked = 0;
-        for (int i = 0; i < original.size(); i++) {
-            Matcher matcher = PRINTLN.matcher(original.get(i));
-            while (matcher.find()) {
-                assertThat("line " + (i + 1) + " of the realigned output", decompiled.get(i), containsString(matcher.group()));
-                checked++;
-            }
-        }
-        assertEquals(PRINTLN_COUNT, checked);
-        // members are joined on shared lines, exactly as in the original source
-        assertThat(decompiled.get(2), allOf(containsString("void a()"), containsString("class In1")));
-        assertThat(decompiled.get(3), allOf(containsString("DensePacked()"), containsString("class In2")));
+        assertEquals(expected, decompileDensePacked(classesDir).replace("\r\n", "\n"));
     }
 
-    private String decompileDensePacked(File classesDir, boolean realign) throws IOException {
+    private String decompileDensePacked(File classesDir) throws IOException {
         DecompilerOptions options = new DecompilerOptions() {
             @Override
             public boolean isSkipResources() {
@@ -164,7 +160,7 @@ public class JavaDecompilerTest {
 
             @Override
             public boolean isRealignLineNumbers() {
-                return realign;
+                return true;
             }
 
             @Override
