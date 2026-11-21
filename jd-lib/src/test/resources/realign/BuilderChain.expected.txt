@@ -1,0 +1,33 @@
+/*   0 */ package com.github.kwart.jd.sample;
+/*   0 */ 
+/*   0 */ import java.util.Locale;
+/*   0 */ 
+/*   0 */ 
+/*   0 */ 
+/*   0 */ 
+/*   0 */ 
+/*   0 */ 
+/*   0 */ 
+/*   0 */ 
+/*   0 */ 
+/*   0 */ 
+/*   0 */ public final class BuilderChain
+/*   0 */ {
+/*   0 */   public static String greeting(String name) {
+/*  17 */     return "Hello, " + 
+/*  18 */       name + 
+/*  19 */       '!';
+/*   0 */   }
+/*   0 */ 
+/*   0 */ 
+/*   0 */ 
+/*   0 */ 
+/*   0 */   
+/*   0 */   public static Locale swissGerman()
+/*   0 */   {
+/*  28 */     return new Locale.Builder()
+/*  29 */       .setLanguage("de")
+/*  30 */       .setRegion("CH")
+/*  31 */       .build();
+/*   0 */   }
+/*   0 */ }

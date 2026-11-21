@@ -13,9 +13,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -100,32 +97,18 @@ public class JavaDecompilerTest {
     }
 
     /**
-     * Decompiles DensePacked.java with realigned line numbers and compares the whole output with an expected file.
+     * Decompiles {@link com.github.kwart.jd.sample.BuilderChain} with realigned line numbers and compares the whole output with
+     * an expected file.
      * <p>
-     * Why this sample: it is the smallest one showing what the realignment does. The two statements are on the lines 6 and 12
-     * of the source (separated by a gap of blank lines), whereas without realignment they come out on the lines 5 and 9 of the
-     * output. With realignment the layout inserts blank lines and moves the opening braces to their own lines, so that the
-     * statements land on the lines 6 and 12 again (see the line numbers displayed in DensePacked.expected.txt, 0 stands for the
-     * lines without original line number). Neither members sharing a line nor inner classes are needed to show this.
-     * <p>
-     * The sample is compiled in the test with {@code --release 17} (so that the output does not depend on the javac version).
+     * Why this sample: it is a typical real-life case, builders called with one call per line ({@code append}, {@code set...}),
+     * with javadoc and imports around. The decompiler does not output comments and, without realignment, the statements would
+     * come out a few lines too early (e.g. the first one on the line 7 instead of 17). With realignment the layout inserts blank
+     * lines (and moves the opening braces to their own lines where needed), so that every call is back on its original line.
+     * The expected file displays the original line numbers (0 stands for the lines without original line number), which are
+     * the same as the numbers of the lines they are on.
      */
     @Test
     public void realignLineNumbersTest() throws IOException {
-        File sourceFile = new File("src/test/resources/realign/DensePacked.java");
-        File classesDir = temporaryFolder.newFolder("classes");
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        assertTrue("A JDK is required to run this test", compiler != null);
-        int result = compiler.run(null, null, null, "-g", "--release", "17", "-d", classesDir.getPath(), sourceFile.getPath());
-        assertEquals(0, result);
-
-        String expected = new String(Files.readAllBytes(new File("src/test/resources/realign/DensePacked.expected.txt").toPath()),
-                StandardCharsets.UTF_8);
-
-        assertEquals(expected.replace("\r\n", "\n"), decompileDensePacked(classesDir).replace("\r\n", "\n"));
-    }
-
-    private String decompileDensePacked(File classesDir) throws IOException {
         DecompilerOptions options = new DecompilerOptions() {
             @Override
             public boolean isSkipResources() {
@@ -153,8 +136,14 @@ public class JavaDecompilerTest {
             }
         };
         File outDir = temporaryFolder.newFolder();
-        new DirInput(classesDir.getPath(), "DensePacked\\.").decompile(new JavaDecompiler(options), new DirOutput(outDir));
-        return new String(Files.readAllBytes(new File(outDir, "com/github/kwart/jd/sample/DensePacked.java").toPath()));
+        new DirInput("target/test-classes", "BuilderChain\\.").decompile(new JavaDecompiler(options), new DirOutput(outDir));
+
+        File actualFile = new File(outDir, "com/github/kwart/jd/sample/BuilderChain.java");
+        File expectedFile = new File("src/test/resources/realign/BuilderChain.expected.txt");
+        String actual = new String(Files.readAllBytes(actualFile.toPath()), StandardCharsets.UTF_8);
+        String expected = new String(Files.readAllBytes(expectedFile.toPath()), StandardCharsets.UTF_8);
+
+        assertEquals(expected.replace("\r\n", "\n"), actual.replace("\r\n", "\n"));
     }
 
     private void assertDecompiled(File outputFolder) throws IOException {
