@@ -3,6 +3,8 @@
 /*   0 */ import java.time.LocalDate;
 /*   0 */ import java.time.Month;
 /*   0 */ import java.util.Locale;
+/*   0 */ import java.util.Objects;
+/*   0 */ 
 /*   0 */ 
 /*   0 */ 
 /*   0 */ 
@@ -12,26 +14,35 @@
 /*   0 */ 
 /*   0 */ public final class BuilderChain
 /*   0 */ {
+/*   0 */   private String name;
+/*   0 */   
 /*   0 */   public Locale swissGerman() {
-/*  16 */     return new Locale.Builder()
-/*  17 */       .setLanguage("de")
-/*  18 */       .setRegion("CH")
-/*  19 */       .build();
+/*  20 */     return new Locale.Builder()
+/*  21 */       .setLanguage("de")
+/*  22 */       .setRegion("CH")
+/*  23 */       .build();
 /*   0 */   }
 /*   0 */ 
 /*   0 */ 
 /*   0 */ 
 /*   0 */   
 /*   0 */   public LocalDate swissNationalDay() {
-/*  26 */     return LocalDate.now()
-/*  27 */       .withMonth(Month.AUGUST.getValue())
-/*  28 */       .withDayOfMonth(1);
+/*  30 */     return LocalDate.now()
+/*  31 */       .withMonth(Month.AUGUST.getValue())
+/*  32 */       .withDayOfMonth(1);
 /*   0 */   }
-/*   0 */ 
-/*   0 */ 
+/*   0 */   public String getName() {
+/*  35 */     return this.name;
+/*   0 */   }
+/*  37 */   public void setName(String value) { this.name = value; }
 /*   0 */   
-/*   0 */   public Locale rootLocale()
-/*   0 */   {
-/*  35 */     return Locale.ROOT;
+/*   0 */   public int hashCode() {
+/*  40 */     return Objects.hash(this.name);
+/*   0 */   }
+/*   0 */   
+/*  43 */   public boolean equals(Object o) { return (o instanceof BuilderChain && Objects.equals(this.name, ((BuilderChain)o).name)); }
+/*   0 */   
+/*   0 */   public String toString() {
+/*  46 */     return "BuilderChain[" + this.name + "]";
 /*   0 */   }
 /*   0 */ }

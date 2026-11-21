@@ -104,8 +104,10 @@ public class JavaDecompilerTest {
      * with javadoc and imports around. The decompiler does not output comments and, without realignment, the statements would
      * come out a few lines too early (e.g. the first one on the line 9 instead of 16). With realignment the layout inserts blank
      * lines (and moves the opening braces to their own lines where needed), so that every call is back on its original line.
-     * The last method has its signature and its body on the same line, as many projects write their one-liners: the decompiler
-     * prints the signature and the opening brace on the lines before the statement, which stays on its original line (35).
+     * The getter, setter, {@code hashCode}, {@code equals} and {@code toString} have their signature and their body on the same
+     * line, as many projects write them. The decompiler cannot always keep them on one line: where the original leaves no room
+     * (e.g. {@code setName} and {@code equals}) the layout joins signature and body on one line, otherwise the signature and the
+     * opening brace are printed on the lines before the statement. Either way, each statement stays on its original line.
      * The expected file displays the original line numbers (0 stands for the lines without original line number), which are
      * the same as the numbers of the lines they are on.
      */

@@ -3,11 +3,15 @@ package com.github.kwart.jd.sample;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
- * Builders called in the usual multi-line style.
+ * Builders called in the usual multi-line style, and one-liners with the signature and the body on the same line.
  */
+@SuppressWarnings({ "checkstyle:leftcurly", "checkstyle:rightcurly" })
 public final class BuilderChain {
+
+    private String name;
 
     /**
      * Builds a locale.
@@ -28,9 +32,16 @@ public final class BuilderChain {
                 .withDayOfMonth(1);
     }
 
-    /**
-     * Returns the root locale (signature and body on the same line, as many projects write their one-liners).
-     */
-    @SuppressWarnings({ "checkstyle:leftcurly", "checkstyle:rightcurly" })
-    public Locale rootLocale() { return Locale.ROOT; }
+    public String getName() { return name; }
+
+    public void setName(String value) { this.name = value; }
+
+    @Override
+    public int hashCode() { return Objects.hash(name); }
+
+    @Override
+    public boolean equals(Object o) { return o instanceof BuilderChain && Objects.equals(name, ((BuilderChain) o).name); }
+
+    @Override
+    public String toString() { return "BuilderChain[" + name + "]"; }
 }
