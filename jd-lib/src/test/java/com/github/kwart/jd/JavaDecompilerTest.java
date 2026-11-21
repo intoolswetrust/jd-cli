@@ -100,21 +100,18 @@ public class JavaDecompilerTest {
     }
 
     /**
-     * Decompiles DensePacked.java with realigned line numbers and compares the whole output.
+     * Decompiles DensePacked.java with realigned line numbers and compares the whole output with an expected file.
      * <p>
-     * Why this sample: jd-core sorts fields, methods and inner classes by their original line number whether the option is
-     * enabled or not, so a class with one member per line (e.g. methods interleaved with inner classes) comes out in the same
-     * order with and without realignment, and could only prove that the lines match. In DensePacked several members share
-     * a line, which is where the realignment layout actually does something on top of the sort: members are joined on one line
-     * again, and members sharing a line are re-ordered (the field {@code z} of {@code In3} is moved behind its constructor,
-     * which is not the case without realignment). The sample is compiled in the test (with {@code --release 17}, so that the
-     * output does not depend on the javac version), because such a layout would not pass checkstyle as a source file.
+     * Why this sample: it is the smallest one showing what the realignment does. The two statements are on the lines 6 and 12
+     * of the source (separated by a gap of blank lines), whereas without realignment they come out on the lines 5 and 9 of the
+     * output. With realignment the layout inserts blank lines and moves the opening braces to their own lines, so that the
+     * statements land on the lines 6 and 12 again (see the line numbers displayed in DensePacked.expected.txt, 0 stands for the
+     * lines without original line number). Neither members sharing a line nor inner classes are needed to show this.
      * <p>
-     * Line numbers are displayed: the expected output (DensePacked.expected.txt) shows the original line numbers, so line 3 of
-     * DensePacked.java is on line 3 of the output, etc. (0 for the lines without original line number).
+     * The sample is compiled in the test with {@code --release 17} (so that the output does not depend on the javac version).
      */
     @Test
-    public void realignLineNumbersReordersMembersTest() throws IOException {
+    public void realignLineNumbersTest() throws IOException {
         File sourceFile = new File("src/test/resources/realign/DensePacked.java");
         File classesDir = temporaryFolder.newFolder("classes");
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
