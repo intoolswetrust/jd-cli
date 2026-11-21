@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +110,8 @@ public class JavaDecompilerTest {
      * which is not the case without realignment). The sample is compiled in the test (with {@code --release 17}, so that the
      * output does not depend on the javac version), because such a layout would not pass checkstyle as a source file.
      * <p>
-     * The numbers in the expected output are the original line numbers: line 3 of DensePacked.java is line 3 of the output, etc.
+     * Line numbers are displayed: the expected output (DensePacked.expected.txt) shows the original line numbers, so line 3 of
+     * DensePacked.java is on line 3 of the output, etc. (0 for the lines without original line number).
      */
     @Test
     public void realignLineNumbersReordersMembersTest() throws IOException {
@@ -120,25 +122,10 @@ public class JavaDecompilerTest {
         int result = compiler.run(null, null, null, "-g", "--release", "17", "-d", classesDir.getPath(), sourceFile.getPath());
         assertEquals(0, result);
 
-        String expected = String.join("\n",
-                "package com.github.kwart.jd.sample;",
-                "public class DensePacked {",
-                // line 3
-                "  public void a() { System.out.println(\"a\"); } class In1 { In1() { System.out.println(\"in1\"); } "
-                        + "void x() { System.out.println(\"x\"); } }",
-                // line 4
-                "  DensePacked() { System.out.println(\"ctor\"); } class In2 { void y() { System.out.println(\"y\"); } }",
-                // line 5
-                "  private int f = 1; public void b() { System.out.println(\"b\"); }",
-                // line 6: the field z is moved behind the constructor
-                "  class In3 { In3() { this.z = 3; System.out.println(\"in3\"); } int z; "
-                        + "void w() { System.out.println(\"w\"); }",
-                "     }",
-                "",
-                "}",
-                "");
+        String expected = new String(Files.readAllBytes(new File("src/test/resources/realign/DensePacked.expected.txt").toPath()),
+                StandardCharsets.UTF_8);
 
-        assertEquals(expected, decompileDensePacked(classesDir).replace("\r\n", "\n"));
+        assertEquals(expected.replace("\r\n", "\n"), decompileDensePacked(classesDir).replace("\r\n", "\n"));
     }
 
     private String decompileDensePacked(File classesDir) throws IOException {
@@ -155,7 +142,7 @@ public class JavaDecompilerTest {
 
             @Override
             public boolean isDisplayLineNumbers() {
-                return false;
+                return true;
             }
 
             @Override

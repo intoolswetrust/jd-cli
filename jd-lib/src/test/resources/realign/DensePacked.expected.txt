@@ -1,0 +1,9 @@
+/*  0 */ package com.github.kwart.jd.sample;
+/*  0 */ public class DensePacked {
+/*  3 */   public void a() { System.out.println("a"); } class In1 { In1() { System.out.println("in1"); } void x() { System.out.println("x"); } }
+/*  4 */   DensePacked() { System.out.println("ctor"); } class In2 { void y() { System.out.println("y"); } }
+/*  5 */   private int f = 1; public void b() { System.out.println("b"); }
+/*  6 */   class In3 { In3() { this.z = 3; System.out.println("in3"); } int z; void w() { System.out.println("w"); }
+/*  0 */      }
+/*  0 */ 
+/*  0 */ }
