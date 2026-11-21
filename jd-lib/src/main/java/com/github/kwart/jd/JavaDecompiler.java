@@ -16,8 +16,12 @@
  *******************************************************************************/
 package com.github.kwart.jd;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jd.core.v1.ClassFileToJavaSourceDecompiler;
 import org.jd.core.v1.api.loader.Loader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +60,9 @@ public class JavaDecompiler {
 
         StringBuilderPrinter sbp = new StringBuilderPrinter(options);
         try {
-            DECOMPILER_TL.get().decompile(loader, sbp, internalName);
+            Map<String, Object> configuration = new HashMap<>();
+            configuration.put("realignLineNumbers", options.isRealignLineNumbers());
+            DECOMPILER_TL.get().decompile(loader, sbp, internalName, configuration);
         } catch (Exception e) {
             LOGGER.error("Can't decompile " + internalName, e);
             return null;

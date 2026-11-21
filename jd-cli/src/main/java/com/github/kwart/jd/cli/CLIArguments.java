@@ -64,6 +64,10 @@ public class CLIArguments implements DecompilerOptions {
     @Parameter(names = { "--displayLineNumbers", "-n" }, description = "displays line numbers in decompiled classes")
     private boolean displayLineNumbers;
 
+    @Parameter(names = { "--realignLineNumbers", "-rn" },
+            description = "inserts empty lines so that decompiled line numbers match the original source")
+    private boolean realignLineNumbers;
+
     @Parameter(names = { "--escapeUnicodeCharacters", "-eu" }, description = "escape unicode characters in decompiled classes")
     private boolean escapeUnicodeCharacters;
 
@@ -114,6 +118,10 @@ public class CLIArguments implements DecompilerOptions {
 
     public boolean isDisplayLineNumbers() {
         return displayLineNumbers;
+    }
+
+    public boolean isRealignLineNumbers() {
+        return realignLineNumbers;
     }
 
     public boolean isEscapeUnicodeCharacters() {

@@ -29,5 +29,12 @@ public interface DecompilerOptions {
 
     boolean isEscapeUnicodeCharacters();
 
+    /**
+     * Returns {@code true} if jd-core should realign the line numbers of the decompiled code to match the original source.
+     */
+    default boolean isRealignLineNumbers() {
+        return false;
+    }
+
     boolean isParallelProcessingAllowed();
 }

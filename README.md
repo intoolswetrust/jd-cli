@@ -49,6 +49,10 @@ Usage: java -jar jd-cli.jar [options] [Files to decompile]
     --pattern, -p
        RegExp pattern which the to-be-decompiled file has to match. Not matching
        entries are skipped.
+    --realignLineNumbers, -rn
+       inserts empty lines so that decompiled line numbers match the original
+       source
+       Default: false
     --serialProcessing, -sp
        don't use parallel processing
        Default: false

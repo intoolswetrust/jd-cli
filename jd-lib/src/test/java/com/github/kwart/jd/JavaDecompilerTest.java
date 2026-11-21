@@ -94,6 +94,53 @@ public class JavaDecompilerTest {
         assertDecompiled(tmpFolder);
     }
 
+    @Test
+    public void realignLineNumbersTest() throws IOException {
+        DecompilerOptions realign = new DecompilerOptions() {
+            @Override
+            public boolean isSkipResources() {
+                return false;
+            }
+
+            @Override
+            public boolean isEscapeUnicodeCharacters() {
+                return false;
+            }
+
+            @Override
+            public boolean isDisplayLineNumbers() {
+                return false;
+            }
+
+            @Override
+            public boolean isRealignLineNumbers() {
+                return true;
+            }
+
+            @Override
+            public boolean isParallelProcessingAllowed() {
+                return true;
+            }
+        };
+        JDInput input = new DirInput("target/test-classes", "jd.Hello.*World\\.");
+        File tmpFolder = temporaryFolder.getRoot();
+        input.decompile(new JavaDecompiler(realign), new DirOutput(tmpFolder.getAbsoluteFile()));
+        List<String> decompiled = Files.readAllLines(new File(tmpFolder, "com/github/kwart/jd/HelloWorld.java").toPath());
+        List<String> original = Files.readAllLines(new File("src/test/java/com/github/kwart/jd/HelloWorld.java").toPath());
+        int origLine = indexOfLine(original, "public static void main(String[] args)");
+        assertTrue(origLine >= 0);
+        assertTrue(decompiled.get(origLine).contains("public static void main(String[] args)"));
+    }
+
+    private static int indexOfLine(List<String> lines, String text) {
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).contains(text)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     private void assertDecompiled(File outputFolder) throws IOException {
         File decompiledFile = new File(outputFolder, "com/github/kwart/jd/HelloWorld.java");
         assertTrue(decompiledFile.isFile());
