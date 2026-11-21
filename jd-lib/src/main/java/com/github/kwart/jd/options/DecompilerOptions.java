@@ -30,7 +30,15 @@ public interface DecompilerOptions {
     boolean isEscapeUnicodeCharacters();
 
     /**
-     * Returns {@code true} if jd-core should realign the line numbers of the decompiled code to match the original source.
+     * Returns {@code true} if jd-core should realign the decompiled code with the line numbers of the original source.
+     * <p>
+     * This is delegated to jd-core's {@code realignLineNumbers} configuration. The layouter treats the lines with known
+     * original line numbers as fixed anchors and fits the flexible parts in between (spacing, members) to them. Where the
+     * original numbering leaves too little room, members can be moved to neighbouring sections. The layout is best effort
+     * (the search is bounded), so it is not a plain padding with blank lines and a perfect match is not guaranteed.
+     * <p>
+     * It requires line number debug information in the class files; without it this option has no effect. It can be
+     * combined with {@link #isDisplayLineNumbers()}.
      */
     default boolean isRealignLineNumbers() {
         return false;

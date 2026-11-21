@@ -50,8 +50,14 @@ Usage: java -jar jd-cli.jar [options] [Files to decompile]
        RegExp pattern which the to-be-decompiled file has to match. Not matching
        entries are skipped.
     --realignLineNumbers, -rn
-       inserts empty lines so that decompiled line numbers match the original
-       source
+       re-lays out the decompiled code (using jd-core's line number realignment)
+       so that statements land on the same line numbers as in the original
+       source, e.g. to set breakpoints or read stack traces against it. Spacing
+       between members is adjusted and, where the original numbering leaves no
+       room, members may be moved; it is a best-effort layout, not a plain
+       padding of blank lines. Needs line number debug info in the classes
+       (compiled with -g or default javac options); without it nothing changes.
+       Can be combined with --displayLineNumbers.
        Default: false
     --serialProcessing, -sp
        don't use parallel processing
