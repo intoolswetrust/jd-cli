@@ -1,9 +1,8 @@
 /*   0 */ package com.github.kwart.jd.sample;
 /*   0 */ 
+/*   0 */ import java.time.LocalDate;
+/*   0 */ import java.time.Month;
 /*   0 */ import java.util.Locale;
-/*   0 */ 
-/*   0 */ 
-/*   0 */ 
 /*   0 */ 
 /*   0 */ 
 /*   0 */ 
@@ -13,32 +12,19 @@
 /*   0 */ 
 /*   0 */ public final class BuilderChain
 /*   0 */ {
-/*   0 */   public static String greeting(String name) {
-/*  17 */     return "Hello, " + 
-/*  18 */       name + 
-/*  19 */       '!';
+/*   0 */   public Locale swissGerman() {
+/*  16 */     return new Locale.Builder()
+/*  17 */       .setLanguage("de")
+/*  18 */       .setRegion("CH")
+/*  19 */       .build();
 /*   0 */   }
 /*   0 */ 
 /*   0 */ 
 /*   0 */ 
-/*   0 */ 
-/*   0 */ 
 /*   0 */   
-/*   0 */   public static String legacyGreeting(String name) {
-/*  28 */     return "Hello, " + 
-/*  29 */       name + 
-/*  30 */       '!';
-/*   0 */   }
-/*   0 */ 
-/*   0 */ 
-/*   0 */ 
-/*   0 */ 
-/*   0 */   
-/*   0 */   public static Locale swissGerman()
-/*   0 */   {
-/*  39 */     return new Locale.Builder()
-/*  40 */       .setLanguage("de")
-/*  41 */       .setRegion("CH")
-/*  42 */       .build();
+/*   0 */   public LocalDate swissNationalDay() {
+/*  26 */     return LocalDate.now()
+/*  27 */       .withMonth(Month.AUGUST.getValue())
+/*  28 */       .withDayOfMonth(1);
 /*   0 */   }
 /*   0 */ }
