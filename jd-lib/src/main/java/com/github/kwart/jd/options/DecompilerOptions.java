@@ -34,7 +34,9 @@ public interface DecompilerOptions {
      * <p>
      * This is delegated to jd-core's {@code realignLineNumbers} configuration. The layouter treats the lines with known
      * original line numbers as fixed anchors and fits the flexible parts in between (spacing, members) to them. Where the
-     * original numbering leaves too little room, members can be moved to neighbouring sections. The layout is best effort
+     * original numbering leaves too little room, members and inner classes which shared a line in the original source are joined
+     * on one line again and members are re-ordered (e.g. the constructor of an inner class is moved behind its methods). The
+     * layout is best effort
      * (the search is bounded), so it is not a plain padding with blank lines and a perfect match is not guaranteed.
      * <p>
      * It requires line number debug information in the class files; without it this option has no effect. It can be

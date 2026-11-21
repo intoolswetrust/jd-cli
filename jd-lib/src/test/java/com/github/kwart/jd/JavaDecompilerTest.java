@@ -1,6 +1,8 @@
 package com.github.kwart.jd;
 
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -9,7 +11,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,6 +58,12 @@ public class JavaDecompilerTest {
             return true;
         }
     };
+
+    /** Number of the println statements in DensePacked.java. */
+    private static final int PRINTLN_COUNT = 9;
+    /** Zero-based index of the line with method b() in DensePacked.java. */
+    private static final int LINE_OF_B = 3;
+    private static final Pattern PRINTLN = Pattern.compile("System\\.out\\.println\\(\"\\w+\"\\);");
 
     /**
      * Temporary folder.
@@ -94,12 +108,49 @@ public class JavaDecompilerTest {
         assertDecompiled(tmpFolder);
     }
 
+    /**
+     * Decompiles a class in which several members (and inner classes) share the same source lines. To keep every statement on
+     * its original line, jd-core has to join members on one line and to reorder them (e.g. the synthetic constructor of an inner
+     * class is moved behind its method). This is not possible by merely adding blank lines.
+     */
     @Test
-    public void realignLineNumbersTest() throws IOException {
-        DecompilerOptions realign = new DecompilerOptions() {
+    public void realignLineNumbersReordersMembersTest() throws IOException {
+        File sourceFile = new File("src/test/resources/realign/DensePacked.java");
+        File classesDir = temporaryFolder.newFolder("classes");
+        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        assertTrue("A JDK is required to run this test", compiler != null);
+        assertEquals(0, compiler.run(null, null, null, "-g", "-d", classesDir.getPath(), sourceFile.getPath()));
+
+        String plain = decompileDensePacked(classesDir, false);
+        String realigned = decompileDensePacked(classesDir, true);
+
+        // without realignment the (synthetic) constructor of the inner class precedes its method
+        assertTrue(plain.indexOf("In1(DensePacked") < plain.indexOf("void x()"));
+        // with realignment the members are reordered, so that the method keeps its original line
+        assertTrue(realigned.indexOf("void x()") < realigned.indexOf("In1(DensePacked"));
+
+        // each statement is on the same line as in the original source
+        List<String> original = Files.readAllLines(sourceFile.toPath());
+        List<String> decompiled = Arrays.asList(realigned.split("\\R", -1));
+        int checked = 0;
+        for (int i = 0; i < original.size(); i++) {
+            Matcher matcher = PRINTLN.matcher(original.get(i));
+            while (matcher.find()) {
+                assertThat("line " + (i + 1) + " of the realigned output", decompiled.get(i), containsString(matcher.group()));
+                checked++;
+            }
+        }
+        assertEquals(PRINTLN_COUNT, checked);
+        // members are joined on shared lines, exactly as in the original source
+        assertThat(decompiled.get(LINE_OF_B), allOf(containsString("void b()"), containsString("class In1")));
+        assertThat(decompiled.get(LINE_OF_B + 1), containsString("void c()"));
+    }
+
+    private String decompileDensePacked(File classesDir, boolean realign) throws IOException {
+        DecompilerOptions options = new DecompilerOptions() {
             @Override
             public boolean isSkipResources() {
-                return false;
+                return true;
             }
 
             @Override
@@ -114,31 +165,17 @@ public class JavaDecompilerTest {
 
             @Override
             public boolean isRealignLineNumbers() {
-                return true;
+                return realign;
             }
 
             @Override
             public boolean isParallelProcessingAllowed() {
-                return true;
+                return false;
             }
         };
-        JDInput input = new DirInput("target/test-classes", "jd.Hello.*World\\.");
-        File tmpFolder = temporaryFolder.getRoot();
-        input.decompile(new JavaDecompiler(realign), new DirOutput(tmpFolder.getAbsoluteFile()));
-        List<String> decompiled = Files.readAllLines(new File(tmpFolder, "com/github/kwart/jd/HelloWorld.java").toPath());
-        List<String> original = Files.readAllLines(new File("src/test/java/com/github/kwart/jd/HelloWorld.java").toPath());
-        int origLine = indexOfLine(original, "public static void main(String[] args)");
-        assertTrue(origLine >= 0);
-        assertTrue(decompiled.get(origLine).contains("public static void main(String[] args)"));
-    }
-
-    private static int indexOfLine(List<String> lines, String text) {
-        for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).contains(text)) {
-                return i;
-            }
-        }
-        return -1;
+        File outDir = temporaryFolder.newFolder();
+        new DirInput(classesDir.getPath(), "DensePacked\\.").decompile(new JavaDecompiler(options), new DirOutput(outDir));
+        return new String(Files.readAllBytes(new File(outDir, "com/github/kwart/jd/sample/DensePacked.java").toPath()));
     }
 
     private void assertDecompiled(File outputFolder) throws IOException {
