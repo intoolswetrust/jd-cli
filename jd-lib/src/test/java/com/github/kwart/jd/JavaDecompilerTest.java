@@ -104,6 +104,7 @@ public class JavaDecompilerTest {
      * with javadoc and imports around. The decompiler does not output comments and, without realignment, the statements would
      * come out a few lines too early (e.g. the first one on the line 7 instead of 17). With realignment the layout inserts blank
      * lines (and moves the opening braces to their own lines where needed), so that every call is back on its original line.
+     * Note that jd-core turns the {@code StringBuilder} and {@code StringBuffer} chains back into string concatenations.
      * The expected file displays the original line numbers (0 stands for the lines without original line number), which are
      * the same as the numbers of the lines they are on.
      */

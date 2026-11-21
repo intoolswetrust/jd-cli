@@ -22,12 +22,23 @@
 /*   0 */ 
 /*   0 */ 
 /*   0 */ 
+/*   0 */ 
+/*   0 */   
+/*   0 */   public static String legacyGreeting(String name) {
+/*  28 */     return "Hello, " + 
+/*  29 */       name + 
+/*  30 */       '!';
+/*   0 */   }
+/*   0 */ 
+/*   0 */ 
+/*   0 */ 
+/*   0 */ 
 /*   0 */   
 /*   0 */   public static Locale swissGerman()
 /*   0 */   {
-/*  28 */     return new Locale.Builder()
-/*  29 */       .setLanguage("de")
-/*  30 */       .setRegion("CH")
-/*  31 */       .build();
+/*  39 */     return new Locale.Builder()
+/*  40 */       .setLanguage("de")
+/*  41 */       .setRegion("CH")
+/*  42 */       .build();
 /*   0 */   }
 /*   0 */ }

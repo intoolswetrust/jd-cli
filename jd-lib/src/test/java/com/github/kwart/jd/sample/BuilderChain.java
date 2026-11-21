@@ -22,6 +22,17 @@ public final class BuilderChain {
     }
 
     /**
+     * Builds a greeting (the old way).
+     */
+    public static String legacyGreeting(String name) {
+        return new StringBuffer()
+                .append("Hello, ")
+                .append(name)
+                .append('!')
+                .toString();
+    }
+
+    /**
      * Builds a locale.
      */
     public static Locale swissGerman() {
