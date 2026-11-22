@@ -49,6 +49,18 @@ Usage: java -jar jd-cli.jar [options] [Files to decompile]
     --pattern, -p
        RegExp pattern which the to-be-decompiled file has to match. Not matching
        entries are skipped.
+    --realignLineNumbers, -rn
+       re-lays out the decompiled code (using jd-core's line number realignment)
+       so that statements land on the same line numbers as in the original source,
+       e.g. to set breakpoints or read stack traces against it. Spacing between
+       members is adjusted and members and inner classes which shared a line in
+       the original are joined on one line again. It is a best-effort layout, not
+       a plain padding of blank lines. Needs line number debug info in the classes
+       (compiled with -g or default javac options); without it nothing changes.
+       Note that, with or without this option, jd-core orders fields, methods and
+       inner classes by their original line number rather than by their order in
+       the bytecode. Can be combined with --displayLineNumbers.
+       Default: false
     --serialProcessing, -sp
        don't use parallel processing
        Default: false

@@ -29,5 +29,25 @@ public interface DecompilerOptions {
 
     boolean isEscapeUnicodeCharacters();
 
+    /**
+     * Returns {@code true} if jd-core should realign the decompiled code with the line numbers of the original source.
+     * <p>
+     * This is delegated to jd-core's {@code realignLineNumbers} configuration. The layouter treats the lines with known
+     * original line numbers as fixed anchors and fits the flexible parts in between (spacing, members) to them. Where the
+     * original numbering leaves too little room, members and inner classes which shared a line in the original source are joined
+     * on one line again. The layout is best effort (the search is bounded), so it is not a plain padding with blank lines and
+     * a perfect match is not guaranteed.
+     * <p>
+     * Note that ordering the fields, methods and inner classes by their original line number (instead of their order in the
+     * bytecode) is done by jd-core in any case, whether this option is enabled or not; this option only adds the re-layout
+     * described above.
+     * <p>
+     * It requires line number debug information in the class files; without it this option has no effect. It can be
+     * combined with {@link #isDisplayLineNumbers()}.
+     */
+    default boolean isRealignLineNumbers() {
+        return false;
+    }
+
     boolean isParallelProcessingAllowed();
 }

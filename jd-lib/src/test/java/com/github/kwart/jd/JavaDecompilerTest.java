@@ -1,12 +1,14 @@
 package com.github.kwart.jd;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,6 +94,60 @@ public class JavaDecompilerTest {
         JavaDecompiler decompiler = new JavaDecompiler(DC_OPTS);
         input.decompile(decompiler, output);
         assertDecompiled(tmpFolder);
+    }
+
+    /**
+     * Decompiles {@link com.github.kwart.jd.sample.BuilderChain} with realigned line numbers and compares the whole output with
+     * an expected file.
+     * <p>
+     * Why this sample: it is a typical real-life case, builders called with one call per line ({@code set...}, {@code with...}),
+     * with javadoc and imports around. The decompiler does not output comments and, without realignment, the statements would
+     * come out a few lines too early (e.g. the first one on the line 9 instead of 16). With realignment the layout inserts blank
+     * lines (and moves the opening braces to their own lines where needed), so that every call is back on its original line.
+     * The getter, setter, {@code hashCode}, {@code equals} and {@code toString} have their signature and their body on the same
+     * line, as many projects write them. The decompiler cannot always keep them on one line: where the original leaves no room
+     * (e.g. {@code setName} and {@code equals}) the layout joins signature and body on one line, otherwise the signature and the
+     * opening brace are printed on the lines before the statement. Either way, each statement stays on its original line.
+     * The expected file displays the original line numbers (0 stands for the lines without original line number), which are
+     * the same as the numbers of the lines they are on.
+     */
+    @Test
+    public void realignLineNumbersTest() throws IOException {
+        DecompilerOptions options = new DecompilerOptions() {
+            @Override
+            public boolean isSkipResources() {
+                return true;
+            }
+
+            @Override
+            public boolean isEscapeUnicodeCharacters() {
+                return false;
+            }
+
+            @Override
+            public boolean isDisplayLineNumbers() {
+                return true;
+            }
+
+            @Override
+            public boolean isRealignLineNumbers() {
+                return true;
+            }
+
+            @Override
+            public boolean isParallelProcessingAllowed() {
+                return false;
+            }
+        };
+        File outDir = temporaryFolder.newFolder();
+        new DirInput("target/test-classes", "BuilderChain\\.").decompile(new JavaDecompiler(options), new DirOutput(outDir));
+
+        File actualFile = new File(outDir, "com/github/kwart/jd/sample/BuilderChain.java");
+        File expectedFile = new File("src/test/resources/realign/BuilderChain.expected.txt");
+        String actual = new String(Files.readAllBytes(actualFile.toPath()), StandardCharsets.UTF_8);
+        String expected = new String(Files.readAllBytes(expectedFile.toPath()), StandardCharsets.UTF_8);
+
+        assertEquals(expected.replace("\r\n", "\n"), actual.replace("\r\n", "\n"));
     }
 
     private void assertDecompiled(File outputFolder) throws IOException {
