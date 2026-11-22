@@ -11,7 +11,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,6 +34,12 @@ import com.github.kwart.jd.output.StructuredDirOutput;
  * Basic test for {@link JavaDecompiler} class.
  */
 public class JavaDecompilerTest {
+
+    /**
+     * Lines of the statements in {@link com.github.kwart.jd.sample.BuilderChain}.
+     */
+    private static final List<Integer> BUILDER_CHAIN_STATEMENT_LINES = Arrays.asList(20, 21, 22, 23, 30, 31, 32, 35, 37, 40,
+            43, 46);
 
     private static final DecompilerOptions DC_OPTS = new DecompilerOptions() {
 
@@ -97,19 +108,8 @@ public class JavaDecompilerTest {
     }
 
     /**
-     * Decompiles {@link com.github.kwart.jd.sample.BuilderChain} with realigned line numbers and compares the whole output with
-     * an expected file.
-     * <p>
-     * Why this sample: it is a typical real-life case, builders called with one call per line ({@code set...}, {@code with...}),
-     * with javadoc and imports around. The decompiler does not output comments and, without realignment, the statements would
-     * come out a few lines too early (e.g. the first one on the line 9 instead of 16). With realignment the layout inserts blank
-     * lines (and moves the opening braces to their own lines where needed), so that every call is back on its original line.
-     * The getter, setter, {@code hashCode}, {@code equals} and {@code toString} have their signature and their body on the same
-     * line, as many projects write them. The decompiler cannot always keep them on one line: where the original leaves no room
-     * (e.g. {@code setName} and {@code equals}) the layout joins signature and body on one line, otherwise the signature and the
-     * opening brace are printed on the lines before the statement. Either way, each statement stays on its original line.
-     * The expected file displays the original line numbers (0 stands for the lines without original line number), which are
-     * the same as the numbers of the lines they are on.
+     * Decompiles {@link com.github.kwart.jd.sample.BuilderChain} with realigned and displayed line numbers and checks that
+     * every statement is printed on its original line. Checks this property, not the exact layout, to survive jd-core updates.
      */
     @Test
     public void realignLineNumbersTest() throws IOException {
@@ -142,12 +142,22 @@ public class JavaDecompilerTest {
         File outDir = temporaryFolder.newFolder();
         new DirInput("target/test-classes", "BuilderChain\\.").decompile(new JavaDecompiler(options), new DirOutput(outDir));
 
-        File actualFile = new File(outDir, "com/github/kwart/jd/sample/BuilderChain.java");
-        File expectedFile = new File("src/test/resources/realign/BuilderChain.expected.txt");
-        String actual = new String(Files.readAllBytes(actualFile.toPath()), StandardCharsets.UTF_8);
-        String expected = new String(Files.readAllBytes(expectedFile.toPath()), StandardCharsets.UTF_8);
+        File decompiledFile = new File(outDir, "com/github/kwart/jd/sample/BuilderChain.java");
+        List<String> lines = Files.readAllLines(decompiledFile.toPath(), StandardCharsets.UTF_8);
 
-        assertEquals(expected.replace("\r\n", "\n"), actual.replace("\r\n", "\n"));
+        Pattern lineNumberPrefix = Pattern.compile("^/\\*\\s*(\\d+) \\*/");
+        Set<Integer> originalLineNumbers = new TreeSet<>();
+        for (int i = 0; i < lines.size(); i++) {
+            Matcher matcher = lineNumberPrefix.matcher(lines.get(i));
+            assertTrue("Line without line number prefix: " + lines.get(i), matcher.find());
+            int originalLineNumber = Integer.parseInt(matcher.group(1));
+            if (originalLineNumber > 0) {
+                assertEquals("Statement printed on a different line than in the source: " + lines.get(i), originalLineNumber,
+                        i + 1);
+                originalLineNumbers.add(originalLineNumber);
+            }
+        }
+        assertEquals(new TreeSet<>(BUILDER_CHAIN_STATEMENT_LINES), originalLineNumbers);
     }
 
     private void assertDecompiled(File outputFolder) throws IOException {

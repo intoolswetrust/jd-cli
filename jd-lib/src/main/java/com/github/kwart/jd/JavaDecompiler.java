@@ -16,12 +16,11 @@
  *******************************************************************************/
 package com.github.kwart.jd;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import org.jd.core.v1.ClassFileToJavaSourceDecompiler;
 import org.jd.core.v1.api.loader.Loader;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,9 +38,12 @@ public class JavaDecompiler {
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaDecompiler.class);
 
     private final DecompilerOptions options;
+    private final Map<String, Object> configuration;
 
     public JavaDecompiler(DecompilerOptions options) {
         this.options = options;
+        // jd-core only reads the configuration, so one immutable map can be shared by all threads.
+        this.configuration = Collections.singletonMap("realignLineNumbers", options.isRealignLineNumbers());
     }
 
     /**
@@ -60,8 +62,6 @@ public class JavaDecompiler {
 
         StringBuilderPrinter sbp = new StringBuilderPrinter(options);
         try {
-            Map<String, Object> configuration = new HashMap<>();
-            configuration.put("realignLineNumbers", options.isRealignLineNumbers());
             DECOMPILER_TL.get().decompile(loader, sbp, internalName, configuration);
         } catch (Exception e) {
             LOGGER.error("Can't decompile " + internalName, e);
