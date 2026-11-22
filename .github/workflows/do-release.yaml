@@ -4,12 +4,15 @@ on:
   workflow_dispatch:
     inputs:
       release-version:
-        description: 'Version to be released (e.g. 1.3.0).'
+        description: 'Version to be released (e.g. 1.3.0, 1.3.0-alpha-1, 1.3.0-beta-1, 1.3.0-M1, 1.3.0-RC-1, 1.3.0.CR1, 1.3.0.Final).'
         required: true
-      next-snapshot-version:
-        description: 'Version to be set after the release - without the -SNAPSHOT suffix (e.g. 1.4.0).'
+      next-version:
+        description: 'Next development version, -SNAPSHOT is appended (e.g. 1.4.0).'
         required: true
 
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -19,58 +22,117 @@ env:
   GIT_AUTHOR_EMAIL: <>
   GIT_COMMITTER_NAME: Terminator the Kitty
   GIT_COMMITTER_EMAIL: <>
+  RELEASE_VERSION: ${{ github.event.inputs.release-version }}
+  NEXT_VERSION: ${{ github.event.inputs.next-version }}
+  MAVEN_ARGS: --batch-mode --no-transfer-progress
+
 jobs:
   do-release:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
-    - name: Checkout
-      uses: actions/checkout@v7
-    - name: Set up Java and credentials
-      uses: actions/setup-java@v6
-      with:
-        java-version: 17
-        distribution: 'temurin'
-        server-id: ossrh
-        server-username: MAVEN_USERNAME
-        server-password: MAVEN_PASSWORD
-        gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-        gpg-passphrase: MAVEN_GPG_PASSPHRASE
-        cache: 'maven'
+      - name: Checkout
+        uses: actions/checkout@v7
 
-    - name: Do the Deployment and related stuff
-      id: maven_release
-      run: |
-        VERSION=${{ github.event.inputs.release-version }}
-        NEXT_VERSION=${{ github.event.inputs.next-snapshot-version }}-SNAPSHOT
-        TAG=jd-cli-${VERSION}
-        set -x
-        mvn --batch-mode clean install
-        mvn -P release --batch-mode "-Dtag=${TAG}" release:prepare \
-                 "-DreleaseVersion=${VERSION}" \
-                 "-DdevelopmentVersion=${NEXT_VERSION}" -DskipTests
-        mvn -P release --batch-mode release:perform \
-            -DskipTests -DstagingProgressTimeoutMinutes=30 -Dmaven.wagon.rto=7200000 \
-            -Dmaven.wagon.httpconnectionManager.maxPerRoute=60 -Dmaven.wagon.httpconnectionManager.maxTotal=100
-        echo "TAG=$TAG" >> $GITHUB_OUTPUT
-      env:
-        MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-        MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-        MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Validate inputs
+        run: |
+          set -euo pipefail
+          fail() { echo "::error::$1"; exit 1; }
+          [ "$GITHUB_REF" = "refs/heads/master" ] || fail "Run the release from master, not $GITHUB_REF."
+          RELEASE_VERSION=$(echo "$RELEASE_VERSION" | xargs)
+          NEXT_VERSION=$(echo "$NEXT_VERSION" | xargs)
+          NEXT_VERSION=${NEXT_VERSION%-SNAPSHOT}
+          shopt -s nocasematch
+          [[ "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-](alpha|beta|M|RC|CR)([.-]?[0-9]+)?|[.-]Final)?$ ]] \
+            || fail "Invalid release version '$RELEASE_VERSION', use e.g. 1.3.0, 1.3.0-alpha-1, 1.3.0-beta-1, 1.3.0-M1, 1.3.0-RC-1, 1.3.0.CR1, 1.3.0.Final."
+          shopt -u nocasematch
+          [[ "$NEXT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail "Invalid next version '$NEXT_VERSION', use e.g. 1.4.0."
+          if git ls-remote --exit-code --tags origin "refs/tags/jd-cli-$RELEASE_VERSION" >/dev/null; then
+            fail "Tag jd-cli-$RELEASE_VERSION already exists."
+          fi
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> "$GITHUB_ENV"
+          echo "NEXT_VERSION=$NEXT_VERSION-SNAPSHOT" >> "$GITHUB_ENV"
+          echo "Releasing $RELEASE_VERSION, next version $NEXT_VERSION-SNAPSHOT"
 
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@29e53e917877a24fad85510ded594ab3c9ca12de
-      with:
-        file: jd-cli-${{ github.event.inputs.release-version }}-dist.*
-        file_glob: true
-        tag: ${{ steps.maven_release.outputs.TAG }}
-        overwrite: true
+      - name: Set up Java and credentials
+        uses: actions/setup-java@v6
+        with:
+          java-version: 17
+          distribution: 'temurin'
+          cache: 'maven'
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v4
+      - name: Check the signing key
+        run: |
+          set -euo pipefail
+          fail() { echo "::error::$1"; exit 1; }
+          gpg --list-secret-keys --keyid-format long
+          KEY=$(mvn help:evaluate -q -Dexpression=gpg.keyname -DforceStdout)
+          gpg --list-secret-keys "$KEY" >/dev/null 2>&1 || fail "Key $KEY (gpg.keyname) is not in MAVEN_GPG_PRIVATE_KEY."
+          echo test | gpg --batch --pinentry-mode loopback --passphrase "$MAVEN_GPG_PASSPHRASE" \
+            --local-user "$KEY" --clearsign >/dev/null || fail "Can't sign with key $KEY, check MAVEN_GPG_PASSPHRASE."
+          curl -fsS -o /dev/null "https://keys.openpgp.org/vks/v1/by-fingerprint/$KEY" \
+            || curl -fsS -o /dev/null "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x$KEY" \
+            || fail "Key $KEY is not on keys.openpgp.org nor keyserver.ubuntu.com, Central would reject the signatures."
+        env:
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
-    - name: Login to Docker Hub
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      # processAllModules: build-tools has no parent, so it isn't updated otherwise
+      - name: Set the release version and test
+        run: |
+          set -euo pipefail
+          mvn versions:set -DgenerateBackupPoms=false -DprocessAllModules=true -DnewVersion="$RELEASE_VERSION"
+          git commit -am "Release $RELEASE_VERSION"
+          git tag "jd-cli-$RELEASE_VERSION"
+          mvn clean install
 
-    - name: Docker Build and Push the image
-      run: docker buildx build --push -f Dockerfile --tag kwart/jd-cli:${{ github.event.inputs.release-version }} .
+      - name: Check master didn't move
+        run: |
+          git fetch --quiet origin master
+          if [ "$(git rev-parse origin/master)" != "$GITHUB_SHA" ]; then
+            echo "::error::master changed during the release, nothing was deployed. Run the release again."
+            exit 1
+          fi
+
+      - name: Deploy to Maven Central
+        run: mvn deploy -Prelease -DskipTests -DstagingProgressTimeoutMinutes=30
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+
+      # The dist archives and jd-cli.jar built with the release version stay in the workspace for the steps below.
+      - name: Push the tag and the next version
+        run: |
+          set -euo pipefail
+          git push origin "jd-cli-$RELEASE_VERSION"
+          mvn versions:set -DgenerateBackupPoms=false -DprocessAllModules=true -DnewVersion="$NEXT_VERSION"
+          git commit -am "Next version is $NEXT_VERSION"
+          if ! git push origin HEAD:master; then
+            echo "::error::jd-cli-$RELEASE_VERSION is released and tagged, but master changed in the meantime. Set the version on master to $NEXT_VERSION manually."
+            exit 1
+          fi
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@29e53e917877a24fad85510ded594ab3c9ca12de
+        with:
+          file: jd-cli-${{ env.RELEASE_VERSION }}-dist.*
+          file_glob: true
+          tag: jd-cli-${{ env.RELEASE_VERSION }}
+          overwrite: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to Docker Hub
+        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Docker Build and Push the image
+        run: docker buildx build --push -f Dockerfile --tag "kwart/jd-cli:$RELEASE_VERSION" .
